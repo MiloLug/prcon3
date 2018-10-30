@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html><head>
+  <title>PRCON</title>
+<script>
+if ("undefined"!=typeof navigator && "serviceWorker" in navigator) {
+ 
+  window.addEventListener("load", function() {  
+  navigator.serviceWorker.register("./sw.js").then(
+    function(registration) {
+      
+      console.log("ServiceWorker registration successful with scope: ", registration.scope); },
+    function(err) {
+      console.log("ServiceWorker registration failed: ", err);
+    });
+  });
+}
+</script>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" charset="utf-8">
+<link rel="apple-touch-icon" sizes="57x57" href="icons/apple-icon-57x57.png">
+<link rel="apple-touch-icon" sizes="60x60" href="icons/apple-icon-60x60.png">
+<link rel="apple-touch-icon" sizes="72x72" href="icons/apple-icon-72x72.png">
+<link rel="apple-touch-icon" sizes="76x76" href="icons/apple-icon-76x76.png">
+<link rel="apple-touch-icon" sizes="114x114" href="icons/apple-icon-114x114.png">
+<link rel="apple-touch-icon" sizes="120x120" href="icons/apple-icon-120x120.png">
+<link rel="apple-touch-icon" sizes="144x144" href="icons/apple-icon-144x144.png">
+<link rel="apple-touch-icon" sizes="152x152" href="icons/apple-icon-152x152.png">
+<link rel="apple-touch-icon" sizes="180x180" href="icons/apple-icon-180x180.png">
+<link rel="icon" type="image/png" sizes="192x192"  href="icons/android-icon-192x192.png">
+<link rel="icon" type="image/png" sizes="32x32" href="icons/favicon-32x32.png">
+<link rel="icon" type="image/png" sizes="96x96" href="icons/favicon-96x96.png">
+<link rel="icon" type="image/png" sizes="16x16" href="icons/favicon-16x16.png">
+  
+<link rel="manifest" href="manifest.json">
+  
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="application-name" content="PRCON">
+<meta name="apple-mobile-web-app-title" content="PRCON">
+<meta name="theme-color" content="#1a1a1d">
+<meta name="msapplication-navbutton-color" content="#1a1a1d">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="msapplication-starturl" content="./">
+<script src="js/CE.js"></script>
+<script src="js/js.js"></script>
+<script src="js/events.js"></script>
+<script src="js/parser.js"></script>
+<script src="js/PATH.js"></script>
+<script src="js/util.js"></script>
+<script src="js/scroll.js"></script>
+<link rel="stylesheet" type="text/css" href="css/scroll.css"/>
+<link rel="stylesheet" type="text/css" href="css/common.css"/>
+<link rel="stylesheet" type="text/css" href="css/generalStructure.css"/>
+<link rel="stylesheet" type="text/css" href="css/forBlocks.css"/>
+<link rel="stylesheet" type="text/css" href="css/layers.css"/>
+
+  </head>
+<body>
+<script>applySettings();</script>
+<div class="sources" hidden>
+	<div act="login">
+      	<div class="backcontent center">
+   		<input type="text" class="login inputstyle cls" placeholder="URL">
+      	<input type="text" class="pass inputstyle cls" placeholder="PASSWORD">
+      	</div>
+        <div class="downmenu">
+          	<button class="blackbtn bwhitefont cls" funcs="sendLogin">login</button>
+          	<button class="blackbtn bwhitefont cls" funcs="openLoginFtp">login ftp</button>
+          	<button class="blackbtn bwhitefont cls" funcs="openLoginLocal">local storage</button>
+          	<button class="blackbtn bwhitefont cls" funcs="easyCancel">close</button>
+      	</div>
+    </div>
+  	
+  	<div act="settings" fsopen="<f-scrollplane>" fsclose="</f-scrollplane><f-scroll-y><f-wheel></f-wheel></f-scroll-y>">
+ 		<div class="backcontent">
+   			@set::selfAct.opt("fsopen")::@
+          	@set::selfAct.opt("fsclose")::@
+      	</div>
+        <div class="downmenu">
+          	<button class="blackbtn bwhitefont cls" funcs="resetSettings">reset</button>
+          	<button class="blackbtn bwhitefont cls" funcs="easyCancel">close</button>
+      	</div>
+  	</div>
+  
+  	<div act="loginFtp">
+      	<div class="backcontent center">
+        <input type="text" class="urlPhp inputstyle cls" placeholder="PHP URL">
+        <input type="text" class="urlFtp inputstyle cls" placeholder="FTP URL">
+   		<input type="text" class="login inputstyle cls" placeholder="FTP LOGIN">
+      	<input type="text" class="pass inputstyle cls" placeholder="FTP PASSWORD">
+      	</div>
+        <div class="downmenu">
+          	<button class="blackbtn bwhitefont cls" funcs="sendLoginFtp">login</button>
+         	<button class="blackbtn bwhitefont cls" funcs="openLogin">login php</button>
+          	<button class="blackbtn bwhitefont cls" funcs="openLoginLocal">local storage</button>
+          	<button class="blackbtn bwhitefont cls" funcs="easyCancel">close</button>
+      	</div>
+    </div>     
+  	
+  	<div act="loginLocal">
+ 		<div class="backcontent">
+ 		</div>
+  		<div class="downmenu">
+          	<button class="blackbtn bwhitefont cls" funcs="openLogin">new account</button>
+           	<button class="blackbtn bwhitefont cls" funcs="easyCancel">cancel</button>
+  		</div>
+  	</div>
+
+  	<div act="dialogInputSrc">
+  		<input type="text" class="inputstyle cls">
+      	<button class="blackbtn bwhitefont cls"></button>
+      	<label class="chbstyle"><input type="checkbox" hidden><div>&#10003;</div><text></text></label>
+  	</div>
+  	<svg act="dirIcon">
+	    <defs>
+	        <path d="M1 22.99L51.91 22.99L51.91 64L1 64L1 22.99Z" id="SVGdirIc1" />
+	        <path d="M43.97 29.92L54.3 29.92L54.3 64L43.97 64L43.97 29.92Z" id="SVGdirIc2" />
+	        <path d="M32.48 22.99L46.45 22.99L46.45 64L32.48 64L32.48 22.99Z" id="SVGdirIc3" />
+	        <path d="M0 0L46.45 0L46.45 64L0 64L0 0Z" id="SVGdirIc4" />
+	        <symbol id="SVGdirIcon">
+	            <use xlink:href="#SVGdirIc1" opacity="1" fill="#999999" fill-opacity="1" />
+	            <use xlink:href="#SVGdirIc2" opacity="1" fill="#414141" fill-opacity="1" />
+	            <filter id="SVGdirIcShadow" x="24.48" y="14.99" width="30.97" height="57.01" filterUnits="userSpaceOnUse" primitiveUnits="userSpaceOnUse">
+	                <feFlood />
+	                <feComposite in2="SourceAlpha" operator="in" />
+	                <feGaussianBlur stdDeviation="1" />
+	                <feOffset dx="1" dy="0" result="afterOffset" />
+	                <feFlood flood-color="#000000" flood-opacity="0.5" />
+	                <feComposite in2="afterOffset" operator="in" />
+	                <feMorphology operator="dilate" radius="0" />
+	                <feComposite in2="SourceAlpha" operator="out" />
+	            </filter>
+	            <path d="M32.48 22.99L46.45 22.99L46.45 64L32.48 64L32.48 22.99Z" id="SVGdirIcShadowPath" fill="white" fill-opacity="1" filter="url(#SVGdirIcShadow)" />
+	            <use xlink:href="#SVGdirIc3" opacity="1" fill="#999999" fill-opacity="0" />
+	            <use xlink:href="#SVGdirIc4" opacity="1" fill="#999999" fill-opacity="1" />
+	        </symbol>
+	    </defs>
+	</svg>
+  	<svg act="fileIcon">
+	    <defs>
+	        <path d="M30 0L46 12L46 64L0 64L0 0L30 0Z" id="SVGfileIc1"></path>
+	        <path d="M46 12L30 12L30 0L46 12Z" id="SVGfileIc2"></path>
+	    <symbol id="SVGfileIcon"><use xlink:href="#SVGfileIc1" opacity="1" fill="#999999" fill-opacity="1"></use>
+	    <use xlink:href="#SVGfileIc2" opacity="1" fill="#3e3e3e" fill-opacity="1"></use>
+		</symbol>
+		</defs>
+	</svg>
+  	<div act="loadscreen">
+		<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" preserveAspectRatio="xMidYMid meet" viewBox="0 0 180 180" width="100%" height="100%">
+          	<circle class="SVGloaderCirc1" cx="50%" cy="50%" r="80"/>
+          	<circle class="SVGloaderCirc2"/>
+      	</svg>
+      	<div></div>
+	</div>
+  	<div act="dirContextMenu">
+      	<div class="row">1</div>
+      	<div class="row">2</div>
+  	</div>
+</div>
+<div class="pathRow">
+  	<button class="bwhitefont cls" funcs="goBack">&#60;</button>
+	<button class="bwhitefont cls" funcs="goForward">&#62;</button>
+  	<input class="inputstyle cls">
+</div>
+<div class="cont">
+	<div class="uppanel NOSELECT" res="before">
+      	<div class="leftexplorer" res="before">
+          <f-scrollplane>
+          </f-scrollplane>
+          <f-scroll-y>
+            <f-wheel></f-wheel>
+          </f-scroll-y>
+          <f-scroll-x>
+            <f-wheel></f-wheel>
+          </f-scroll-x>
+          <div class="lsplace"></div>
+		</div>      	
+      	<div class="middle w center">
+			<button class="middlebtn bwhitefont hide"></button>
+		</div>
+      	<div class="rightexplorer" res="after">
+          	<f-scrollplane contextfuncs="testbbctx" bubblecontext>
+          	</f-scrollplane>
+          	<f-scroll-y>
+          	  <f-wheel></f-wheel>
+          	</f-scroll-y>
+          	<div class="lsplace"></div>
+      	</div>
+	</div>
+	
+	<div class="middle h center">
+		<button class="middlebtn bwhitefont hide"></button>
+	</div>
+	
+	<div class="downpanel" res="after">
+		<div class="rightmenu">
+			<button class="blackbtn bwhitefont cls" funcs="openLogin">
+			&#9094;
+			</button>
+			<button class="blackbtn bwhitefont cls" funcs="showResizeButton">
+			&#8693;
+			</button>
+			<button class="blackbtn bwhitefont cls" funcs="openSettings">
+			&#10978;
+			</button>
+			<button class="blackbtn bwhitefont cls">
+			&#8635;
+			</button>
+			<button class="blackbtn bwhitefont cls" funcs="toggleDirSelecting">
+			&#10003;
+			</button>
+          	<button class="blackbtn bwhitefont rightshower" funcs="toggleRightMenu">
+			<div></div>
+			</button>
+   		</div>
+      	<div class="srcplace">
+          	
+      	</div>
+	</div>
+
+</div>
+
+<div class="dialogback center" hidden>
+</div>
+
+<script src="js/UI.js"></script>
+
+
+
+
+
+
