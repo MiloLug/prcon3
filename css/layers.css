@@ -1,0 +1,15 @@
+.middle{
+  z-index:10;
+}
+[topLayer]{
+  z-index:11;
+}
+.rightmenu{
+  z-index:12;
+}
+.dialogback{
+  z-index:888;
+}
+.contextmenu{
+  z-index:999;
+}
