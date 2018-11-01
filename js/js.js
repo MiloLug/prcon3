@@ -319,10 +319,9 @@ Prev define version: 6.0.0 (15.10.2018)
 			}
 			return a;
 		},
-		func: function (freeFunc) { /**выполнить call-back функцию с использованием a в качестве аргумента.**/
+		callbackFun: function (fun) { /**выполнить call-back функцию с использованием a в качестве аргумента.**/
 			var a = this.a();
-			A.isEmpty(a) && A.error(A.errs.E_1);
-			freeFunc(a);
+			fun(a);
 		},
 		css: function (vl, vl2) {
 			/**получить/задать стили a.
@@ -1054,12 +1053,13 @@ Prev define version: 6.0.0 (15.10.2018)
 	W.A.Ainit({
 		_DATA: {
 			opt_spec: {
-				keys: ["_TXT", "_DOM", "_CSS", "_VAL"],
+				keys: ["_TXT", "_DOM", "_CSS", "_VAL", "_INIT"],
 				funcs: {
 					_TXT: "html",
 					_DOM: "DOMTree",
 					_CSS: "css",
-					_VAL: "val"
+					_VAL: "val",
+                  	_INIT: "callbackFun"
 				}
 			}
 		},
