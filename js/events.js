@@ -560,7 +560,7 @@ Prev define version: -
 				};
 			!AT.addLisSeq[lis] && (AT.addLisSeq[lis] = A.start());
 			AT.addLisSeq[lis] = AT.addLisSeq[lis].wait(function () {
-					tmpFunc = (tmp = [a.a()], tmp.keyPrevHandler = !!exp, tmp.keyListenerFunction = s.prevl, tmp);
+					tmpFunc = (tmp = [a.a()], tmp.keyPrevHandler = A.isEmpty(exp)?true:!!exp, tmp.keyListenerFunction = s.prevl, tmp);
 					if ((tmp = DT[lis].combins.fined(keys)) < 0)
 						DT[lis].funcs.push([tmpFunc]),
 						DT[lis].combins.push(keys);
@@ -588,7 +588,6 @@ Prev define version: -
 							fn.keyListenerFunction(new KeyCombinationEvent(e, path)),
 							!fn.keyPrevHandler && StopEvent(e)();
 						});
-						return false;
 					}, false);
 					window.addEventListener("keyup", function (e, fin) {
 						if ((fin = DT[lis].pressed.indexOf(e.keyCode)) > -1)
