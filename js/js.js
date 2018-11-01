@@ -842,10 +842,14 @@ Prev define version: 6.0.0 (15.10.2018)
 			 **/
 			e = e || event;
 			var scope = 'client',
-			type = A.isEmpty(e.changedTouches) && A.isEmpty(e.targetTouches) ? e : e.changedTouches[0] || e.targetTouches[0];
+			type = A.isEmpty(e.changedTouches) && A.isEmpty(e.targetTouches) ? e : e.changedTouches[0] || e.targetTouches[0],
+            r={
+            	t: type[scope + 'Y'],
+				l: type[scope + 'X']
+            };
 			return {
-				t: type[scope + 'Y'] || "Y",
-				l: type[scope + 'X'] || "X"
+				t:r.t!==undefined?r.t:"Y",
+              	l:r.l!==undefined?r.l:"X"
 			};
 		},
 		json: function (vl) { /**функция автоматически парсит строку vl или переводит в неё массивы и объекты**/
