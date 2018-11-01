@@ -1,3 +1,5 @@
+(function(A,window,document){
+  "use strict";
 A({
 	resizer: function get() {
 		var a = this.a(),
@@ -223,12 +225,27 @@ A({
 	".pathRow>input".on("combination", "enter", function (e) {
 		UI.openDir("", e.toElement.val());
 	}, false);
+  	window.A.on("combination","enter",function(e){
+    	var onEnter=".dialog[toplayer] [onEnter]".a();
+      	if(onEnter)
+          	e.stopEvent(),
+            onEnter.emitEvent("click");
+    });
 	window.A.on("combination", "esc", function (e) {
-		".dialog[toplayer]".all(function (el) {
-			UI.closeDialog(el.opt("uid"));
-		});
-	}, false);
+		var dg=".dialog[toplayer]".a(),
+            onEsc=".dialog[toplayer] [onEsc]".a();
+      	if(dg)
+          	e.stopEvent();
+      	else
+          	return;
+      
+        if(onEsc)
+        	onEsc.emitEvent("click");
+      	else
+      		UI.closeDialog(dg.opt("uid"));
+	});
   	window.A.on("combination","ctrl+shift+f",function(e){
+      	console.log(BUFFER.explorer.curDir);
       	UI.createFile(document,BUFFER.explorer.curDir);
     },false);
   	window.A.on("combination","ctrl+shift+d",function(e){
@@ -248,7 +265,11 @@ A({
                   	type:"input",
                   	inpID:"path",
                   	opt:{
-                      	value:"@ROOT:/"
+                      	value:"@ROOT:/",
+                      	_INIT:function(a){
+                          	a.selectionStart = a.value.length;
+
+                        }
                     }
                 },
               	{
@@ -262,6 +283,7 @@ A({
                   	btnID:"cancel"
                 }
             ],
+          	onEnter:"open",
           	func:function(data){
               	if(data.pressed!=="open")
                   	return;
@@ -395,11 +417,13 @@ var UI = {
 		return req;
 	},
 	closeDialog: function (uid) {
-		(uid = ".dialog[uid=" + uid + "]",
-			uid = [
-				uid,
-				uid.previousElement
-			], uid[0]).remElem();
+      	uid = (".dialog[uid=" + uid + "]").a();
+      	if(!uid)
+          	return;
+		(uid = [
+			uid,
+			uid.previousElement
+		], uid[0]).remElem();
 		if (!".dialogback".a().children.length)
 			".dialogback".opt({
 				hidden: "."
@@ -422,6 +446,8 @@ var UI = {
 						btnID: "cancel"
 					}
 				],
+          		//onEnter:"ok",
+          		//onEsc:"cancel",
 				func: function () {}
 			}, param),
 		dialog = ".dialogback".addElem("div", {
@@ -470,7 +496,9 @@ var UI = {
 					_LIS: [{
 							click: fn
 						}
-					]
+					],
+                  	onEnter:el.btnID===s.onEnter?".":"",
+                  	onEsc:el.btnID===s.onEsc?".":""
 				}).opt(el.opt || {});
 				break;
 			case "input":
@@ -507,6 +535,8 @@ var UI = {
 							btntext: "ok"
 						}
 					],
+                  	onEnter:"ok",
+                  	onEsc:"ok",
 					func: function () {
 						next();
 					}
@@ -1208,6 +1238,7 @@ var UI = {
 					btnID: "no"
 				}
 			],
+          	onEnter:"yes",
 			func: function (data) {
 				if (data.pressed !== "yes")
 					return;
@@ -1237,6 +1268,7 @@ var UI = {
 					btnID: "no"
 				}
 			],
+          	onEnter:"yes",
 			func: function (data) {
 				if (data.pressed !== "yes")
 					return;
@@ -1270,14 +1302,16 @@ var UI = {
 					btnID: "cancel"
 				}
 			],
+          	onEnter:"create",
 			func: function (data) {
 				if (data.pressed !== "create")
 					return;
               	if (data.values.name == "")
                   	return UI.errors(["no name"]);
 				
-              	var url = url || TH.attrFromPath("_url"),
-				path = PATH(url, UI.errors);
+              	url = url || TH.attrFromPath("_url");
+              
+				var path = PATH(url, UI.errors);
 				path.common("create",{
                   	name:data.values.name,
                   	type:"dir"
@@ -1310,14 +1344,15 @@ var UI = {
 					btnID: "cancel"
 				}
 			],
+          	onEnter:"create",
 			func: function (data) {
 				if (data.pressed !== "create")
 					return;
               	if (data.values.name == "")
                   	return UI.errors(["no name"]);
 				
-              	var url = url || TH.attrFromPath("_url"),
-				path = PATH(url, UI.errors);
+              	url = url || TH.attrFromPath("_url");
+				var path = PATH(url, UI.errors);
 				path.common("create",{
                   	name:data.values.name,
                   	type:"file"
@@ -1511,4 +1546,8 @@ A.on("mousedown", function (e, tmp) {
 	if (tmp && e.path.indexOf(tmp) < 0)
 		UI.ctx.closeContextmenu(tmp.opt("uid"));
 });
+  
+window.UI=UI;  
 /*END*/
+})(window.A,window,document);
+
