@@ -223,11 +223,54 @@ A({
 	".pathRow>input".on("combination", "enter", function (e) {
 		UI.openDir("", e.toElement.val());
 	}, false);
-	A.on("combination", "esc", function (e) {
+	window.A.on("combination", "esc", function (e) {
 		".dialog[toplayer]".all(function (el) {
 			UI.closeDialog(el.opt("uid"));
 		});
 	}, false);
+  	window.A.on("combination","ctrl+shift+f",function(e){
+      	UI.createFile(document,BUFFER.explorer.curDir);
+    },false);
+  	window.A.on("combination","ctrl+shift+d",function(e){
+      	UI.createDir(document,BUFFER.explorer.curDir);
+    },false);
+  	window.A.on("combination","ctrl+shift+r",function(e){
+      	UI.openDir(document,BUFFER.explorer.curDir,"stay");
+    },false);
+  	window.A.on("combination","ctrl+shift+o",function(e){
+      	UI.dialogPanel({
+          	content:[
+              	{
+                  	type:"message",
+                	text:"enter path:"
+                },
+              	{
+                  	type:"input",
+                  	inpID:"path",
+                  	opt:{
+                      	value:"@ROOT:/"
+                    }
+                },
+              	{
+                  	type:"button",
+                  	btntext:"open",
+                  	btnID:"open"
+                },
+              	{
+                  	type:"button",
+                  	btntext:"cancel",
+                  	btnID:"cancel"
+                }
+            ],
+          	func:function(data){
+              	if(data.pressed!=="open")
+                  	return;
+              	if(data.values.path=="")
+                  	return UI.errors(["no name"]);
+              	UI.openDir(document,data.values.path,PATH(data.values.path).fixUrl()===PATH(BUFFER.explorer.curDir).fixUrl()?"stay":"");
+            }
+        });
+    },false);
 })();
 
 ".rightexplorer>f-scrollplane".selects(".rightexplorer>f-scrollplane", ".dirPlace");
@@ -387,6 +430,7 @@ var UI = {
 				_TXT: "<f-scrollplane></f-scrollplane><f-scroll-y no='.'><f-wheel></f-wheel></f-scroll-y><div class='downmenu'></div>"
 			}),
 		bc,
+        inpcount=0,
 		fn = function (e) {
 			var data = {
 				pressed: e.toElement.opt("bid"),
@@ -409,7 +453,7 @@ var UI = {
 		});
 
 		bc = dialog.child("f-scrollplane");
-		s.content.all(function (el) {
+		s.content.all(function (el,ind) {
 			switch (el.type) {
 			case "message":
 				bc.addElem("div", {
@@ -434,7 +478,7 @@ var UI = {
 					pasteIn: bc
 				}).opt({
 					iid: el.inpID
-				}).opt(el.opt || {});
+				}).opt(el.opt || {})[inpcount<1?(inpcount++,"focus"):"a"]();
 				break;
 			case "checkbox":
 				"[act=dialogInputSrc]>.chbstyle".copy({
@@ -497,7 +541,13 @@ var UI = {
 			case "wrong path":
 				up("path is not exists or not available");
 				break;
-			}
+          	case "no name":
+                up("you did not enter the name of the object being created");
+                break;
+            case "already exists":
+                up("this object already exists in the destination folder");
+                break;
+            }
 		})();
 	},
 	closeAll: function () {
@@ -873,6 +923,7 @@ var UI = {
 									}
 								]);
 						}, "break", "continue");
+                      	RE.opt("_url",url);
 						rW.value = 1;
 					});
 				}, true));
@@ -1145,6 +1196,9 @@ var UI = {
 					type: "message",
 					text: "Do you want to delete it?"
 				}, {
+					type: "message",
+					text: url
+				}, {
 					type: "button",
 					btntext: "yes",
 					btnID: "yes"
@@ -1171,6 +1225,9 @@ var UI = {
 					type: "message",
 					text: "Do you want to delete it?"
 				}, {
+					type: "message",
+					text: list.join("<br>")
+				}, {
 					type: "button",
 					btntext: "yes",
 					btnID: "yes"
@@ -1192,6 +1249,86 @@ var UI = {
 			}
 		});
 	},
+  	createDir:function(TH,url){
+      	UI.dialogPanel({
+			content: [{
+					type: "message",
+					text: "Endter dir name:"
+				}, {
+					type: "input",
+					inpID: "name",
+                  	opt:{
+                      	placeholder:"new dir"
+                    }
+				}, {
+					type: "button",
+					btntext: "create",
+					btnID: "create"
+				}, {
+					type: "button",
+					btntext: "cancel",
+					btnID: "cancel"
+				}
+			],
+			func: function (data) {
+				if (data.pressed !== "create")
+					return;
+              	if (data.values.name == "")
+                  	return UI.errors(["no name"]);
+				
+              	var url = url || TH.attrFromPath("_url"),
+				path = PATH(url, UI.errors);
+				path.common("create",{
+                  	name:data.values.name,
+                  	type:"dir"
+                }).wait(function (vl, W) {
+                  	if(vl.type==="requery" && vl.info==="obj exists")
+                      	return UI.errors(["already exists"]);
+					UI.reloadListsChanges(TH,path.url);
+				});
+			}
+		});
+    },
+  	createFile:function(TH,url){
+      	UI.dialogPanel({
+			content: [{
+					type: "message",
+					text: "Endter file name:"
+				}, {
+					type: "input",
+					inpID: "name",
+                  	opt:{
+                      	placeholder:"new file"
+                    }
+				}, {
+					type: "button",
+					btntext: "create",
+					btnID: "create"
+				}, {
+					type: "button",
+					btntext: "cancel",
+					btnID: "cancel"
+				}
+			],
+			func: function (data) {
+				if (data.pressed !== "create")
+					return;
+              	if (data.values.name == "")
+                  	return UI.errors(["no name"]);
+				
+              	var url = url || TH.attrFromPath("_url"),
+				path = PATH(url, UI.errors);
+				path.common("create",{
+                  	name:data.values.name,
+                  	type:"file"
+                }).wait(function (vl, W) {
+                  	if(vl.type==="requery" && vl.info==="obj exists")
+                      	return UI.errors(["already exists"]);
+					UI.reloadListsChanges(TH,path.url);
+				});
+			}
+		});
+    },
 	ctx: {
 		openContextmenu: function (param, coo, bbl) {
 			var s = A.args({
@@ -1296,27 +1433,42 @@ var UI = {
 				});
 			UI.ctx.openContextmenu(list, coo);
 		},
-		testbbctx: function (TH, coo, bbl) {
-			UI.ctx.openContextmenu({
-				content: [{
-						type: "message",
-						text: "lol"
-					}, {
+		rightexplorer: function (TH, coo, bbl) {
+			var list={
+            	content:[
+                  	{
 						type: "button",
-						btntext: "test bubblecontext",
-						btnID: "btnIDlol"
-					}, {
+						btntext: "create file",
+						btnID: "mkfile"
+					},
+                  	{
 						type: "button",
-						btntext: "test bubblecontext btn 2",
-						btnID: "btnIDlol2"
-					}, {
-						type: "button",
-						btntext: "I am btn 3",
-						btnID: "btnIDlol3"
+						btntext: "create dir",
+						btnID: "mkdir"
+					},
+                  	{
+                      	type: "button",
+                      	btntext: "reload",
+                      	btnID: "reload"
+                    }
+                ],
+              	func:function(data){
+                	var pr = data.pressed,
+					url = TH.attrFromPath("_url");
+					switch (pr) {
+					case "mkdir":
+						UI.createDir(TH, url);
+						break;
+                    case "mkfile":
+                        UI.createFile(TH, url);
+						break;
+					case "reload":
+                        UI.openDir(document,url,"stay");
+						break
 					}
-				],
-				func: console.log
-			}, coo, bbl);
+                }
+            };
+        	UI.ctx.openContextmenu(list, coo);
 		}
 	}
 };
