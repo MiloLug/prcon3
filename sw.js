@@ -1,32 +1,53 @@
-var CACHE_NAME = 'PRCON_CACHE';
-var urlsToCache = [
-  './css/',
-  './js/',
-  'index.html',
-  './icons/',
-  './'
-];
-
-self.addEventListener('install', function(event) {
-  // Perform install steps
-  event.waitUntil(
-    caches.open(CACHE_NAME)
-      .then(function(cache) {
-        console.log('Opened cache');
-        return cache.addAll(urlsToCache);
-      })
-  );
+self.addEventListener('message', function (e) {
+	var s = e.data;
+	if (!s || s.updateSw) {
+		self.skipWaiting();
+		return;
+	}
+	var type = s.type;
+	s = s.s;
+	if (type === "install") {
+		caches.open(s.cacheName).then(function (c) {
+			for (var nm in s.cacheFiles) {
+				s.cacheFiles[nm].forEach(function (f) {
+					c.match(nm + "/" + f).then(function (cR) {
+						if (!cR)
+							c.add(nm + "/" + f);
+					});
+				});
+			}
+		});
+		return;
+	}
+	if (type === "update") {
+		caches.open(s.cacheName).then(function (c) {
+			var cf = [];
+			for (var nm in s.cacheFiles) {
+				s.cacheFiles[nm].forEach(function (f) {
+					cf.push(c.add(nm + "/" + f));
+				});
+			}
+			return Promise.all(cf);
+		}).then(function () {
+			e.source.postMessage({
+				type: "reload"
+			});
+		});
+		return;
+	}
 });
-
-self.addEventListener('activate', function(event) {
-  console.log('Finally active. Ready to start serving content!');  
-});
-
-self.addEventListener('fetch', function(e) {
-  console.log('[ServiceWorker] Fetch', e.request.url);
-  e.respondWith(
-    caches.match(e.request).then(function(response) {
-      return response || fetch(e.request);
-    })
-  );
-});
+var fn = function (e) {
+	console.info('[ServiceWorker] Fetch', e.request.url);
+	e.respondWith(
+		caches.match("@:precacheJS_cacheName_").then(function (r) {
+			return r.text();
+		}).then(function (t) {
+			return caches.open(t).then(function (c) {
+				return c.match(e.request).then(function (response) {
+					return response || fetch(e.request);
+				});
+			})
+		}));
+};
+self.removeEventListener('fetch', fn);
+self.addEventListener('fetch', fn);
