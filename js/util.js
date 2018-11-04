@@ -6,7 +6,7 @@ var ACCOUNT={
       	urlFtp:"",
       	urlPhp:""
     },
-    VERSION=3.5,
+    STORAGE_NAME="PRCON_DATA",
     SETTINGS_DECLARE=[
  	  	{
  	      	type:"checkbox",
@@ -116,7 +116,11 @@ var ACCOUNT={
      	    }
      	},
 		t.settings = new N_SETTINGS(),
-        t.version=VERSION;
+        t.version=VERSION,
+        t.UIStatics={
+          	lrExpW:[],
+          	udPanH:[]
+        };
     },
     N_BUFFER=function(){
       	this.localData= {},
@@ -163,14 +167,14 @@ var ACCOUNT={
 	BUFFERToLocal = function () {
       	if(ACCOUNT.name!=="")
         	BUFFER.localData.accounts.data.explorer[ACCOUNT.name]=BUFFER.explorer;
-		localStorage.setItem("PRCON", A.json(BUFFER.localData));
+		localStorage.setItem(STORAGE_NAME, A.json(BUFFER.localData));
 	},
 	localToBUFFER = function () {
-		BUFFER.localData = A.json(localStorage.getItem("PRCON")),
+		BUFFER.localData = A.json(localStorage.getItem(STORAGE_NAME)),
       	BUFFER.explorer = BUFFER.localData.accounts.data.explorer[ACCOUNT.name]||(new N_BUFFER).explorer;
 	},
     clearLocal=function(){
-      	localStorage.setItem("PRCON", A.json(new N_LOCAL()));
+      	localStorage.setItem(STORAGE_NAME, A.json(new N_LOCAL()));
       	localToBUFFER();
       	window.location.reload();
     },
@@ -232,8 +236,8 @@ var ACCOUNT={
 /*SET localStorage AND BUFFER localData*/
 (function(){
 var tmp;
-if (!localStorage.getItem("PRCON")||A.isEmpty(tmp=A.json(localStorage.getItem("PRCON")))||tmp.version!==VERSION)
-	localStorage.setItem("PRCON", A.json(new N_LOCAL()));
+if (!localStorage.getItem(STORAGE_NAME)||A.isEmpty(tmp=A.json(localStorage.getItem(STORAGE_NAME)))||(VERSION>0?tmp.version!==VERSION:false))
+	localStorage.setItem(STORAGE_NAME, A.json(new N_LOCAL()));
 localToBUFFER();
 })();
 /*END*/
