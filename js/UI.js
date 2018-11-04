@@ -44,8 +44,37 @@ A({
 						width: "calc(" + dest.after + "% - " + (e.X - start.X) + "px)"
 					});
 			});
-			e.stopEvent();
-		};
+			e.stopEvent&&e.stopEvent();
+		},
+      	setFn=function(replace){
+          requestAnimationFrame(function () {
+          	var LD=BUFFER.localData.UIStatics;
+      		getDest();
+      		if(h)
+        	  	(!LD.udPanH[0]||replace)&&(LD.udPanH[0]=dest.before+"%"),
+      			(!LD.udPanH[1]||replace)&&(LD.udPanH[1]=dest.after+"%");
+        	else
+        	  	(!LD.lrExpW[0]||replace)&&(LD.lrExpW[0]=dest.before+"%"),	
+      			(!LD.lrExpW[1]||replace)&&(LD.lrExpW[1]=dest.after+"%");
+          	
+          	if (h)
+				before.css({
+					height: LD.udPanH[0]
+				}),
+				after.css({
+					height: LD.udPanH[1]
+				});
+			else
+				before.css({
+					width: LD.lrExpW[0]
+				}),
+				after.css({
+					width: LD.lrExpW[1]
+				});
+          });
+        };
+      	
+      
 		a.on("mousedown", function (e) {
 			getDest(),
 			start = e,
@@ -61,7 +90,11 @@ A({
 			window.removeEventListener("dragstart", preventer);
 			document.not("mousemove", resFunc),
 			"html".remClass("NOSELECT");
+          	setFn(true);
 		});
+      
+      	setFn();
+      	
 	},
 	selects: function (parentSelector, selectedClass) {
 		var a = this.a(),
@@ -687,15 +720,20 @@ var UI = {
 					});
 					break;
 				case "input":
-					tmpdom.div._DOM.unshift({
+                    var inpval=buffSett[dec.param.name] || "";
+                    tmpdom.div._DOM.unshift({
 						input: {
 							class: "inputstyle cls",
 							placeholder: dec.inptext,
 							_VAL: buffSett[dec.param.name] || "",
-							type: dec.inptype || "text",
+							type: "text",
 							_LIS: [{
 									change: function (e) {
-										buffSett[dec.param.name] = A.eGetElem(e).val();
+                                      	var val=A.eGetElem(e).val();
+                                      	if(dec.inptype==="number"&&!A.isNumeric(val))
+                                          	return (A.eGetElem(e).val=val==""?0:inpval);
+                                      	inpval=val;
+										buffSett[dec.param.name] = val; 
 										if (dec.realtime)
 											applySettings();
 									}
@@ -1548,6 +1586,7 @@ A.on("mousedown", function (e, tmp) {
 });
   
 window.UI=UI;  
+UI.setLSToPlace("body",false);
 /*END*/
 })(window.A,window,document);
 
