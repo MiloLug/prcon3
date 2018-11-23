@@ -56,6 +56,10 @@
 <script src="js/events.js"></script>
 <script src="js/parser.js"></script>
 <script src="js/PATH.js"></script>
+
+<script src="js/redactors/light_file_editor.js"></script>
+  
+<script src="js/settings_declare.js"></script>
 <script src="js/util.js"></script>
   
 <script src="js/scroll.js"></script>
@@ -118,6 +122,7 @@
 
   	<div act="dialogInputSrc">
   		<input type="text" class="inputstyle cls">
+      	<textarea type="text" class="inputstyle cls"></textarea>
       	<button class="blackbtn bwhitefont cls"></button>
       	<label class="chbstyle"><input type="checkbox" hidden><div>&#10003;</div><text></text></label>
   	</div>
@@ -162,9 +167,24 @@
       	</svg>
       	<div></div>
 	</div>
-  	<div act="dirContextMenu">
-      	<div class="row">1</div>
-      	<div class="row">2</div>
+  	<div act="quickFileRedactor">
+  		<div class="backcontent">
+          	<iframe seamless=" " sandbox="allow-scripts allow-same-origin" class="qFileTextFrame"></iframe>
+          	<textarea class="qFileText"></textarea>
+ 		</div>
+  		<div class="downmenu">
+          	<button class="blackbtn bwhitefont cls" funcs="saveFile">save</button>
+           	<button class="blackbtn bwhitefont cls" funcs="closeRedactor">close</button>
+          	<button class="blackbtn bwhitefont cls" funcs="windowedRedactor">window</button>
+          	<button class="blackbtn bwhitefont cls" funcs="openedFiles">opened files</button>
+  		</div>
+  	</div>
+  	<div act="openedFilesList">
+ 		<div class="backcontent">
+ 		</div>
+  		<div class="downmenu">
+          	<button class="blackbtn bwhitefont cls" funcs="easyCancel">close</button>
+  		</div>
   	</div>
 </div>
 <div class="pathRow">
@@ -185,7 +205,7 @@
           </f-scroll-x>
           <div class="lsplace"></div>
 		</div>      	
-      	<div class="middle w center">
+      	<div class="middle w center leftRightEResizer">
 			<button class="middlebtn bwhitefont hide"></button>
 		</div>
       	<div class="rightexplorer" res="after">
@@ -198,7 +218,7 @@
       	</div>
 	</div>
 	
-	<div class="middle h center">
+	<div class="middle h center upDownPResizer">
 		<button class="middlebtn bwhitefont hide"></button>
 	</div>
 	
@@ -229,13 +249,11 @@
 	</div>
 
 </div>
-
 <div class="dialogback center" hidden>
 </div>
 
 <script src="js/UI.js"></script>
-
-
+  
 
 
 

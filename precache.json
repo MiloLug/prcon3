@@ -19,8 +19,13 @@
 			"js.js",
 			"parser.js",
 			"scroll.js",
-			"util.js"
+			"util.js",
+            "settings_declare.js"
 		],
+        "js/redactors":[
+        	".",
+            "light_file_editor.js"
+        ],
 		"icons": [
 			".",
 			"android-icon-144x144.png",
