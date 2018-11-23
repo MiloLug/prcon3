@@ -53,10 +53,10 @@ f-scrollplane,f-scrollplane{
   color:white;
 }
 	/*<styles for clicks>*/
-.cls[taped]{
+.cls[taped],.cls[emtaped]{
   background:rgb(10, 10, 10);
 }
-.cls[hover]:not([taped]){
+.cls[hover]:not([taped]),.cls[emhover]:not([taped]):not([emtaped]){
   background:rgb(20, 20, 20);
 }
 	/*</styles for clicks>*/
