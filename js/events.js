@@ -4,8 +4,8 @@ No copyright
 Prev define version: -
  **/
 
-(function () {
-	window.Ainit({
+(window._BJSEventsInitF= function (W) {
+	W.Ainit({
 		StopEvent: function (e, touch) {
 			return function () {
 				!touch && e.preventDefault && e.preventDefault(),
@@ -16,47 +16,47 @@ Prev define version: -
 			};
 		},
 		TouchMouseEvent: function (e, path, touch) {
-			if (e.constructor === TouchMouseEvent)
-				this.Ainit(e);
+			if (e.constructor === W.TouchMouseEvent)
+				this.Ainit(e,W);
 			else
-				this.Ainit(new BJSEvent(e, path, touch));
+				this.Ainit(new W.BJSEvent(e, path, touch),W);
 		},
 		KeyCombinationEvent: function (e, path) {
-			if (e.constructor === KeyCombinationEvent)
-				this.Ainit(e);
+			if (e.constructor === W.KeyCombinationEvent)
+				this.Ainit(e,W);
 			else
-				this.Ainit(new BJSEvent(e, path, false)),
+				this.Ainit(new W.BJSEvent(e, path, false),W),
 				this.combination = e.combination,
 				this.repeat = e.repeat,
 				this.key = e.key,
 				this.keyCode = e.keyCode;
 		},
 		ResizeEvent: function (e, path, touch) {
-			if (e.constructor === ResizeEvent)
-				this.Ainit(e);
+			if (e.constructor === W.ResizeEvent)
+				this.Ainit(e,W);
 			else
-				this.Ainit(new BJSEvent(e, path, touch));
+				this.Ainit(new W.BJSEvent(e, path, touch),W);
 		},
 		BJSEvent: function (e, path, touch) {
 			var tmp;
-			if (e.constructor === BJSEvent)
-				this.Ainit(e);
+			if (e.constructor === W.BJSEvent)
+				this.Ainit(e,W);
 			else
-				tmp = A.cPos(e),
+				tmp = W.A.cPos(e),
 				tmp.l !== "X" && (this.X = tmp.l),
 				tmp.t !== "Y" && (this.Y = tmp.t),
 				tmp = path || e.path || (e.srcElement || e.target || e.toElement || e.fromElement || e.relatedTarget || {}).path || [],
 				this.path = tmp,
 				this.toElement = tmp[0],
-				this.touch = touch || (touch = !!(window.TouchEvent && e.constructor === window.TouchEvent)),
-				this.stopEvent = StopEvent(e, touch),
-				!A.isEmpty(e.height) && (this.height = e.height),
-				!A.isEmpty(e.width) && (this.width = e.width);
+				this.touch = touch || (touch = !!(W.TouchEvent && e.constructor === W.TouchEvent)),
+				this.stopEvent = W.StopEvent(e, touch),
+				!W.A.isEmpty(e.height) && (this.height = e.height),
+				!W.A.isEmpty(e.width) && (this.width = e.width);
 		}
 	});
 
-	var DT = A._DATA,
-	AT = A._TEMP,
+	var DT = W.A._DATA,
+	AT = W.A._TEMP,
 	LL;
 
 	DT.opt_spec.keys.push("_LIS");
@@ -108,7 +108,7 @@ Prev define version: -
 	DT.ListenersList = {};
 	LL = DT.ListenersList;
 
-	A({
+	W.A({
 		emitEvent: function (ev, e, exp) {
 			var a = this;
 			A.isEmpty(a.a()) && A.error(A.errs.E_1);
@@ -126,9 +126,9 @@ Prev define version: -
 			"combination"- аргументы func, ft и ft1 используются как keys, func и ft для .addKeyListener()
 			 **/
 			var a = this;
-			s = A.args({
-					strict: !A.isEmpty(s) && s.constructor !== Object ? !!s : false,
-					level: A.isEmpty(s) || s.constructor !== Object || A.isEmpty(s.level) ? Infinity : null,
+			s = W.A.args({
+					strict: !A.isEmpty(s) && s.constructor !== W.Object ? !!s : false,
+					level: A.isEmpty(s) || s.constructor !== W.Object || A.isEmpty(s.level) ? Infinity : null,
 					prevl: s
 				}, s);
 
@@ -234,13 +234,13 @@ Prev define version: -
 			liss,
 			tmp;
 			act = A.args({
-					_ADD: !A.isEmpty(act) && act.constructor === Array ? act : [],
+					_ADD: !A.isEmpty(act) && act.constructor === W.Array ? act : [],
 					_REM: []
 				}, act);
 			act._ADD.all(function (obj) {
 				for (key in obj)
 					liss = key.split(","),
-					tmp = obj[key].constructor !== Array ? [obj[key]] : obj[key],
+					tmp = obj[key].constructor !== W.Array ? [obj[key]] : obj[key],
 					liss.all(function (lis) {
 						tmp.unshift(lis);
 						a.on.apply(a, tmp);
@@ -249,7 +249,7 @@ Prev define version: -
 			act._REM.all(function (obj) {
 				for (key in obj)
 					liss = key.split(","),
-					tmp = obj[key].constructor !== Array ? [obj[key]] : obj[key],
+					tmp = obj[key].constructor !== W.Array ? [obj[key]] : obj[key],
 					liss.all(function (lis) {
 						tmp.unshift(lis);
 						a.not.apply(a, tmp);
@@ -260,7 +260,7 @@ Prev define version: -
 		getKeyCode: function (x) {
 			return DT.keyCodes_spec[x.toLowerCase()] || x.toUpperCase().charCodeAt(0);
 		}
-	});
+	},W);
 	LL.click = LL.touch = {
 		lisData: "mclickLis",
 		remover: function (a, ev, func, exp) {
@@ -272,8 +272,8 @@ Prev define version: -
 				clientY: 0,
 				path: a.path
 			};
-          	s.path=s.path||a.path;
-			A.activateLis(new BJSEvent(s, s.path, s.constructor === Object ? ev === "touch" : false), this.lisData, ev, TouchMouseEvent);
+			s.path = s.path || a.path;
+			W.A.activateLis(new BJSEvent(s, s.path, s.constructor === W.Object ? ev === "touch" : false), this.lisData, ev, W.TouchMouseEvent);
 		},
 		adder: function (a, ev, func, s, exp) {
 			var lis = this.lisData,
@@ -308,14 +308,14 @@ Prev define version: -
 							});
 						rep();
 					};
-					window.A.on("touchend", function (e) {
+					W.A.on("touchend", function (e) {
 						waits = waits.wait(function (vl) {
 								if (vl === 2 && time())
 									fun(e, "touch");
 							});
 						rep();
 					}, true);
-					window.A.on("mouseup", function (e) {
+					W.A.on("mouseup", function (e) {
 						(function interval(t) {
 							if (t >= params.timeClickToClick)
 								return clickFun(e);
@@ -324,13 +324,13 @@ Prev define version: -
 							}, 1);
 						})(0);
 					}, true);
-					window.A.on("mousedown", function (e) {
+					W.A.on("mousedown", function (e) {
 						waits = waits.wait(function () {
 								return 1;
 							});
 						down = true;
 					}, true),
-					window.A.on("touchstart", function (e) {
+					W.A.on("touchstart", function (e) {
 						waits = waits.wait(function () {
 								return 2;
 							});
@@ -343,13 +343,13 @@ Prev define version: -
 							return flagTime;
 						};
 					}, true),
-					window.A.on("mousemove", function (e) {
+					W.A.on("mousemove", function (e) {
 						move <= (params.moveDistanceForNotClick + 1) && down && move++;
 					}),
-					window.addEventListener("contextmenu", rep, false);
-					window.addEventListener("dragend", rep, false),
-					window.addEventListener("dragstart", rep, false),
-					window.addEventListener("select", rep, false);
+					W.addEventListener("contextmenu", rep, false);
+					W.addEventListener("dragend", rep, false),
+					W.addEventListener("dragstart", rep, false),
+					W.addEventListener("select", rep, false);
 				}
 			});
 		}
@@ -365,7 +365,7 @@ Prev define version: -
 				clientY: 0,
 				path: a.path
 			};
-          	s.path=s.path||a.path;
+			s.path = s.path || a.path;
 			A.activateLis(new BJSEvent(s, s.path, s.constructor === Object ? ev === "touchstart" : false), this.lisData, ev, TouchMouseEvent);
 		},
 		adder: function (a, ev, func, s, exp) {
@@ -379,29 +379,29 @@ Prev define version: -
 							A.activateLis(e, lis, t, TouchMouseEvent);
 						}).error(console.error);
 					};
-					window.addEventListener("touchstart", function (e) {
+					W.addEventListener("touchstart", function (e) {
 						if (mouse)
 							return;
 						touch = true;
 						fun(e, "touchstart");
 					});
-					window.addEventListener("mousedown", function (e) {
+					W.addEventListener("mousedown", function (e) {
 						if (touch || tend)
 							return (tend = false);
 						mouse = true;
 						fun(e, "mousedown");
 					});
-					window.addEventListener("mouseup", function (e) {
+					W.addEventListener("mouseup", function (e) {
 						touch = mouse = false;
 					});
-					window.addEventListener("touchend", function (e) {
+					W.addEventListener("touchend", function (e) {
 						tend = !mv;
 						mouse = touch = mv = false;
 					});
-					window.addEventListener("dragend", function () {
+					W.addEventListener("dragend", function () {
 						touch = mouse = false;
 					}, false);
-					window.addEventListener("touchmove", function () {
+					W.addEventListener("touchmove", function () {
 						mv = true;
 					});
 				}
@@ -419,7 +419,7 @@ Prev define version: -
 				clientY: 0,
 				path: a.path
 			};
-          	s.path=s.path||a.path;
+			s.path = s.path || a.path;
 			A.activateLis(new BJSEvent(s, s.path, s.constructor === Object ? ev === "touchmove" : false), this.lisData, ev, TouchMouseEvent);
 		},
 		adder: function (a, ev, func, s, exp) {
@@ -433,20 +433,20 @@ Prev define version: -
 							A.activateLis(e, lis, t, TouchMouseEvent);
 						}).error(console.error);
 					};
-					window.A.on("touchstart", function (e) {
+					W.A.on("touchstart", function (e) {
 						touch = alw = true;
 					}, true),
-					window.addEventListener("touchmove", function (e) {
+					W.addEventListener("touchmove", function (e) {
 						if (!touch || !alw)
 							return;
 						fun(e, "touchmove");
 					}),
-					window.addEventListener("mousemove", function (e) {
+					W.addEventListener("mousemove", function (e) {
 						if (touch || up)
 							return (up = false);
 						fun(e, "mousemove");
 					}, false),
-					window.A.on("mouseup", function () {
+					W.A.on("mouseup", function () {
 						alw = false,
 						touch = false,
 						up = true;
@@ -466,7 +466,7 @@ Prev define version: -
 				clientY: 0,
 				path: a.path
 			};
-          	s.path=s.path||a.path;
+			s.path = s.path || a.path;
 			A.activateLis(new BJSEvent(s, s.path, s.constructor === Object ? ev === "touchend" : false), this.lisData, ev, TouchMouseEvent);
 		},
 		adder: function (a, ev, func, s, exp) {
@@ -484,20 +484,20 @@ Prev define version: -
 								return 0;
 							});
 					};
-					window.A.on("mousedown", function (e) {
+					W.A.on("mousedown", function (e) {
 						waits = waits.wait(function () {
 								return 1;
 							});
 					}, true);
-					window.A.on("touchstart", function (e) {
+					W.A.on("touchstart", function (e) {
 						waits = waits.wait(function () {
 								return 2;
 							});
 					}, true);
-					window.addEventListener("mouseup", fun, false);
-					window.addEventListener("touchend", fun, false);
+					W.addEventListener("mouseup", fun, false);
+					W.addEventListener("touchend", fun, false);
 
-					window.addEventListener("dragend", fun, false);
+					W.addEventListener("dragend", fun, false);
 				}
 			});
 		}
@@ -560,7 +560,7 @@ Prev define version: -
 				};
 			!AT.addLisSeq[lis] && (AT.addLisSeq[lis] = A.start());
 			AT.addLisSeq[lis] = AT.addLisSeq[lis].wait(function () {
-					tmpFunc = (tmp = [a.a()], tmp.keyPrevHandler = A.isEmpty(exp)?true:!!exp, tmp.keyListenerFunction = s.prevl, tmp);
+					tmpFunc = (tmp = [a.a()], tmp.keyPrevHandler = A.isEmpty(exp) ? true : !!exp, tmp.keyListenerFunction = s.prevl, tmp);
 					if ((tmp = DT[lis].combins.fined(keys)) < 0)
 						DT[lis].funcs.push([tmpFunc]),
 						DT[lis].combins.push(keys);
@@ -572,7 +572,7 @@ Prev define version: -
 					DT[lis].listener = !0;
 
 					var waits = A.start();
-					window.addEventListener("keydown", function (e, fin) {
+					W.addEventListener("keydown", function (e, fin) {
 						if (DT[lis].pressed.indexOf(e.keyCode) < 0)
 							DT[lis].pressed.push(e.keyCode);
 						DT[lis].pressed.clearArrFull;
@@ -588,14 +588,14 @@ Prev define version: -
 							fn.keyListenerFunction(new KeyCombinationEvent(e, path)),
 							!fn.keyPrevHandler && StopEvent(e)();
 						});
-					}, false);
-					window.addEventListener("keyup", function (e, fin) {
+					}, true);
+					W.addEventListener("keyup", function (e, fin) {
 						if ((fin = DT[lis].pressed.indexOf(e.keyCode)) > -1)
 							DT[lis].pressed.splice(fin, 1);
-					}, false);
-					window.addEventListener("focus", function () {
+					}, true);
+					W.addEventListener("focus", function () {
 						DT[lis].pressed = [];
-					});
+					}, true);
 				});
 		}
 	};
@@ -610,10 +610,10 @@ Prev define version: -
 		},
 		emitter: function (a, ev, e, exp) {
 			var s = A.args({
-				width:0,
-				height:0
-			},e),
-            lis=this.lisData;
+					width: 0,
+					height: 0
+				}, e),
+			lis = this.lisData;
 			A.start(function () {
 				A.activateLis({
 					height: s.height,
@@ -662,7 +662,7 @@ Prev define version: -
 			if (nm === "keyLis") {
 				DT[nm].funcs.all(function (fn, ind) {
 					fn.all(function (fn2, ind2) {
-						if (fn2[0] === window || fn2[0] === document || document.contains(fn2[0]))
+						if (fn2[0] === window || fn2[0] === document || W.document.contains(fn2[0]))
 							return;
 						fn2[0].not("combination", DT[nm].combins[ind], fn2.keyListenerFunction);
 					});
@@ -670,11 +670,11 @@ Prev define version: -
 				continue;
 			}
 			DT[nm].element.all(function (el, ind) {
-				if (el === window || el === document || document.contains(el))
+				if (el === window || el === document || W.document.contains(el))
 					return;
 				el.remLisData(nm, true);
 			});
 		};
 		setTimeout(cleaner, 10000);
 	})();
-})();
+})(window);

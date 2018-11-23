@@ -7,100 +7,32 @@ var ACCOUNT={
       	urlPhp:""
     },
     STORAGE_NAME="PRCON_DATA",
-    SETTINGS_DECLARE=[
- 	  	{
- 	      	type:"checkbox",
- 	      	chctext:"show back and forward buttons",
-          	group:"path row",
- 	      	realtime:true,
- 	      	info:"",
- 	      	param:{
- 	          	name:"showBFBtns",
- 	          	def:true,
- 	          	iteration:true
- 	        }
- 	    },
- 	  	{
- 	      	type:"checkbox",
- 	      	chctext:"show path",
- 	      	group:"path row",
- 	      	realtime:true,
- 	      	info:"show the panel with the path to the folder",
- 	      	param:{
- 	          	name:"showPathRow",
- 	          	def:true,
- 	          	iteration:true
- 	        }
- 	    },
- 	  	{
- 	      	type:"checkbox",
- 	      	chctext:"show left explorer",
- 	      	group:"explorer",
- 	      	realtime:true,
- 	      	info:"show panel with file tree",
- 	      	param:{
- 	          	name:"showLeftExplorer",
- 	          	def:true,
- 	          	iteration:true
- 	        }
- 	    },
- 	  	{
- 	      	type:"checkbox",
- 	      	chctext:"use browser buttons",
- 	      	group:"explorer",
- 	      	realtime:false,
- 	      	info:"use the browser buttons 'forward' and 'back' to control the explorer",
- 	      	param:{
- 	          	name:"enableUseBrowserBFBtns",
- 	          	def:true,
- 	          	iteration:false
- 	        }
- 	    },
- 	  	{
- 	      	type:"checkbox",
- 	      	chctext:"show account save message",
- 	      	group:"other",
- 	      	realtime:false,
- 	      	info:"suggest saving account in local storage",
- 	      	param:{
- 	          	name:"showAccountSaveMessage",
- 	          	def:true,
- 	          	iteration:false
- 	        }
- 	    },
-      	{
- 	      	type:"button",
- 	      	btntext:"clear local data",
-          	funcs:"clearLocal",
-          	realtime:true,
- 	      	group:"local storage",
- 	      	info:"clear all data(accounts, settings etc) in local storage",
- 	    },
-      	{
- 	      	type:"input",
- 	      	inptext:"zadeklariroval input",
-          	inptype:"number",
- 	      	group:"gother",
- 	      	realtime:false,
- 	      	info:"ggvp",
- 	      	param:{
- 	          	name:"govoracovora",
- 	          	def:123,
- 	          	iteration:false
- 	        }
- 	    },
- 	],
+    SETTINGS_DECLARE=[],
     N_SETTINGS=function(){
       	var t=this;
       	t.I={};
-      	SETTINGS_DECLARE.all(function(dec){
-		  	dec=dec.param;
-		  	if(!dec)return;
-		  	if(dec.iteration)
-		    	t.I[dec.name]=dec.def;
-		  	else
-		      	t[dec.name]=dec.def;
+      	SETTINGS_DECLARE=[];
+      	TEMP_SETTINGS_DECLARE.all(function(dec){
+          	var newDec={},
+                tmpObj={};
+          	for(var nm in dec){
+              	if(dec[nm].constructor===Object&&dec[nm]._InitClass){
+                  	tmpObj[nm]=dec[nm]._InitClass;
+                  	newDec.Ainit(tmpObj);
+                  	continue;
+                }
+              	newDec[nm]=dec[nm];
+            }
+          	SETTINGS_DECLARE.push(newDec);
 		});
+      	SETTINGS_DECLARE.all(function(dec){
+          	var newDec=dec.param;
+		  	if(!newDec)return;
+		  	if(newDec.iteration)
+		    	t.I[newDec.name]=newDec.def;
+		  	else
+		      	t[newDec.name]=newDec.def;
+        });
     },
     N_LOCAL=function(){
       	var t=this;
@@ -118,16 +50,15 @@ var ACCOUNT={
 		t.settings = new N_SETTINGS(),
         t.version=VERSION,
         t.UIStatics={
-          	lrExpW:[],
-          	udPanH:[]
+          	resizePanels:{}
         };
     },
     N_BUFFER=function(){
-      	this.localData= {},
+      	this.localData= new N_LOCAL(),
 		this.explorer={
           	back:[],
+          	copied:[],
 			forward:[],
-          	selected:[],
           	curDir:"@ROOT:",
           	tree:{
               	"@ROOT:":{

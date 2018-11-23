@@ -34,10 +34,22 @@
 		},
 		nosel: function () {
 			"html".addClass = "NOSELECT",
-            w.addEventListener("scroll", f3.preventer),
-			w.addEventListener("wheel", f3.preventer),
-			w.addEventListener("drag", f3.preventer),
-			w.addEventListener("dragstart", f3.preventer);
+            w.addEventListener("scroll", f3.preventer,{
+                    	capture:false,
+                      	passive:true
+                    }),
+			w.addEventListener("wheel", f3.preventer,{
+                    	capture:false,
+                      	passive:true
+                    }),
+			w.addEventListener("drag", f3.preventer,{
+                    	capture:false,
+                      	passive:true
+                    }),
+			w.addEventListener("dragstart", f3.preventer,{
+                    	capture:false,
+                      	passive:true
+                    });
 
 		},
 		scrollSP: function (obj, reverse, pos, temp) {
@@ -163,7 +175,10 @@
 			f3.gets(f2, "X", e),
 			f3.wheelMove(e, f2);
 
-	}, false),
+	},{
+                    	capture:false,
+                      	passive:true
+                    }),
 	w.A.on("mouseup", function () {
 		"html".remClass("NOSELECT"),
 		w.removeEventListener("scroll", f3.preventer),

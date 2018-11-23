@@ -4,9 +4,9 @@ No copyright library
 Prev define version: 6.0.0 (15.10.2018)
  **/
 
-(function (W, D, O, E, N, Ar, S, NL, HC, F, NM) {
+(window._AinitF = function(W,Ain) {
 	"use strict";
-	O.defineProperties(O.prototype, {
+	!Ain&&W.Object.defineProperties(W.Object.prototype, {
 		Ainit: {
 			/**конструктор объектов.
 			принимает объект и помещает его свойства в тот, на котором вызван Init.
@@ -27,8 +27,9 @@ Prev define version: 6.0.0 (15.10.2018)
 			enumerable: false,
 			configurable: false,
 			writable: true,
-			value: function (vl) {
+			value: function (vl,Ww) {
 				var tmp = {};
+              	Ww=Ww||W;
 				for (var nm in vl) {
 					var s = vl[nm] || {},
 					isp = s.__isParam__,
@@ -40,7 +41,7 @@ Prev define version: 6.0.0 (15.10.2018)
 						writable: true,
 						value: vl[nm]
 					}
-					 : s.constructor !== F ? s : (function (s, sn) {
+					 : s.constructor !== Ww.Function ? s : (function (s, sn) {
 						switch (sn) {
 						case "setget":
 							return {
@@ -71,7 +72,7 @@ Prev define version: 6.0.0 (15.10.2018)
 						}
 					})(s, sn);
 				}
-				O.defineProperties(this, tmp);
+				Ww.Object.defineProperties(this, tmp);
 			}
 		},
 		errored: {
@@ -79,7 +80,7 @@ Prev define version: 6.0.0 (15.10.2018)
 				if (this === errored)
 					return errored;
 				if (!!arguments.length) {
-					if (test.constructor === F ? test(this) : test)
+					if (test.constructor === W.Function ? test(this) : test)
 						return this;
 				} else if (!A.isEmpty(this) && this.a && this.a())
 					return this;
@@ -89,27 +90,27 @@ Prev define version: 6.0.0 (15.10.2018)
 	});
 	var nodeobj = {},
 	WA = {},
-	WAfunc = function (obj) {
+	WAfunc = function (obj,Ww) {
 		var empty = {};
-		WA.Ainit(obj);
+		WA.Ainit(obj,Ww||W);
 		for (var nm in obj) {
 			empty[nm] = function get() {
 				return errored;
 			};
 		}
-		errored.Ainit(empty);
+		errored.Ainit(empty,Ww||W);
 	};
-	WA.__proto__ = O.prototype;
+	WA.__proto__ = W.Object.prototype;
 	WAfunc.__proto__ = WA;
 
-	nodeobj.Ainit(E.prototype);
+	nodeobj.Ainit(W.EventTarget.prototype,W);
 	nodeobj.__proto__ = WA;
-	nodeobj.constructor = E;
-	N.prototype.__proto__ = nodeobj;
-	Ar.prototype.__proto__ = WA;
-	S.prototype.__proto__ = WA;
-	NL.prototype.__proto__ = WA;
-	HC.prototype.__proto__ = WA;
+	nodeobj.constructor = W.EventTarget;
+	W.Node.prototype.__proto__ = nodeobj;
+	W.Array.prototype.__proto__ = WA;
+	W.String.prototype.__proto__ = WA;
+	W.NodeList.prototype.__proto__ = WA;
+	W.HTMLCollection.prototype.__proto__ = WA;
 	var A = W.A = WAfunc;
 
 	W.A({
@@ -145,8 +146,8 @@ Prev define version: 6.0.0 (15.10.2018)
 			th = this;
 			return th === W.A ?
 			W :
-			th.constructor === S ?
-			D[arr ? "querySelectorAll" : "querySelector"](th) :
+			th.constructor === W.String ?
+			W.document[arr ? "querySelectorAll" : "querySelector"](th) :
 			th.almostArray ?
 			arr ?
 			th :
@@ -156,7 +157,7 @@ Prev define version: 6.0.0 (15.10.2018)
 			th;
 		},
 		almostArray: function get(c) {
-			return (c = this.constructor, c === Ar || c === NL || c === HC);
+			return (c = this.constructor, c === W.Array || c === W.NodeList || c === W.HTMLCollection);
 		},
 		test: function () {
 			return A;
@@ -210,22 +211,22 @@ Prev define version: 6.0.0 (15.10.2018)
 			}
 			_ADD добавляет новые элементы
 			так же можно добавлять сразу несколь элементов с одинаковым opt {"elem0,elem1,elem2":opt}
-            _ADD может принимать объекты в перемешку с элементами и тоже вставлять их в дерево:
-     		_ADD:[{elem:opt},element,{elem:opt}]
+			_ADD может принимать объекты в перемешку с элементами и тоже вставлять их в дерево:
+			_ADD:[{elem:opt},element,{elem:opt}]
 			_EDIT редактирует существующие по селекторам(прямые потомки)
 			если dom- массив, то будет использовано _ADD
 			opt означает, что значение такое же, какое принимает .opt()
 			то-есть можно создать бесконечную цепочку {"div":{id:"id1",_DOM:{"div":{_DOM:{"div".....}}}}
 			функция возвращает a
 			 **/
-			var a = this === W.A ? (a=A.createElem("div"),a._DOMTreeList=true,a) : this,
+			var a = this === W.A ? (a = A.createElem("div"), a._DOMTreeList = true, a) : this,
 			key,
 			elems,
-			tmp=[];
-            if (!A.isEmpty(dom))
-				if (dom.constructor === Ar)
+			tmp = [];
+			if (!A.isEmpty(dom))
+				if (dom.constructor === W.Array)
 					tmp = dom;
-				else if (dom.constructor !== O) {
+				else if (dom.constructor !== W.Object) {
 					dom.pasteIn(a);
 					return;
 				} else if (dom.almostArray) {
@@ -270,12 +271,10 @@ Prev define version: 6.0.0 (15.10.2018)
 			в противном случае сам аргумент принимает true/false(стандарт- true) и используется в качестве {deep:}
 			функция в любом случае возвращает КОПИЮ a
 			 **/
-			var mv = A.args({
-					deep: !A.isEmpty(mv) && mv.constructor === O || A.isEmpty(mv) ? true : mv,
-					pasteIn: null,
-					pos: null
-				}, mv),
-			a = this.a(),
+			mv = A.args({
+					deep: !A.isEmpty(mv) && mv.constructor === W.Object || A.isEmpty(mv) ? true : mv
+				}, mv);
+			var a = this.a(),
 			tmp = a.cloneNode(mv.deep);
 			mv.pasteIn && tmp.pasteIn({
 				in: mv.pasteIn,
@@ -295,18 +294,18 @@ Prev define version: 6.0.0 (15.10.2018)
 			 **/
 			var a = this.a();
 			args = A.args({
-					in: !A.isEmpty(args) && args.constructor !== O ? args : null,
+					in: !A.isEmpty(args) && args.constructor !== W.Object ? args : undefined,
 					pos: "last"
 				}, args);
 			args.in = args.in.a();
 			A.isEmpty(a) && A.error(A.errs.E_1),
 			A.isEmpty(args.in) && A.error(A.errs.E_1);
-          	if(a._DOMTreeList){
-              	a.children.all(function(el){
-                  	args.in.appendChild(el);
-                });
-              	return a;
-            }
+			if (a._DOMTreeList) {
+				a.children.all(function (el) {
+					args.in.appendChild(el);
+				});
+				return a;
+			}
 			switch (args.pos) {
 			case "first":
 				args.in.insertBefore(a, args.in.firstChild);
@@ -325,8 +324,8 @@ Prev define version: 6.0.0 (15.10.2018)
 		},
 		css: function (vl, vl2) {
 			/**получить/задать стили a.
-            если vl- строка и при этом задан vl2 то будет фактически выполнено a.css({vl:vl2})
-            ----------------------------------------------------------------------------------
+			если vl- строка и при этом задан vl2 то будет фактически выполнено a.css({vl:vl2})
+			----------------------------------------------------------------------------------
 			получить свойство- передать в к-ве аргумента его имя
 			изменить свойства- передать в к-ве аргумента объект {name:value, name:value, na....}(возвращает a)
 			если использовать без аргумента, то вернёт ВСЕ стили элемента
@@ -338,7 +337,7 @@ Prev define version: 6.0.0 (15.10.2018)
 			tmp,
 			pf;
 			A.isEmpty(a) && A.error(A.errs.E_1);
-			if (vl.constructor === O) {
+			if (vl.constructor === W.Object) {
 				for (var key in vl) {
 					a.style[key] = vl[key];
 				}
@@ -358,8 +357,8 @@ Prev define version: 6.0.0 (15.10.2018)
 		},
 		opt: function setgetfun(vl, vl2) {
 			/**различные действи с элементом a.
-            если vl- строка и при этом задан vl2 то будет фактически выполнено a.opt({vl:vl2})
-            ----------------------------------------------------------------------------------
+			если vl- строка и при этом задан vl2 то будет фактически выполнено a.opt({vl:vl2})
+			----------------------------------------------------------------------------------
 			если vl-объект({attribute:value,attribute:val....}), то a получит соответствующие атрибуты ;
 			если vl-строка("attribute"), то будет возвращён соответствующий атрибут a ;
 			если vl не задан, то будет возвращён объект со всеми атрибутами a
@@ -375,7 +374,7 @@ Prev define version: 6.0.0 (15.10.2018)
 			bl = !!arguments.length,
 			allAttrs;
 			A.isEmpty(a) && A.error(A.errs.E_1);
-			if (bl && vl.constructor === O) {
+			if (bl && vl.constructor === W.Object) {
 				for (var key in vl) {
 					if (A._DATA.opt_spec.keys.indexOf(key) < 0) {
 						if (vl[key] === "")
@@ -403,18 +402,19 @@ Prev define version: 6.0.0 (15.10.2018)
 			}
 			return req;
 		},
-      	attrFromPath:function(attr){
-          	var ret;
-          	this.path.all(function(el){
-              	if(el!==W&&el!==D&&(el=el.opt(attr))){
-                  	ret=el;
-                  	return "break";
-                }
-            },"break");
-          	return ret;
-        },
-		jsonData: function (vl) {/**если vl - пустой, то возвращает значение атрибута "bjs-json" или пустой объект.
-        	Если vl- объект, то переводит его в json строку и помещает в атрибут "bjs-json"**/
+		attrFromPath: function (attr) {
+			var ret;
+			this.path.all(function (el) {
+				if (el !== W && el !== W.document && (el = el.opt(attr))) {
+					ret = el;
+					return "break";
+				}
+			}, "break");
+			return ret;
+		},
+		jsonData: function (vl) {
+			/**если vl - пустой, то возвращает значение атрибута "bjs-json" или пустой объект.
+			Если vl- объект, то переводит его в json строку и помещает в атрибут "bjs-json"**/
 			var a = this.a();
 			if (arguments.length)
 				return (a.opt("bjs-json", A.json(vl)), a);
@@ -424,7 +424,7 @@ Prev define version: 6.0.0 (15.10.2018)
 		addClass: function setgetfun(vl) { /**добавить класс vl к a **/
 			var a = this.a();
 			A.isEmpty(a) && A.error(A.errs.E_1);
-			!a.hasClass(vl)&&(a.className += (a.className.length ? " " : "") + vl);
+			!a.hasClass(vl) && (a.className += (a.className.length ? " " : "") + vl);
 			return a;
 		},
 		remClass: function (vl) { /**удалить класс vl из a **/
@@ -447,20 +447,20 @@ Prev define version: 6.0.0 (15.10.2018)
 			a.getClass.fined(cl) != -1 && (x = !!1);
 			return x;
 		},
-      	toggle:function(vl1,vl2){/**смена класса vl1 на vl2. Возвращает текущий класс по номеру (1 или 2) или false, если менять нечего (оба аргумента = пустые строки)**/
-        	var a=this.a(),
-            	classes=a.getClass,
-                srch=vl1===""?[[vl2,2],[vl1,1]]:[[vl1,1],[vl2,2]];
-            if(srch[0][0]==="")
-            	return false;
-          	if(classes.indexOf(srch[0][0])<0)
-              	return (a.remClass(srch[1][0]).addClass(srch[0][0]),srch[0][1]);
-          	else
-            	return (a.remClass(srch[0][0]).addClass(srch[1][0]),srch[1][1]);
-        },
-      	createElem:function(elem, attrs){/**создать элемент с атрибутами. attrs принимает то же, что и .opt()**/
-        	return D.createElement(elem).opt(attrs||{});
-        },
+		toggle: function (vl1, vl2) { /**смена класса vl1 на vl2. Возвращает текущий класс по номеру (1 или 2) или false, если менять нечего (оба аргумента = пустые строки)**/
+			var a = this.a(),
+			classes = a.getClass,
+			srch = vl1 === "" ? [[vl2, 2], [vl1, 1]] : [[vl1, 1], [vl2, 2]];
+			if (srch[0][0] === "")
+				return false;
+			if (classes.indexOf(srch[0][0]) < 0)
+				return (a.remClass(srch[1][0]).addClass(srch[0][0]), srch[0][1]);
+			else
+				return (a.remClass(srch[0][0]).addClass(srch[1][0]), srch[1][1]);
+		},
+		createElem: function (elem, attrs) { /**создать элемент с атрибутами. attrs принимает то же, что и .opt()**/
+			return W.document.createElement(elem).opt(attrs || {});
+		},
 		addElem: function (args, attrs) {
 			/**создать элемент в а.
 			атрибуты:
@@ -477,7 +477,7 @@ Prev define version: 6.0.0 (15.10.2018)
 			CE = [];
 			A.isEmpty(a) && A.error(A.errs.E_1);
 			for (var i = 1; i <= count; i++) {
-				createdElem = D.createElement(elem);
+				createdElem = W.document.createElement(elem);
 				createdElem.pasteIn({
 					in: a,
 					pos: args.pos
@@ -497,9 +497,9 @@ Prev define version: 6.0.0 (15.10.2018)
 			step = step || 1,
 			steptmp;
 			A.isEmpty(a) && A.error(A.errs.E_1);
-			if (step.constructor === NM)
+			if (step.constructor === W.Number)
 				for (var i = 1; (a = a.parentNode) && i < step; i++);
-			else if (step.constructor === S)
+			else if (step.constructor === W.String)
 				step.all(function (el) {
 					steptmp = a;
 					while ((steptmp = steptmp.parentNode) && steptmp !== el);
@@ -510,10 +510,11 @@ Prev define version: 6.0.0 (15.10.2018)
 				while ((a = a.parentNode) && a && !step(a));
 			return a || false;
 		},
-		path: function get() {/**путь от элемента до window.
-        возвращает массив, где каждый последующий элемент- родитель предыдущего.
-        [a,elem1,elem2,...,document,window]
-        **/
+		path: function get() {
+			/**путь от элемента до window.
+			возвращает массив, где каждый последующий элемент- родитель предыдущего.
+			[a,elem1,elem2,...,document,window]
+			 **/
 			var a = this.a(),
 			p = [a],
 			tempP = a;
@@ -542,7 +543,7 @@ Prev define version: 6.0.0 (15.10.2018)
 			return removed || a;
 		},
 		previousElement: function get() {
-          	/**возвращает предыдущий по элемент**/
+			/**возвращает предыдущий по элемент**/
 			var a = this.a();
 			A.isEmpty(a) && A.error(A.errs.E_1);
 			while (a = a.previousSibling) {
@@ -557,16 +558,15 @@ Prev define version: 6.0.0 (15.10.2018)
 			return arr[arr.length - 1];
 		},
 		all: function () {
-        /**Итерирует массив или все элементы по селектору как .forEach() 
-        первый аргумент- callback-функция, получающая как аргументы текущий элемент и его индекс.
-        второй- ключевое значение, при возврате которого callback'ом происходить break
-        третий- значение для continue
-        Возвращает объект 
-        {
-        	allEl: a, - сам итерируемый массив/ коллекция и т.д.
-            return: массив всех return callback'а
-        }
-        **/
+			/**Итерирует массив или все элементы по селектору как .forEach()
+			первый аргумент- callback-функция, получающая как аргументы текущий элемент и его индекс.
+			второй- ключевое значение, при возврате которого callback'ом происходить break
+			третий- значение для continue
+			Возвращает объект {
+			allEl: a, - сам итерируемый массив/ коллекция и т.д.
+			return: массив всех return callback'а
+			}
+			 **/
 			var a = this.a(!0),
 			req = [],
 			tmp,
@@ -618,7 +618,7 @@ Prev define version: 6.0.0 (15.10.2018)
 			 **/
 			var a = this.a(!!1),
 			req = false,
-			arr = arr.constructor === Ar ? arr : [arr];
+			arr = arr.constructor === W.Array ? arr : [arr];
 			a.length === arr.length && (
 				req = true,
 				strict ? (
@@ -647,7 +647,7 @@ Prev define version: 6.0.0 (15.10.2018)
 			c = 0;
 			deep ? a.all(function (l) {
 				l === vl && c++;
-				if (l.constructor === Ar)
+				if (l.constructor === W.Array)
 					c += l.countOf(vl, true);
 			}) : a.all(function (l) {
 				l === vl && c++;
@@ -679,41 +679,41 @@ Prev define version: 6.0.0 (15.10.2018)
 		\\+---------------------------------------------------------------+\\
 		\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\**/
 		start: function (func, NoWaitReturn) {
-          	/**аналог Promise.
-         		waiter={
-                	wait:function(callback,NoWaitReturn){...},- принимает функцию, которая выполнится по завершению выполнения func 
-                    	и получит как аргументы:
-                        	значение, которое она вернула
-                            новый объект waiter (и так по цепочке далее)
-                    
-                    
-                    error:function(callback,NoWaitReturn){...},- принимает функцию, которая выполнится при ошибке выполнения func 
-                    	и получит как аргументы:
-                        	ошибку
-                            новый объект waiter (и так по цепочке далее)
-                    
-                    arg:{
-                    	changed:true/false, -true, если функция была завершена
-                        vl: ... -содержит значени, которое вернула функция
-                    },
-                    err:{
-                    	changed:true/false, -true, если функция была завершена с ошибкой
-                        vl: ... - содержит значние ошибки
-                    },
-                    time:, -время завершения текущей функции (с ошибкой или без) в формате UNIX
-                    value:, - при установке любого значения func считается завершённой и возвратившей value
-                    errorValue: - при установке любого значения func считается завершённой с ошибкой и возвртившей ошибке errorValue 
-                }
-                
-               A.start принимает те же аргументы, что .wait и .error
-               НО:
-               callback получает как аргумент только объект waiter
-               
-               .wait, .error и A.start одинаково возвращают свой waiter
-               
-               NoWaitReturn- принимает true/false (стандарт- false). 
-               Если true, то следующая по цепочке функция выполнится ТОЛЬКО после прямого изменения waiter.value (waiter.error в любом случае будет выполнена при ошибке)
-            **/
+			/**аналог Promise.
+			waiter={
+			wait:function(callback,NoWaitReturn){...},- принимает функцию, которая выполнится по завершению выполнения func
+			и получит как аргументы:
+			значение, которое она вернула
+			новый объект waiter (и так по цепочке далее)
+
+
+			error:function(callback,NoWaitReturn){...},- принимает функцию, которая выполнится при ошибке выполнения func
+			и получит как аргументы:
+			ошибку
+			новый объект waiter (и так по цепочке далее)
+
+			arg:{
+			changed:true/false, -true, если функция была завершена
+			vl: ... -содержит значени, которое вернула функция
+			},
+			err:{
+			changed:true/false, -true, если функция была завершена с ошибкой
+			vl: ... - содержит значние ошибки
+			},
+			time:, -время завершения текущей функции (с ошибкой или без) в формате UNIX
+			value:, - при установке любого значения func считается завершённой и возвратившей value
+			errorValue: - при установке любого значения func считается завершённой с ошибкой и возвртившей ошибке errorValue
+			}
+
+			A.start принимает те же аргументы, что .wait и .error
+			НО:
+			callback получает как аргумент только объект waiter
+
+			.wait, .error и A.start одинаково возвращают свой waiter
+
+			NoWaitReturn- принимает true/false (стандарт- false).
+			Если true, то следующая по цепочке функция выполнится ТОЛЬКО после прямого изменения waiter.value (waiter.error в любом случае будет выполнена при ошибке)
+			 **/
 			func = func || function (w, w2) {
 				w2 ? (w2.value = 1) : (w.value = 1);
 				return;
@@ -730,7 +730,7 @@ Prev define version: 6.0.0 (15.10.2018)
 				var req = {
 					fn: func
 				};
-				if (!req.fn || req.fn.constructor !== F)
+				if (!req.fn || req.fn.constructor !== W.Function)
 					return;
 
 				return A.start(function (obj) {
@@ -781,35 +781,35 @@ Prev define version: 6.0.0 (15.10.2018)
 				wt: false,
 				er: false,
 				arg: arg,
-              	err:error,
-              	time:-1
+				err: error,
+				time: -1
 			};
-			O.defineProperties(waiter, {
+			W.Object.defineProperties(waiter, {
 				value: {
 					set: function (vl) {
 						arg.vl = vl;
 						arg.changed = true;
-                      	waiter.time=Date.now();
+						waiter.time = Date.now();
 					}
 				},
-              	errorValue: {
-                  	set: function (vl){
-                      	error.vl=vl;
-                      	error.changed=true;
-                      	waiter.time=Date.now();
-                    }
-                }
+				errorValue: {
+					set: function (vl) {
+						error.vl = vl;
+						error.changed = true;
+						waiter.time = Date.now();
+					}
+				}
 			});
 			setTimeout(function () {
 				var tmp;
 				try {
 					tmp = func(waiter);
 				} catch (err) {
-					waiter.errorValue=err;
+					waiter.errorValue = err;
 				}
 				if (NoWaitReturn || arg.changed || error.changed)
 					return;
-				waiter.value=tmp;
+				waiter.value = tmp;
 			}, 0);
 			return waiter;
 		},
@@ -821,44 +821,44 @@ Prev define version: 6.0.0 (15.10.2018)
 			вспомогательная функция для ajax()
 			 **/
 			try {
-				return new ActiveXObject("Msxml2.XMLHTTP");
+				return new W.ActiveXObject("Msxml2.XMLHTTP");
 			} catch (e) {
 				try {
-					return new ActiveXObject("Microsoft.XMLHTTP");
+					return new W.ActiveXObject("Microsoft.XMLHTTP");
 				} catch (ee) {}
 			}
-			if (typeof XMLHttpRequest != 'undefined') {
-				return new XMLHttpRequest();
+			if (typeof W.XMLHttpRequest != 'undefined') {
+				return new W.XMLHttpRequest();
 
 			}
 		},
 		altUrl: function (file) { /**использовать адрес текущего файла, если указана пустота("")**/
-			return location.pathname + (file || "");
+			return W.location.pathname + (file || "");
 		},
 		cPos: function (e) {
 			/**обнаружить позицию курсора относительно scope(стандарт- client)
 			возвращает объект {l:left,t:top};
 			 **/
-			e = e || event;
+			e = e || W.event;
 			var scope = 'client',
 			type = A.isEmpty(e.changedTouches) && A.isEmpty(e.targetTouches) ? e : e.changedTouches[0] || e.targetTouches[0],
-            r={
-            	t: type[scope + 'Y'],
+			r = {
+				t: type[scope + 'Y'],
 				l: type[scope + 'X']
-            };
+			};
 			return {
-				t:r.t!==undefined?r.t:"Y",
-              	l:r.l!==undefined?r.l:"X"
+				t: r.t !== undefined ? r.t : "Y",
+				l: r.l !== undefined ? r.l : "X"
 			};
 		},
 		json: function (vl) { /**функция автоматически парсит строку vl или переводит в неё массивы и объекты**/
 			var req;
-          	try{
-              req = vl.constructor === S ? JSON.parse(vl) : JSON.stringify(vl);
-            }catch(e){
-              req=vl;
-            }
-          	return req;
+			try {
+				req = vl.constructor === W.String ? JSON.parse(vl) : JSON.stringify(vl);
+			} catch (e) {
+				req = vl;
+			}
+			return req;
 		},
 		args: function (standart, ins) {
 			/**стандартные аргументы.
@@ -867,10 +867,10 @@ Prev define version: 6.0.0 (15.10.2018)
 			возвращает изменённый standart
 			 **/
 			var ins = ins || {};
-			standart.constructor !== O && A.error(A.errs.E_2);
-			if (ins.constructor === O)
+			standart.constructor !== W.Object && A.error(A.errs.E_2);
+			if (ins.constructor === W.Object)
 				for (var nm in ins)
-					!A.isEmpty(ins[nm]) && (standart[nm] = ins[nm]);
+					ins[nm] !== undefined && (standart[nm] = ins[nm]);
 			return standart;
 		},
 		ajax: function (param) {
@@ -896,7 +896,7 @@ Prev define version: 6.0.0 (15.10.2018)
 					cache: !1,
 					header: "application/x-www-form-urlencoded",
 					async: !1,
-              		dataType:"text",
+					dataType: "text",
 					data: null,
 					sucсess: null,
 					progress: null,
@@ -908,25 +908,24 @@ Prev define version: 6.0.0 (15.10.2018)
 			FD = s.data,
 			url = s.url && s.url[0] !== '?' ? s.url : this.altUrl(s.url);
 			url += s.cache ? ((url.indexOf('?') >= 0) ? '&' : '?') + '_=' + new Date().getTime() : "";
-			
-          	if (s.dataType==="json")
-              	FD=A.json(s.data),
-                s.header="application/json";
-          
-          	else if (s.dataType==="form" || (!A.isEmpty(s.data) && param.data.constructor !== S)) {
+
+			if (s.dataType === "json")
+				FD = A.json(s.data),
+				s.header = "application/json";
+			else if (s.dataType === "form" || (!A.isEmpty(s.data) && param.data.constructor !== W.String)) {
 				s.header = "",
-				FD = new FormData;
+				FD = new W.FormData;
 				for (var nm in s.data) {
 					FD.append(nm, s.data[nm]);
 				}
 			}
-          	XHR.open(s.type, url, s.async),
+			XHR.open(s.type, url, s.async),
 			s.header && XHR.setRequestHeader("Content-type", s.header),
 			XHR.onerror = s.error,
 			XHR.onprogress = s.progress,
 			XHR.onreadystatechange = function () {
 				XHR.readyState === 4 && (
-					XHR.status === 200 && (s.success ? (res = s.success(s.dataType==="json"?A.json(XHR.responseText):XHR.responseText,XHR.responseText)) : (res = XHR.responseText)),
+					XHR.status === 200 && (s.success ? (res = s.success(s.dataType === "json" ? A.json(XHR.responseText) : XHR.responseText, XHR.responseText)) : (res = XHR.responseText)),
 					s.resCode && s.resCode(XHR.status));
 			},
 			XHR.send(FD);
@@ -938,7 +937,7 @@ Prev define version: 6.0.0 (15.10.2018)
 			если ind=true, то вернёт массив вида [[property_name1,val1],[property_name2,val2],[property_name3,val3]]
 			 **/
 			var arr = [];
-			if (!Array.isArray(obj))
+			if (!W.Array.isArray(obj))
 				for (var el in obj) {
 					arr.push(ind ? [el, obj[el]] : obj[el]);
 				}
@@ -966,19 +965,19 @@ Prev define version: 6.0.0 (15.10.2018)
 			if (a !== undefined && a !== null) {
 				c = a.constructor;
 				switch (true) {
-				case c === O:
+				case c === W.Object:
 					req = !0;
 					for (var v in a) {
 						req = !1;
 						break;
 					}
 					break;
-				case c === Ar:
-				case c === NL:
-				case c === HC:
+				case c === W.Array:
+				case c === W.NodeList:
+				case c === W.HTMLCollection:
 					req = !a.length;
 					break;
-				case c === S:
+				case c === W.String:
 					req = !a;
 					break;
 				}
@@ -1001,7 +1000,7 @@ Prev define version: 6.0.0 (15.10.2018)
 					out: !1,
 					ecode: undefined,
 					nothrow: !1
-				}, name.constructor === O ? name : {
+				}, name.constructor === W.Object ? name : {
 					name: name,
 					message: message,
 					out: out,
@@ -1015,7 +1014,7 @@ Prev define version: 6.0.0 (15.10.2018)
 				this.ecode = s.ecode;
 			};
 
-			er.prototype = O.create(Error.prototype);
+			er.prototype = W.Object.create(Error.prototype);
 			er.prototype.constructor = Error;
 
 			s.out && console.error(s.name, ":", (s.ecode !== undefined ? s.ecode + " : " : "") + s.message, "\n\r" + (new Error).stack.split("\n").splice(2).join("\n\r"));
@@ -1053,18 +1052,19 @@ Prev define version: 6.0.0 (15.10.2018)
 	W.A.Ainit({
 		_DATA: {
 			opt_spec: {
-				keys: ["_TXT", "_DOM", "_CSS", "_VAL", "_INIT"],
+				keys: ["_TXT", "_DOM", "_CSS", "_VAL", "_INIT","_AFTER"],
 				funcs: {
 					_TXT: "html",
 					_DOM: "DOMTree",
 					_CSS: "css",
 					_VAL: "val",
-                  	_INIT: "callbackFun"
+					_INIT: "callbackFun",
+                  	_AFTER: "opt"
 				}
 			}
 		},
 		_TEMP: {
 			dataModSeq: A.start()
 		}
-	});
-})(window, document, Object, EventTarget, Node, Array, String, NodeList, HTMLCollection, Function, Number);
+	},W);
+})(window);
