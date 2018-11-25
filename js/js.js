@@ -726,7 +726,11 @@ Prev define version: 6.0.0 (15.10.2018)
 				changed: false,
 				vl: false
 			},
-			mult = function (func, nwr, iserr) {
+            progress = {
+              	changed: true,
+              	vl: false
+            },
+			mult = function (func, nwr, iserr, isprog) {
 				var req = {
 					fn: func
 				};
@@ -734,34 +738,51 @@ Prev define version: 6.0.0 (15.10.2018)
 					return;
 
 				return A.start(function (obj) {
-					var interval = iserr ? function () {
-						if (arg.changed)
-							return;
-
-						if (error.changed) {
-							if (!nwr)
-								obj.value = req.fn(error.vl, obj);
-							else
-								req.fn(error.vl, obj);
-							return;
-						}
-
-						return setTimeout(interval, 1);
-					}
-					 : function () {
-						if (error.changed)
-							return;
-
-						if (arg.changed) {
-							if (!nwr)
-								obj.value = req.fn(arg.vl, obj);
-							else
-								req.fn(arg.vl, obj);
-							return;
-						}
-
-						return setTimeout(interval, 0);
-					};
+					var interval;
+                  	if(iserr)
+                      	interval= function () {
+							if (arg.changed)
+								return;
+	
+							if (error.changed) {
+								if (!nwr)
+									obj.value = req.fn(error.vl, obj);
+								else
+									req.fn(error.vl, obj);
+								return;
+							}
+	
+							return setTimeout(interval, 1);
+						};
+					else if(isprog)
+                    	interval=function () {
+							if (progress.changed) {
+								if (!nwr)
+									obj.value = req.fn(progress.vl, obj);
+								else
+									req.fn(progress.vl, obj);
+                              	progress.changed=false;
+                              	if (error.changed||arg.changed)
+                                	return;
+							}
+	
+							return setTimeout(interval, 0);
+						};
+                    else
+                      	interval=function () {
+							if (error.changed)
+								return;
+	
+							if (arg.changed) {
+								if (!nwr)
+									obj.value = req.fn(arg.vl, obj);
+								else
+									req.fn(arg.vl, obj);
+								return;
+							}
+	
+							return setTimeout(interval, 0);
+						};
 					interval();
 				}, true);
 			},
@@ -778,8 +799,15 @@ Prev define version: 6.0.0 (15.10.2018)
 					waiter.er = true;
 					return tmp;
 				},
+              	progress: function (fn, nwr) {
+					var tmp;
+					tmp = mult(fn, nwr, false, true);
+					waiter.pr = true;
+					return tmp;
+				},
 				wt: false,
 				er: false,
+              	pr: false,
 				arg: arg,
 				err: error,
 				time: -1
@@ -798,7 +826,13 @@ Prev define version: 6.0.0 (15.10.2018)
 						error.changed = true;
 						waiter.time = Date.now();
 					}
-				}
+				},
+              	progressValue: {
+                  	set: function (vl) {
+						progress.vl = vl;
+						progress.changed = true;
+					}
+                }
 			});
 			setTimeout(function () {
 				var tmp;
