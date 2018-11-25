@@ -912,11 +912,9 @@ class FN
     }
 }
 ;
-
-$F = new FN();
 if (count($error) == 0) {
     for ($i = 0; $i < count($data["funcs"]); $i++)
-        $req[] = $F->$data["funcs"][$i]["name"]($data["funcs"][$i]["args"]);
+        $req[] = FN::$data["funcs"][$i]["name"]($data["funcs"][$i]["args"]);
 }
 
 if ($FTP)
