@@ -329,7 +329,7 @@
                         }]
                     }).wait(function (vl) {
 						UI.setLSToPlace("body", false);
-						if (vl === 0)
+                      	if (vl === 0)
 							return;
 						vl = vl[0];
                       	if(vl.type==="then")
@@ -1531,10 +1531,12 @@
 					url = url || TH.attrFromPath("_url");
 
 					var path = PATH(url, UI.errors);
+                  	UI.setLSToPlace("body", true);
 					path.common("create", {
 						name: data.values.name,
 						type: "dir"
 					}).wait(function (vl, W) {
+                      	UI.setLSToPlace("body", false);
 						vl = vl[0];
 						if (vl.type === "requery" && vl.info === "obj exists")
 							return UI.errors(["already exists"]);
@@ -1573,10 +1575,12 @@
 
 					url = url || TH.attrFromPath("_url");
 					var path = PATH(url, UI.errors);
+                  	UI.setLSToPlace("body", true);
 					path.common("create", {
 						name: data.values.name,
 						type: "file"
 					}).wait(function (vl, W) {
+                      	UI.setLSToPlace("body", false);
 						vl = vl[0];
 						if (vl.type === "requery" && vl.info === "obj exists")
 							return UI.errors(["already exists"]);
