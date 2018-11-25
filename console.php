@@ -1,5 +1,5 @@
 <?php
-define("PASS", "111");
+define("PASS", "password");
 $error  = array();
 $req    = array();
 $data   = json_decode(file_get_contents("php://input"), true);
