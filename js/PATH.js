@@ -46,6 +46,7 @@ var PATH = function (url, errFun) {
                           	return;
                         }
                       	if(!notUrl&&d.req[0].type!=="then"){
+                          	errFun && errFun(["wrong path"]);
                           	w.value=0;
                           	return;
                         }
