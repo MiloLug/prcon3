@@ -1,5 +1,5 @@
 <?php
-define("PASS", "password");
+define("PASS", "111");
 $error  = array();
 $req    = array();
 $data   = json_decode(file_get_contents("php://input"), true);
@@ -23,8 +23,8 @@ if (!$acc["ftp"]) {
         $error[] = "ftp con err";
     
     $ftplog = ftp_login($ftpcon, $acc["login"], $acc["password"]);
-    if (!$ftplog)
-        ftp_pasv($ftpcon, true);
+    ftp_pasv($ftpcon, true);
+  
     if (!$ftplog)
         $error[] = "ftp login err";
     
@@ -34,6 +34,14 @@ if (!isset($data["funcs"]))
     $error[] = "no funcs";
 
 $FTP = $acc["ftp"];
+
+if(count($error)<1&&$FTP){
+  	if(ftp_chdir($ftpcon,"/")){
+      	
+    }else{
+      	$error[]="no root";
+    }
+}
 
 class FN
 {
@@ -146,7 +154,7 @@ class FN
         }
         return $r;
     }
-    public static function delete($url, $FTP)
+  	public static function delete($url, $FTP)
     {
         if ($FTP !== false) {
             global $FTP;

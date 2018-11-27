@@ -8,24 +8,42 @@
 			"generalStructure.css",
 			"layers.css",
 			"loader.css",
+			"rules.css",
 			"scroll.css"
 		],
 		"js": [
 			".",
 			"CE.js",
 			"PATH.js",
-			"UI.js",
+			"UI_click.js",
+			"UI_contextmenu.js",
+			"UI_ctx.js",
+			"UI_index.js",
+			"UI_main.js",
+			"common.js",
 			"events.js",
+			"interactive.js",
+			"interactive_index.js",
 			"js.js",
+			"jsSrc.js",
+			"jsStyle.js",
 			"parser.js",
 			"scroll.js",
-			"util.js",
-            "settings_declare.js"
+			"settings_declare.js",
+			"util.js"
 		],
         "js/redactors":[
-        	".",
-            "light_file_editor.js"
+        	"."
         ],
+		"js/redactors/light file editor":[
+			".",
+			"UI.js",
+			"index.js",
+			"js.js",
+			"src.js",
+			"style.css",
+			"style.js"
+		],
 		"icons": [
 			".",
 			"android-icon-144x144.png",
