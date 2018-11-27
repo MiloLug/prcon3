@@ -4,9 +4,31 @@ No copyright library
 Prev define version: 6.0.0 (15.10.2018)
  **/
 
-(window._AinitF = function(W,Ain) {
+(window._AinitF = function (W, Ain) {
 	"use strict";
-	!Ain&&W.Object.defineProperties(W.Object.prototype, {
+	var _objTypes = {
+		"[object Undefined]": "undefined",
+		"[object Null]": "null"
+	},
+	_cType = function (obj) {
+		return _objTypes[Object.prototype.toString.call(obj)];
+	};
+	[
+		"NodeList",
+		"Object",
+		"String",
+		"Function",
+		"NodeList",
+		"Array",
+		"EventTarget",
+		"HTMLCollection",
+		"Number",
+		"Boolean"
+	].forEach(function (obj) {
+		_objTypes[Object.prototype.toString.call(W[obj] ? W[obj].prototype : W[obj])] = obj;
+	});
+
+	!Ain && W.Object.defineProperties(W.Object.prototype, {
 		Ainit: {
 			/**конструктор объектов.
 			принимает объект и помещает его свойства в тот, на котором вызван Init.
@@ -27,9 +49,9 @@ Prev define version: 6.0.0 (15.10.2018)
 			enumerable: false,
 			configurable: false,
 			writable: true,
-			value: function (vl,Ww) {
+			value: function (vl, Ww) {
 				var tmp = {};
-              	Ww=Ww||W;
+				Ww = Ww || W;
 				for (var nm in vl) {
 					var s = vl[nm] || {},
 					isp = s.__isParam__,
@@ -41,7 +63,7 @@ Prev define version: 6.0.0 (15.10.2018)
 						writable: true,
 						value: vl[nm]
 					}
-					 : s.constructor !== Ww.Function ? s : (function (s, sn) {
+					 : _cType(s) !== "Function" ? s : (function (s, sn) {
 						switch (sn) {
 						case "setget":
 							return {
@@ -75,12 +97,17 @@ Prev define version: 6.0.0 (15.10.2018)
 				Ww.Object.defineProperties(this, tmp);
 			}
 		},
+		__typeOfThis__: {
+			get: function () {
+				return _cType(this);
+			}
+		},
 		errored: {
 			value: function (test) {
 				if (this === errored)
 					return errored;
 				if (!!arguments.length) {
-					if (test.constructor === W.Function ? test(this) : test)
+					if (_cType(test) === "Function" ? test(this) : test)
 						return this;
 				} else if (!A.isEmpty(this) && this.a && this.a())
 					return this;
@@ -88,22 +115,27 @@ Prev define version: 6.0.0 (15.10.2018)
 			}
 		}
 	});
+	Object.__typeOf__ = _cType;
+
 	var nodeobj = {},
 	WA = {},
-	WAfunc = function (obj,Ww) {
+	WAfunc = function (obj, Ww) {
+		if(obj.__typeOfThis__==="String"){
+			return new String(obj);
+		}
 		var empty = {};
-		WA.Ainit(obj,Ww||W);
+		WA.Ainit(obj, Ww || W);
 		for (var nm in obj) {
 			empty[nm] = function get() {
 				return errored;
 			};
 		}
-		errored.Ainit(empty,Ww||W);
+		errored.Ainit(empty, Ww || W);
 	};
 	WA.__proto__ = W.Object.prototype;
 	WAfunc.__proto__ = WA;
 
-	nodeobj.Ainit(W.EventTarget.prototype,W);
+	nodeobj.Ainit(W.EventTarget.prototype, W);
 	nodeobj.__proto__ = WA;
 	nodeobj.constructor = W.EventTarget;
 	W.Node.prototype.__proto__ = nodeobj;
@@ -146,7 +178,7 @@ Prev define version: 6.0.0 (15.10.2018)
 			th = this;
 			return th === W.A ?
 			W :
-			th.constructor === W.String ?
+			th.__typeOfThis__ === "String" ?
 			W.document[arr ? "querySelectorAll" : "querySelector"](th) :
 			th.almostArray ?
 			arr ?
@@ -157,10 +189,7 @@ Prev define version: 6.0.0 (15.10.2018)
 			th;
 		},
 		almostArray: function get(c) {
-			return (c = this.constructor, c === W.Array || c === W.NodeList || c === W.HTMLCollection);
-		},
-		test: function () {
-			return A;
+			return (c = this.__typeOfThis__, c === "Array" || c === "NodeList" || c === "HTMLCollection" || c instanceof W.Array);
 		},
 		child: function (vl, arr, immed) {
 			var a = this.a();
@@ -224,9 +253,9 @@ Prev define version: 6.0.0 (15.10.2018)
 			elems,
 			tmp = [];
 			if (!A.isEmpty(dom))
-				if (dom.constructor === W.Array)
+				if (dom.__typeOfThis__ === "Array")
 					tmp = dom;
-				else if (dom.constructor !== W.Object) {
+				else if (dom.__typeOfThis__ !== "Object") {
 					dom.pasteIn(a);
 					return;
 				} else if (dom.almostArray) {
@@ -272,7 +301,7 @@ Prev define version: 6.0.0 (15.10.2018)
 			функция в любом случае возвращает КОПИЮ a
 			 **/
 			mv = A.args({
-					deep: !A.isEmpty(mv) && mv.constructor === W.Object || A.isEmpty(mv) ? true : mv
+					deep: !A.isEmpty(mv) && mv.__typeOfThis__ === "Object" || A.isEmpty(mv) ? true : mv
 				}, mv);
 			var a = this.a(),
 			tmp = a.cloneNode(mv.deep);
@@ -294,7 +323,7 @@ Prev define version: 6.0.0 (15.10.2018)
 			 **/
 			var a = this.a();
 			args = A.args({
-					in: !A.isEmpty(args) && args.constructor !== W.Object ? args : undefined,
+					in: !A.isEmpty(args) && args.__typeOfThis__ !== "Object" ? args : undefined,
 					pos: "last"
 				}, args);
 			args.in = args.in.a();
@@ -337,7 +366,7 @@ Prev define version: 6.0.0 (15.10.2018)
 			tmp,
 			pf;
 			A.isEmpty(a) && A.error(A.errs.E_1);
-			if (vl.constructor === W.Object) {
+			if (vl.__typeOfThis__ === "Object") {
 				for (var key in vl) {
 					a.style[key] = vl[key];
 				}
@@ -374,7 +403,7 @@ Prev define version: 6.0.0 (15.10.2018)
 			bl = !!arguments.length,
 			allAttrs;
 			A.isEmpty(a) && A.error(A.errs.E_1);
-			if (bl && vl.constructor === W.Object) {
+			if (bl && vl.__typeOfThis__ === "Object") {
 				for (var key in vl) {
 					if (A._DATA.opt_spec.keys.indexOf(key) < 0) {
 						if (vl[key] === "")
@@ -497,9 +526,9 @@ Prev define version: 6.0.0 (15.10.2018)
 			step = step || 1,
 			steptmp;
 			A.isEmpty(a) && A.error(A.errs.E_1);
-			if (step.constructor === W.Number)
+			if (step.__typeOfThis__ === "Number")
 				for (var i = 1; (a = a.parentNode) && i < step; i++);
-			else if (step.constructor === W.String)
+			else if (step.__typeOfThis__ === "String")
 				step.all(function (el) {
 					steptmp = a;
 					while ((steptmp = steptmp.parentNode) && steptmp !== el);
@@ -618,12 +647,12 @@ Prev define version: 6.0.0 (15.10.2018)
 			 **/
 			var a = this.a(!!1),
 			req = false,
-			arr = arr.constructor === W.Array ? arr : [arr];
+			arr = arr.__typeOfThis__ === "Array" ? arr : [arr];
 			a.length === arr.length && (
 				req = true,
 				strict ? (
 					a.all(function (l, id) {
-						if (l.constructor === Ar)
+						if (l.__typeOfThis__ === "Array")
 							req = l.equals(arr[id], true);
 						else
 							req = l === arr[id]
@@ -647,7 +676,7 @@ Prev define version: 6.0.0 (15.10.2018)
 			c = 0;
 			deep ? a.all(function (l) {
 				l === vl && c++;
-				if (l.constructor === W.Array)
+				if (l.__typeOfThis__ === "Array")
 					c += l.countOf(vl, true);
 			}) : a.all(function (l) {
 				l === vl && c++;
@@ -726,24 +755,24 @@ Prev define version: 6.0.0 (15.10.2018)
 				changed: false,
 				vl: false
 			},
-            progress = {
-              	changed: true,
-              	vl: false
-            },
+			progress = {
+				changed: true,
+				vl: false
+			},
 			mult = function (func, nwr, iserr, isprog) {
 				var req = {
 					fn: func
 				};
-				if (!req.fn || req.fn.constructor !== W.Function)
+				if (!req.fn || req.fn.__typeOfThis__ !== "Function")
 					return;
 
 				return A.start(function (obj) {
 					var interval;
-                  	if(iserr)
-                      	interval= function () {
+					if (iserr)
+						interval = function () {
 							if (arg.changed)
 								return;
-	
+
 							if (error.changed) {
 								if (!nwr)
 									obj.value = req.fn(error.vl, obj);
@@ -751,28 +780,28 @@ Prev define version: 6.0.0 (15.10.2018)
 									req.fn(error.vl, obj);
 								return;
 							}
-	
+
 							return setTimeout(interval, 1);
 						};
-					else if(isprog)
-                    	interval=function () {
+					else if (isprog)
+						interval = function () {
 							if (progress.changed) {
 								if (!nwr)
 									obj.value = req.fn(progress.vl, obj);
 								else
 									req.fn(progress.vl, obj);
-                              	progress.changed=false;
-                              	if (error.changed||arg.changed)
-                                	return;
+								progress.changed = false;
+								if (error.changed || arg.changed)
+									return;
 							}
-	
+
 							return setTimeout(interval, 0);
 						};
-                    else
-                      	interval=function () {
+					else
+						interval = function () {
 							if (error.changed)
 								return;
-	
+
 							if (arg.changed) {
 								if (!nwr)
 									obj.value = req.fn(arg.vl, obj);
@@ -780,7 +809,7 @@ Prev define version: 6.0.0 (15.10.2018)
 									req.fn(arg.vl, obj);
 								return;
 							}
-	
+
 							return setTimeout(interval, 0);
 						};
 					interval();
@@ -799,7 +828,7 @@ Prev define version: 6.0.0 (15.10.2018)
 					waiter.er = true;
 					return tmp;
 				},
-              	progress: function (fn, nwr) {
+				progress: function (fn, nwr) {
 					var tmp;
 					tmp = mult(fn, nwr, false, true);
 					waiter.pr = true;
@@ -807,7 +836,7 @@ Prev define version: 6.0.0 (15.10.2018)
 				},
 				wt: false,
 				er: false,
-              	pr: false,
+				pr: false,
 				arg: arg,
 				err: error,
 				time: -1
@@ -827,12 +856,12 @@ Prev define version: 6.0.0 (15.10.2018)
 						waiter.time = Date.now();
 					}
 				},
-              	progressValue: {
-                  	set: function (vl) {
+				progressValue: {
+					set: function (vl) {
 						progress.vl = vl;
 						progress.changed = true;
 					}
-                }
+				}
 			});
 			setTimeout(function () {
 				var tmp;
@@ -888,7 +917,7 @@ Prev define version: 6.0.0 (15.10.2018)
 		json: function (vl) { /**функция автоматически парсит строку vl или переводит в неё массивы и объекты**/
 			var req;
 			try {
-				req = vl.constructor === W.String ? JSON.parse(vl) : JSON.stringify(vl);
+				req = vl.__typeOfThis__ === "String" ? JSON.parse(vl) : JSON.stringify(vl);
 			} catch (e) {
 				req = vl;
 			}
@@ -901,8 +930,8 @@ Prev define version: 6.0.0 (15.10.2018)
 			возвращает изменённый standart
 			 **/
 			var ins = ins || {};
-			standart.constructor !== W.Object && A.error(A.errs.E_2);
-			if (ins.constructor === W.Object)
+			standart.__typeOfThis__ !== "Object" && A.error(A.errs.E_2);
+			if (ins.__typeOfThis__ === "Object")
 				for (var nm in ins)
 					ins[nm] !== undefined && (standart[nm] = ins[nm]);
 			return standart;
@@ -946,7 +975,7 @@ Prev define version: 6.0.0 (15.10.2018)
 			if (s.dataType === "json")
 				FD = A.json(s.data),
 				s.header = "application/json";
-			else if (s.dataType === "form" || (!A.isEmpty(s.data) && param.data.constructor !== W.String)) {
+			else if (s.dataType === "form" || (!A.isEmpty(s.data) && param.data.__typeOfThis__ !== "String")) {
 				s.header = "",
 				FD = new W.FormData;
 				for (var nm in s.data) {
@@ -997,21 +1026,21 @@ Prev define version: 6.0.0 (15.10.2018)
 			var req = false,
 			c;
 			if (a !== undefined && a !== null) {
-				c = a.constructor;
+				c = a.__typeOfThis__;
 				switch (true) {
-				case c === W.Object:
+				case c === "Object":
 					req = !0;
 					for (var v in a) {
 						req = !1;
 						break;
 					}
 					break;
-				case c === W.Array:
-				case c === W.NodeList:
-				case c === W.HTMLCollection:
+				case c === "Array":
+				case c === "NodeList":
+				case c === "HTMLCollection":
 					req = !a.length;
 					break;
-				case c === W.String:
+				case c === "String":
 					req = !a;
 					break;
 				}
@@ -1034,7 +1063,7 @@ Prev define version: 6.0.0 (15.10.2018)
 					out: !1,
 					ecode: undefined,
 					nothrow: !1
-				}, name.constructor === W.Object ? name : {
+				}, name.__typeOfThis__ === "Object" ? name : {
 					name: name,
 					message: message,
 					out: out,
@@ -1086,19 +1115,19 @@ Prev define version: 6.0.0 (15.10.2018)
 	W.A.Ainit({
 		_DATA: {
 			opt_spec: {
-				keys: ["_TXT", "_DOM", "_CSS", "_VAL", "_INIT","_AFTER"],
+				keys: ["_TXT", "_DOM", "_CSS", "_VAL", "_INIT", "_AFTER"],
 				funcs: {
 					_TXT: "html",
 					_DOM: "DOMTree",
 					_CSS: "css",
 					_VAL: "val",
 					_INIT: "callbackFun",
-                  	_AFTER: "opt"
+					_AFTER: "opt"
 				}
 			}
 		},
 		_TEMP: {
 			dataModSeq: A.start()
 		}
-	},W);
+	}, W);
 })(window);

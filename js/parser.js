@@ -1,5 +1,5 @@
 window.Preprocess=function(commands,punctuation,txt){
-	var req={
+  	var req={
       		start:-1,
       		commandStart:-1,
       		commandEnd:-1,

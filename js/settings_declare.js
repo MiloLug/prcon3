@@ -8,6 +8,7 @@ var TEMP_SETTINGS_DECLARE=[
             },
           	group:"file editor",
  	      	realtime:false,
+          	compareBy:"value",
  	      	info:"select file editor",
  	      	param:{
  	          	_InitClass:function get(){
@@ -17,6 +18,22 @@ var TEMP_SETTINGS_DECLARE=[
  	          			iteration:false
                     }
                 }
+ 	        }
+ 	    },
+		{
+ 	      	type:"select",
+ 	      	options:[
+				"in new window",
+				"in explorer"
+			],
+          	group:"file editor",
+          	compareBy:"selectedIndex",
+ 	      	realtime:true,
+ 	      	info:"the type of file editor (in the window or in the explorer) in which files will be opened by default",
+ 	      	param:{
+				name:"defaultFileEditorType",
+ 	          	def:1,
+ 	          	iteration:false
  	        }
  	    },
  	  	{
