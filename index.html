@@ -6,8 +6,12 @@
   <script src="version.js"></script>
   <script src="precache.js"></script>
 <script>
+  var PRCON_CHACHE_NAME="PRCON_CACHE_TEMP",
+      PRCON_LOCAL_STORAGE_NAME="PRCON_LOCAL_STORAGE",
+      PRCON_LANGUAGE_SAVE_NAME="PRCON_LANGUAGE";
+  
 (function () {
-	precache("precache.json","PRCON_CACHE_TEMP");
+	precache("precache.json",PRCON_CHACHE_NAME);
 })();
 </script>
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" charset="utf-8">
@@ -51,21 +55,24 @@
 	</div>
 </div>
   
+
 <script src="js/CE.js"></script>
 <script src="js/js.js"></script>
-<script src="js/common.js"></script>
 <script src="js/events.js"></script>
+<script src="js/lang/setter.js"></script>  
+
+<script src="js/common.js"></script>
 <script src="js/interactive.js"></script>
 <script src="js/parser.js"></script>
 <script src="js/PATH.js"></script>
 <script src="js/jsStyle.js"></script>
 <script src="js/jsSrc.js"></script>
-
+  
 <script src="js/redactors/light file editor/index.js"></script>
 <script src="js/redactors/light file editor/style.js"></script>
 <script src="js/redactors/light file editor/src.js"></script>
 <link rel="stylesheet" type="text/css" href="js/redactors/light file editor/style.css"/>
-  
+
 <script src="js/settings_declare.js"></script>
 <script src="js/util.js"></script>
   
@@ -86,10 +93,10 @@
       	<input type="text" class="pass inputstyle cls" placeholder="PASSWORD">
       	</div>
         <div class="downmenu">
-          	<button class="blackbtn bwhitefont cls" funcs="sendLogin">login</button>
-          	<button class="blackbtn bwhitefont cls" funcs="openLoginFtp">login ftp</button>
-          	<button class="blackbtn bwhitefont cls" funcs="openLoginLocal">local storage</button>
-          	<button class="blackbtn bwhitefont cls" funcs="easyCancel">close</button>
+          	<button class="blackbtn bwhitefont cls" funcs="sendLogin">@set::"login".tr::@</button>
+          	<button class="blackbtn bwhitefont cls" funcs="openLoginFtp">@set::"login ftp".tr::@</button>
+          	<button class="blackbtn bwhitefont cls" funcs="openLoginLocal">@set::"local storage".tr::@</button>
+          	<button class="blackbtn bwhitefont cls" funcs="easyCancel">@set::"close".tr::@</button>
       	</div>
     </div>
   	
@@ -99,8 +106,8 @@
           	@set::selfAct.opt("fsclose")::@
       	</div>
         <div class="downmenu">
-          	<button class="blackbtn bwhitefont cls" funcs="resetSettings">reset</button>
-          	<button class="blackbtn bwhitefont cls" funcs="easyCancel">close</button>
+          	<button class="blackbtn bwhitefont cls" funcs="resetSettings">@set::"reset settings".tr::@</button>
+          	<button class="blackbtn bwhitefont cls" funcs="easyCancel">@set::"close".tr::@</button>
       	</div>
   	</div>
   
@@ -112,10 +119,10 @@
       	<input type="text" class="pass inputstyle cls" placeholder="FTP PASSWORD">
       	</div>
         <div class="downmenu">
-          	<button class="blackbtn bwhitefont cls" funcs="sendLoginFtp">login</button>
-         	<button class="blackbtn bwhitefont cls" funcs="openLogin">login php</button>
-          	<button class="blackbtn bwhitefont cls" funcs="openLoginLocal">local storage</button>
-          	<button class="blackbtn bwhitefont cls" funcs="easyCancel">close</button>
+          	<button class="blackbtn bwhitefont cls" funcs="sendLoginFtp">@set::"login".tr::@</button>
+         	<button class="blackbtn bwhitefont cls" funcs="openLogin">@set::"login php".tr::@</button>
+          	<button class="blackbtn bwhitefont cls" funcs="openLoginLocal">@set::"local storage".tr::@</button>
+          	<button class="blackbtn bwhitefont cls" funcs="easyCancel">@set::"close".tr::@</button>
       	</div>
     </div>     
   	
@@ -123,8 +130,8 @@
  		<div class="backcontent">
  		</div>
   		<div class="downmenu">
-          	<button class="blackbtn bwhitefont cls" funcs="openLogin">new account</button>
-           	<button class="blackbtn bwhitefont cls" funcs="easyCancel">cancel</button>
+          	<button class="blackbtn bwhitefont cls" funcs="openLogin">@set::"new account".tr::@</button>
+           	<button class="blackbtn bwhitefont cls" funcs="easyCancel">@set::"cancel".tr::@</button>
   		</div>
   	</div>
 
@@ -179,7 +186,7 @@
  		<div class="backcontent">
  		</div>
   		<div class="downmenu">
-          	<button class="blackbtn bwhitefont cls" funcs="easyCancel">close</button>
+          	<button class="blackbtn bwhitefont cls" funcs="easyCancel">set::"close".tr::@</button>
   		</div>
   	</div>
 </div>
@@ -229,8 +236,8 @@
 			<button class="blackbtn bwhitefont cls" funcs="openSettings">
 			&#10978;
 			</button>
-			<button class="blackbtn bwhitefont cls">
-			&#8635;
+          	<button class="blackbtn bwhitefont cls" funcs="langSet">
+			&#127757;
 			</button>
 			<button class="blackbtn bwhitefont cls" funcs="toggleDirSelecting">
 			&#10003;
@@ -254,9 +261,6 @@
 <script src="js/UI_click.js"></script>
 <script src="js/UI_contextmenu.js"></script>
 <script>
-  	window.A.on("beforeunload",function(){
-      	UI.closeAll();
-    },false);
   	UI.setLSToPlace("body", false);
 </script>
 

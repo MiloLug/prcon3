@@ -6,6 +6,17 @@ $data   = json_decode(file_get_contents("php://input"), true);
 $acc    = $data["acc"];
 $ftpcon = false;
 
+//json echo start .req
+//	{
+//		"req":[
+//
+echo '
+{
+	"req":[
+';
+flush();
+
+
 if (!isset($acc["password"]))
     $error[] = "no password";
 
@@ -23,10 +34,11 @@ if (!$acc["ftp"]) {
         $error[] = "ftp con err";
     
     $ftplog = ftp_login($ftpcon, $acc["login"], $acc["password"]);
-    ftp_pasv($ftpcon, true);
   
     if (!$ftplog)
         $error[] = "ftp login err";
+  	
+  	ftp_pasv($ftpcon, true);
     
 }
 
@@ -40,6 +52,22 @@ if(count($error)<1&&$FTP){
       	
     }else{
       	$error[]="no root";
+    }
+}
+
+function _echo($fn,$args,$arr,$_FTP){
+	while(count($fn)>0) {
+      	$t=array_shift($fn);
+      	$a=array_shift($args);
+      	$t=$arr?$t:$t($a,$_FTP);
+      	if($t!=="__echo_inserted__"){
+          	echo json_encode($t);
+        }
+      	if(count($fn)>0){
+          	echo ",";
+        }
+      	flush();
+      	
     }
 }
 
@@ -118,6 +146,28 @@ class FN
         ;
         return $tmp;
     }
+	public static function divNameExp($url)
+    {
+		$url = self::gUrl($url, $FTP);
+        $name = array_pop(self::arrUrl($url));
+        $name = explode(".",$name);
+		$r="";
+		$e="";
+		if(count($name)<2)
+			return $name;
+		while(count($name)>0){
+			$n=array_shift($name);
+			$c=count($name);
+			if($c<1){
+				$e=$n;
+			}else{
+				$r.=$n;
+				if($c>1)
+					$r.=".";
+			}
+		}
+		return array($r,$e);
+    }
     public static function isDir($url, $FTP)
     {
         if ($FTP !== false) {
@@ -141,7 +191,7 @@ class FN
         } else {
             $list = scandir($url);
         }
-        foreach ($list as $item) {
+		foreach ($list as $item) {
             if ($FTP) {
                 $item = self::arrUrl($item, $FTP);
                 $item = $item[count($item) - 1];
@@ -251,7 +301,7 @@ class FN
             }
             ;
             if ($FTP) {
-                $tmpName_zip = sys_get_temp_dir() . uniqid("PRCON_TMP", true) . $name . ".zip";
+                $tmpName_zip = sys_get_temp_dir() . "/" . uniqid("PRCON_TMP", true) . $name . ".zip";
                 if ($zip->open($tmpName_zip, ZIPARCHIVE::CREATE | ZipArchive::OVERWRITE) !== true) {
                     return $commonError;
                 }
@@ -277,7 +327,7 @@ class FN
                                     $_path . $nname . "/"
                                 );
                         } else {
-                            $tmpName_file = sys_get_temp_dir() . uniqid("PRCON_TMP", true) . $nname;
+                            $tmpName_file = sys_get_temp_dir() . "/" . uniqid("PRCON_TMP", true) . $nname;
                             if (ftp_get($ftpcon, $tmpName_file, $item, FTP_BINARY)) {
                                 $zip->addFile($tmpName_file, $_path . $nname);
                                 $forDelete[] = $tmpName_file;
@@ -356,6 +406,79 @@ class FN
             "funcName" => $FN
         );
     }
+	public static function rename($args, $FTP)
+    {
+        if ($FTP !== false) {
+            global $FTP;
+        }
+        global $ftpcon;
+        $FN = "rename";
+        
+        $url       = self::normUrl($args, $FTP);
+		$oldNames  = $args["oldNames"];
+		$newNames  = $args["newNames"];
+      	$staticExt = $args["staticExtension"];
+      
+		$list    = self::getList($url, $FTP);
+		$names   = array();
+		$types   = array();
+		$renames = array();
+      
+		foreach($list as $item){
+			$names[]=$item["name"];
+			$types[]=$item["type"];
+		}
+      	foreach($newNames as $nm){
+			$mods[$nm]=-1;
+		}
+      
+		while(count($oldNames)>0){
+			$oldName = array_shift($oldNames);
+          	$newName = array_shift($newNames);
+          	if($oldName==$newName)
+				continue;
+          	$newDiv = self::divNameExp($newName);
+          	$oldDiv = self::divNameExp($oldName);
+          	$mod=-1;	
+          	$newExt = count($staticExt?$oldDiv:$newDiv)>1?".".($staticExt?$oldDiv[1]:$newDiv[1]):"";
+          
+			$type=$types[array_search($oldName,$names)];
+			
+          	$oldUrl = $url . "/" . $oldName;
+          	$newUrl="";
+			
+          	do{
+              	$tmod=$mod<0?"":"_" . $mod;
+				if($type=="file"){
+					$newUrl = $newDiv[0] . $tmod . $newExt;
+				}else{
+					$newUrl = $newName . $tmod;
+				}
+				$mod++;
+			}while(array_search($newUrl,$names)!==false);
+			
+          	$newName=$newUrl;
+			$newUrl=$url . "/" . $newUrl;
+
+			$ok;
+        	if($FTP)
+				$ok=ftp_rename($ftpcon,$oldUrl,$newUrl);
+			else
+				$ok=rename($oldUrl,$newUrl);
+			
+			if($ok){
+				$renames[]=array(self::shortUrl($oldUrl,$FTP),self::shortUrl($newUrl,$FTP));
+              	$names[array_search($oldName,$names)]=$newName;
+            }
+          	
+          	$mods[$newName]=$mod;
+		}
+        return array(
+            "type" => "ok",
+			"renames" => $renames,
+            "funcName" => $FN
+        );
+    }
     public static function createPath($url, $FTP)
     {
         if ($FTP !== false) {
@@ -392,7 +515,7 @@ class FN
             "funcName" => $FN
         );
     }
-    public static function getBlob($url, $FTP)
+    public static function getBase64($url, $FTP)
     {
         if ($FTP !== false) {
             global $FTP;
@@ -407,30 +530,43 @@ class FN
             "url" => self::shortUrl($url, $FTP),
             "funcName" => $FN
         );
+      	$successStr='{
+         	"type":"ok",
+            "funcName":"'.$FN.'",
+            "url":"'.self::shortUrl($url, $FTP).'",';
+      	$chunkSize = 3*8;
+
         if (self::isDir($url, $FTP)) {
             $commonError["info"] = "obj is dir";
             return $commonError;
         }
         $r;
-        if ($FTP) {
-            $tmpName = sys_get_temp_dir() . uniqid("PRCON_TMP", true) . $name;
-            if (ftp_get($ftpcon, $tmpName, $url, FTP_BINARY) !== false) {
-                return $commonError;
-            }
-            ;
-            $data = file_get_contents($tmpName);
-            $r    = 'data:' . mime_content_type($tmpName) . ';base64,' . base64_encode($data);
-            unlink($tmpName);
-        } else {
-            $r = 'data:' . mime_content_type($url) . ';base64,' . base64_encode(file_get_contents($url));
+		$m;
+        $tmpName = $FTP?sys_get_temp_dir() . "/" . uniqid("PRCON_TMP", true) . $name : $url;
+        if ($FTP && ftp_get($ftpcon, $tmpName, $url, FTP_BINARY) === false) {
+            return $commonError;
         }
+		$file = fopen($tmpName, 'rb');
+		$m=mime_content_type($tmpName);
+        echo $successStr;
+        flush();
+        echo '
+          	"mime":"'.$m.'",
+           	"content":"';
+		flush();
+        while (!feof($file))
+    	{
+    	    $buffer = fread($file, $chunkSize);
+			echo base64_encode($buffer);
+			flush();
+    	}
+        echo '"}," "';
+        flush();
+		fclose($file);
+        if($FTP)
+			unlink($tmpName);
         
-        return array(
-            "type" => "ok",
-            "funcName" => $FN,
-            "url" => self::shortUrl($url, $FTP),
-            "content" => $r
-        );
+        return "__echo_inserted__";
     }
     public static function create($args, $FTP)
     {
@@ -565,7 +701,7 @@ class FN
         } else {
             $copied = false;
             if ($FTP) {
-                $tmpName = sys_get_temp_dir() . uniqid("PRCON_TMP", true) . $name;
+                $tmpName = sys_get_temp_dir() . "/" . uniqid("PRCON_TMP", true) . $name;
                 if (ftp_get($ftpcon, $tmpName, $url, FTP_BINARY) && ftp_put($ftpcon, $inDest, $tmpName, FTP_BINARY)) {
                     $copied = true;
                     unlink($tmpName);
@@ -626,7 +762,7 @@ class FN
         }
         $content = "";
         if ($FTP) {
-            $tmp = sys_get_temp_dir() . uniqid("PRCON_TMP", true) . $name;
+            $tmp = sys_get_temp_dir() . "/" . uniqid("PRCON_TMP", true) . $name;
             ftp_get($ftpcon, $tmp, $url, FTP_BINARY);
             $content = file_get_contents($tmp);
             unlink($tmp);
@@ -664,8 +800,8 @@ class FN
         );
         if (extension_loaded('zip')) {
             $zip         = new ZipArchive();
-            $tmpName_ext = sys_get_temp_dir() . uniqid("PRCON_TMP", true) . "_ext";
-            $tmpName_zip = ($FTP ? sys_get_temp_dir() . uniqid("PRCON_TMP", true) . ".zip" : $url);
+            $tmpName_ext = sys_get_temp_dir() . "/" . uniqid("PRCON_TMP", true) . "_ext";
+            $tmpName_zip = ($FTP ? sys_get_temp_dir() . "/" . uniqid("PRCON_TMP", true) . ".zip" : $url);
             
             if (!self::isAvailable($dest)) {
                 $r = self::createPath($dest);
@@ -887,8 +1023,8 @@ class FN
         $then    = $args["then"];
         $else    = $args["else"];
         $cond    = true;
-        $globRet = array();
-        
+        $globRet = array();	
+      
         foreach ($if as $c) {
             $ret = self::$c["name"]($c["args"], $FTP);
             switch ($c["return"]["type"]) {
@@ -902,34 +1038,90 @@ class FN
             }
         }
         
+      	echo '{
+        	"type":"'.($cond ? 'then' : 'else').'",
+            "return":[
+        ';
+      
+      	$nFN=new self();
+      
         if ($cond && $then) {
-            foreach ($then as $t) {
-                $globRet[] = self::$t["name"]($t["args"], $FTP);
+          	$funcs=array();
+          	$args=array();
+          	foreach($then as $t){
+              	$funcs[]=array($nFN,$t["name"]);
+              	$args[]=$t["args"];
             }
+          	_echo($funcs,$args);
         } elseif ($else) {
-            foreach ($else as $e) {
-                $globRet[] = self::$e["name"]($e["args"], $FTP);
+            $funcs=array();
+          	$args=array();
+          	foreach($else as $t){
+              	$funcs[]=array($nFN,$t["name"]);
+              	$args[]=$t["args"];
             }
+          	_echo($funcs,$args);
         }
-        
-        return array(
-            "type" => $cond ? "then" : "else",
-            "return" => $globRet,
-            "funcName" => $FN
-        );
-    }
+      
+      	echo '
+       		],
+        	"funcName":"'.$FN.'"}
+        ';
+		
+        return "__echo_inserted__";
+   }
 }
 ;
+$_echoFN=array();
+$_echoArgs=array();
+$nFN=new FN();
 if (count($error) == 0) {
-    for ($i = 0; $i < count($data["funcs"]); $i++)
-        $req[] = FN::$data["funcs"][$i]["name"]($data["funcs"][$i]["args"]);
+    foreach($data["funcs"] as $t){
+      	$_echoFN[] = array($nFN,$t["name"]);
+      	$_echoArgs[]= $t["args"];
+    }
 }
+
+//json echo content of .req
+//	{
+//	//	"req":[
+//			content
+_echo($_echoFN,$_echoArgs);
+
+//json echo end of .req & start .error
+//	{
+//	//	"req":[
+//	//		content
+//		],
+//		"error":[
+//
+echo '
+],
+    "error":[
+';
+
+//json echo content of .error
+//	{
+//	//	"req":[
+//	//		content
+//	//	],
+//	//	"error":[
+//			content
+//
+_echo($error,array(),true);
+
+//json echo end of .error & echo
+//	{
+//	//	"req":[
+//	//		content
+//	//	],
+//	//	"error":[
+//	//		content
+//		]
+//	}
+echo '
+]}';
 
 if ($FTP)
     ftp_close($ftpcon);
-
-echo json_encode(array(
-    "error" => $error,
-    "req" => $req
-));
 ?>

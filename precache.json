@@ -35,6 +35,12 @@
         "js/redactors":[
         	"."
         ],
+        "js/lang":[
+        	".",
+            "setter.js",
+            "en.js",
+            "ru.js"
+        ],
 		"js/redactors/light file editor":[
 			".",
 			"UI.js",
