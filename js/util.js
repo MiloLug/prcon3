@@ -6,7 +6,6 @@ var ACCOUNT={
       	urlFtp:"",
       	urlPhp:""
     },
-    STORAGE_NAME="PRCON_DATA",
     SETTINGS_DECLARE=[],
     N_SETTINGS=function(){
       	var t=this;
@@ -84,14 +83,14 @@ var ACCOUNT={
 	BUFFERToLocal = function () {
       	if(ACCOUNT.name!=="")
         	BUFFER.localData.accounts.data.explorer[ACCOUNT.name]=BUFFER.explorer;
-		localStorage.setItem(STORAGE_NAME, A.json(BUFFER.localData));
+		localStorage.setItem(PRCON_LOCAL_STORAGE_NAME, A.json(BUFFER.localData));
 	},
 	localToBUFFER = function () {
-		BUFFER.localData = A.json(localStorage.getItem(STORAGE_NAME)),
+		BUFFER.localData = A.json(localStorage.getItem(PRCON_LOCAL_STORAGE_NAME)),
       	BUFFER.explorer = BUFFER.localData.accounts.data.explorer[ACCOUNT.name]||(new N_BUFFER).explorer;
 	},
     clearLocal=function(){
-      	localStorage.setItem(STORAGE_NAME, A.json(new N_LOCAL()));
+      	localStorage.setItem(PRCON_LOCAL_STORAGE_NAME, A.json(new N_LOCAL()));
       	localToBUFFER();
       	window.location.reload();
     },
@@ -153,8 +152,8 @@ var ACCOUNT={
 /*SET localStorage AND BUFFER localData*/
 (function(){
 var tmp;
-if (!localStorage.getItem(STORAGE_NAME)||A.isEmpty(tmp=A.json(localStorage.getItem(STORAGE_NAME)))||(VERSION>0?tmp.version!==VERSION:false))
-	localStorage.setItem(STORAGE_NAME, A.json(new N_LOCAL()));
+if (!localStorage.getItem(PRCON_LOCAL_STORAGE_NAME)||A.isEmpty(tmp=A.json(localStorage.getItem(PRCON_LOCAL_STORAGE_NAME)))||(VERSION>0?tmp.version!==VERSION:false))
+	localStorage.setItem(PRCON_LOCAL_STORAGE_NAME, A.json(new N_LOCAL()));
 localToBUFFER();
 })();
 /*END*/
@@ -177,4 +176,8 @@ if(window.history&&BUFFER.localData.settings.enableUseBrowserBFBtns)
 
 /*ON PAGE UNLOAD*/
 window.addEventListener("unload", BUFFERToLocal,false);
+window.addEventListener("beforeunload", BUFFERToLocal,false);
+window.addEventListener("unload",function(){
+      	window.UI.closeAll();
+    },false);
 /*END*/

@@ -1,22 +1,25 @@
-window.A.on("combination", "enter", function (e) {
-	var onEnter = ".dialog[toplayer] [onEnter]".a();
-	if (onEnter)
-		e.stopEvent(),
-		onEnter.emitEvent("click");
-});
-window.A.on("combination", "esc", function (e) {
-	var dg = ".dialog[toplayer]".a(),
-	onEsc = ".dialog[toplayer] [onEsc]".a();
-	if (dg)
-		e.stopEvent();
-	else
-		return;
-	if (onEsc)
-		onEsc.emitEvent("click");
-	else
-		UI.closeDialog(dg.opt("uid"));
-});
-var UI = {
+(function(){
+	"use stict";
+	A({
+		addFromText: function (txt, pos) {
+			var a = this.a(),
+			el = document.createElement('div');
+			el.innerHTML = txt;
+			el.children.all(function (elem) {
+				elem.paste({
+					in: a,
+					pos: pos
+				});
+			});
+			return a;
+		},
+		br: function get() {
+			var a = this.a();
+			a.parentNode.insertAfter(A.createElem("br"),a);
+			return a;
+		}
+	})
+	window.UI = {
 		toTopLayer: function (elem) {
 			elem = elem.a();
 			var tl = elem.parentNode.child("[toplayer]");
@@ -144,7 +147,7 @@ var UI = {
 					values: {},
 					checked: {}
 				}
-				dialog.child("f-scrollplane>input", !0).all(function (el) {
+				dialog.child("f-scrollplane>input,f-scrollplane>textarea", !0).all(function (el) {
 					data.values[el.opt("iid")] = el.val();
 				});
 				dialog.child("f-scrollplane>.chbstyle>input", !0).all(function (el) {
@@ -163,10 +166,10 @@ var UI = {
 			s.content.all(function (el, ind) {
 				switch (el.type) {
 				case "message":
-					bc.addElem("div", {
+					bc.addElem("pre", {
 						class: "message",
 						_TXT: el.text
-					});
+					}).opt(el.opt||{});
 					break;
 				case "button":
 					"[act=dialogInputSrc]>button".copy({
@@ -224,51 +227,10 @@ var UI = {
 						}
 					});
 				};
-				switch (er) {
-				case "no password":
-				case "wrong password":
-					up("Password is missing or incorrect. <br> Enter another password.");
-					break;
-				case "net err":
-					up("Network connection error. <br> Check your network connection");
-					break;
-				case "no ftp login":
-					up("Ftp login is missig.");
-					break;
-				case "ftp con err":
-					up("Ftp connection error.");
-					break;
-				case "ftp login err":
-					up("Error connecting to ftp account.");
-					break;
-				case "not main":
-					up("Invalid server client address.");
-					break;
-				case "logged":
-					up("you are already logged in");
-					break;
-				case "no acc":
-					up("account not found in storage");
-					break;
-				case "wrong path":
-					up("path is not exists or not available");
-					break;
-				case "no name":
-					up("you did not enter the name of the object being created");
-					break;
-				case "already exists":
-					up("this object already exists in the destination folder");
-					break;
-				case "obj is dir":
-					up("this function needs a file, not a folder!");
-                    break;
-                case "no editor":
-                    up("please, select file editor");
-                    break;
-				case "no pop-up":
-					up("please, allow popups");
-					break;
-				}
+              	if(er==="no password")
+                  	er="wrong password";
+              	up(er.tr);
 			})();
 		}
-}
+	}
+})();

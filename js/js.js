@@ -311,6 +311,17 @@ Prev define version: 6.0.0 (15.10.2018)
 			});
 			return tmp;
 		},
+      	insertAfter: function(el,pos){
+          	var a=this.a(),
+                el=el.a(),
+                ne;
+          	if(!pos||!(A.isEmpty(pos=pos.a()))||!(ne=pos.nextElement))
+              	a.appendChild(el);
+          	else
+            	a.insertBefore(el,ne);
+            
+          	return a;
+        },
 		pasteIn: function (args) {
 			/**вставить a в элемент.
 			Eсли args- объект, то принимает следующие свойства: {
@@ -582,6 +593,16 @@ Prev define version: 6.0.0 (15.10.2018)
 			}
 			return null;
 		},
+        nextElement:function get(){
+          	var a = this.a();
+			A.isEmpty(a) && A.error(A.errs.E_1);
+  		  	while (a = a.nextSibling) {
+				if (a.nodeType === 1) {
+					return a;
+				}
+			}
+          	return null;
+  		},
 		end: function get() { /**возвращает последний элемент массива a **/
 			var arr = this.a(!0);
 			return arr[arr.length - 1];

@@ -234,13 +234,13 @@ Prev define version: -
 			liss,
 			tmp;
 			act = A.args({
-					_ADD: !A.isEmpty(act) && act.constructor === W.Array ? act : [],
+					_ADD: !A.isEmpty(act) && act.__typeOfThis__ === "Array" ? act : [],
 					_REM: []
 				}, act);
 			act._ADD.all(function (obj) {
 				for (key in obj)
 					liss = key.split(","),
-					tmp = obj[key].constructor !== W.Array ? [obj[key]] : obj[key],
+					tmp = obj[key].__typeOfThis__ !== "Array" ? [obj[key]] : obj[key],
 					liss.all(function (lis) {
 						tmp.unshift(lis);
 						a.on.apply(a, tmp);
@@ -249,7 +249,7 @@ Prev define version: -
 			act._REM.all(function (obj) {
 				for (key in obj)
 					liss = key.split(","),
-					tmp = obj[key].constructor !== W.Array ? [obj[key]] : obj[key],
+					tmp = obj[key].__typeOfThis__ !== "Array" ? [obj[key]] : obj[key],
 					liss.all(function (lis) {
 						tmp.unshift(lis);
 						a.not.apply(a, tmp);
@@ -273,7 +273,7 @@ Prev define version: -
 				path: a.path
 			};
 			s.path = s.path || a.path;
-			W.A.activateLis(new BJSEvent(s, s.path, s.constructor === W.Object ? ev === "touch" : false), this.lisData, ev, W.TouchMouseEvent);
+			W.A.activateLis(new BJSEvent(s, s.path, s.__typeOfThis__ === "Object" ? ev === "touch" : false), this.lisData, ev, W.TouchMouseEvent);
 		},
 		adder: function (a, ev, func, s, exp) {
 			var lis = this.lisData,
@@ -366,7 +366,7 @@ Prev define version: -
 				path: a.path
 			};
 			s.path = s.path || a.path;
-			A.activateLis(new BJSEvent(s, s.path, s.constructor === Object ? ev === "touchstart" : false), this.lisData, ev, TouchMouseEvent);
+			A.activateLis(new BJSEvent(s, s.path, s.__typeOfThis__ === "Object" ? ev === "touchstart" : false), this.lisData, ev, TouchMouseEvent);
 		},
 		adder: function (a, ev, func, s, exp) {
 			var lis = this.lisData;
@@ -420,7 +420,7 @@ Prev define version: -
 				path: a.path
 			};
 			s.path = s.path || a.path;
-			A.activateLis(new BJSEvent(s, s.path, s.constructor === Object ? ev === "touchmove" : false), this.lisData, ev, TouchMouseEvent);
+			A.activateLis(new BJSEvent(s, s.path, s.__typeOfThis__ === "Object" ? ev === "touchmove" : false), this.lisData, ev, TouchMouseEvent);
 		},
 		adder: function (a, ev, func, s, exp) {
 			var lis = this.lisData;
@@ -467,7 +467,7 @@ Prev define version: -
 				path: a.path
 			};
 			s.path = s.path || a.path;
-			A.activateLis(new BJSEvent(s, s.path, s.constructor === Object ? ev === "touchend" : false), this.lisData, ev, TouchMouseEvent);
+			A.activateLis(new BJSEvent(s, s.path, s.__typeOfThis__ === "Object" ? ev === "touchend" : false), this.lisData, ev, TouchMouseEvent);
 		},
 		adder: function (a, ev, func, s, exp) {
 			var lis = this.lisData;

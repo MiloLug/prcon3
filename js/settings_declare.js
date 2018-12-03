@@ -6,10 +6,10 @@ var TEMP_SETTINGS_DECLARE=[
                   	return window.FILE_REDACTORS_INIT?Object.keys(window.FILE_REDACTORS_INIT):[];
                 }
             },
-          	group:"file editor",
+          	group:"file editor".tr,
  	      	realtime:false,
           	compareBy:"value",
- 	      	info:"select file editor",
+ 	      	info:"select file editor".tr,
  	      	param:{
  	          	_InitClass:function get(){
                   	return {
@@ -23,13 +23,13 @@ var TEMP_SETTINGS_DECLARE=[
 		{
  	      	type:"select",
  	      	options:[
-				"in new window",
-				"in explorer"
+				"in new window".tr,
+				"in explorer window".tr
 			],
-          	group:"file editor",
+          	group:"file editor".tr,
           	compareBy:"selectedIndex",
  	      	realtime:true,
- 	      	info:"the type of file editor (in the window or in the explorer) in which files will be opened by default",
+ 	      	info:"file editor type".tr,
  	      	param:{
 				name:"defaultFileEditorType",
  	          	def:1,
@@ -38,8 +38,8 @@ var TEMP_SETTINGS_DECLARE=[
  	    },
  	  	{
  	      	type:"checkbox",
- 	      	chctext:"show back and forward buttons",
-          	group:"path row",
+ 	      	chctext:"show back and forward buttons".tr,
+          	group:"path row".tr,
  	      	realtime:true,
  	      	info:"",
  	      	param:{
@@ -50,10 +50,10 @@ var TEMP_SETTINGS_DECLARE=[
  	    },
  	  	{
  	      	type:"checkbox",
- 	      	chctext:"show path",
- 	      	group:"path row",
+ 	      	chctext:"show path".tr,
+ 	      	group:"path row".tr,
  	      	realtime:true,
- 	      	info:"show the panel with the path to the folder",
+ 	      	info:"show path row".tr,
  	      	param:{
  	          	name:"showPathRow",
  	          	def:true,
@@ -62,10 +62,10 @@ var TEMP_SETTINGS_DECLARE=[
  	    },
  	  	{
  	      	type:"checkbox",
- 	      	chctext:"show left explorer",
- 	      	group:"explorer",
+ 	      	chctext:"show tree".tr,
+ 	      	group:"explorer".tr,
  	      	realtime:true,
- 	      	info:"show panel with file tree",
+ 	      	info:"",
  	      	param:{
  	          	name:"showLeftExplorer",
  	          	def:true,
@@ -74,10 +74,10 @@ var TEMP_SETTINGS_DECLARE=[
  	    },
       	{
  	      	type:"checkbox",
- 	      	chctext:"always show controls",
- 	      	group:"explorer",
+ 	      	chctext:"always show controls".tr,
+ 	      	group:"explorer".tr,
  	      	realtime:true,
- 	      	info:"always show arrows and other buttons in left explorer (in file tree)",
+ 	      	info:"show file tree controls".tr,
  	      	param:{
  	          	name:"showLeftExplorerControls",
  	          	def:false,
@@ -86,10 +86,10 @@ var TEMP_SETTINGS_DECLARE=[
  	    },
  	  	{
  	      	type:"checkbox",
- 	      	chctext:"use browser buttons",
- 	      	group:"explorer",
+ 	      	chctext:"use browser buttons".tr,
+ 	      	group:"explorer".tr,
  	      	realtime:false,
- 	      	info:"use the browser buttons 'forward' and 'back' to control the explorer",
+ 	      	info:"browser control path".tr,
  	      	param:{
  	          	name:"enableUseBrowserBFBtns",
  	          	def:true,
@@ -98,10 +98,10 @@ var TEMP_SETTINGS_DECLARE=[
  	    },
  	  	{
  	      	type:"checkbox",
- 	      	chctext:"show account save message",
- 	      	group:"other",
+ 	      	chctext:"show account save message".tr,
+ 	      	group:"local storage".tr,
  	      	realtime:false,
- 	      	info:"suggest saving account in local storage",
+ 	      	info:"suggest save account".tr,
  	      	param:{
  	          	name:"showAccountSaveMessage",
  	          	def:true,
@@ -110,11 +110,11 @@ var TEMP_SETTINGS_DECLARE=[
  	    },
       	{
  	      	type:"button",
- 	      	btntext:"clear local data",
+ 	      	btntext:"clear local data".tr,
           	funcs:"clearLocal",
           	realtime:true,
- 	      	group:"local storage",
- 	      	info:"clear all data(accounts, settings etc) in local storage",
+ 	      	group:"local storage".tr,
+ 	      	info:"clear all data".tr,
  	    },
       	{
  	      	type:"input",

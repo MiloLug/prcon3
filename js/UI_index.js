@@ -1,13 +1,67 @@
 (function (A, window, document) {
 	"use strict";
+	window.A.on("combination", "ctrl+r", function (e) {
+		UI.dialogPanel({
+			content:[{
+				type:"message",
+				text:"close page?".tr	
+			},{
+				type:"button",
+				btnID:"y",
+				btntext:"yes".tr
+			},{
+				type:"button",
+				btnID:"n",
+				btntext:"no".tr
+			}],
+			onEnter:"y",
+			func:function(data){
+				if(data.pressed==="y")
+					window.allowUnload=true,
+					window.location.reload();
+			}
+		});
+	},false);
 	window.UI.Ainit({
+      	langSet:function(){
+          	var cont=[{
+              	type:"message",
+              	text:"lan reload".tr
+            }, {
+              	type:"button",
+              	btntext:"cancel".tr,
+              	btnID:"cl"
+            }];
+          	LANG_LIST.all(function(ln,i){
+				cont.push({
+                  	type:"checkbox",
+                  	chctext:ln,
+                  	chcID:ln,
+                  	opt:{
+                      	checked:CUR_LANG===ln?".":"",
+                      	_INIT:function(e){
+                      		e.on("change",function(){
+                              	if(!e.checked)
+                                  	return e.checked=true;
+                              	localStorage.setItem(PRCON_LANGUAGE_SAVE_NAME,ln);
+              					window.allowUnload=true;
+              					window.location.reload();
+                			});
+                    	}
+                    }
+                });
+			});
+          	UI.dialogPanel({
+              	content:cont
+            });
+        },
 		closeAll: function () {
-			A.toArray(BUFFER.windows.viewInReload).all(function (w) {
+			var wcloser=function (w) {
+				w.allowUnload=true;
 				w.close();
-			});
-			A.toArray(BUFFER.windows.redactors).all(function (w) {
-				w.close();
-			});
+			};
+			A.toArray(BUFFER.windows.viewInReload).all(wcloser);
+			A.toArray(BUFFER.windows.redactors).all(wcloser);
 			".srcplace".html = "";
 			BUFFERToLocal();
 			BUFFER = new N_BUFFER();
@@ -87,7 +141,7 @@
 				tmp[g].all(function (dec) {
 					var tmpdom = {
 						div: {
-							title: !dec.realtime ? "need to reload" : "",
+							title: !dec.realtime ? "need to reload".tr : "",
 							class: "blackbtn sett_cont",
 							_DOM: [{
 									div: {
@@ -193,20 +247,21 @@
 			UI.dialogPanel({
 				content: [{
 						type: "message",
-						text: "Do you want to reload page?"
+						text: "close page?".tr
 					}, {
 						type: "button",
 						btnID: "ok",
-						btntext: "yes"
+						btntext: "yes".tr
 					}, {
 						type: "button",
 						btnID: "n",
-						btntext: "no"
+						btntext: "no".tr
 					}
 				],
 				onEnter: "ok",
 				func: function (req) {
 					if (req.pressed === "ok") {
+                      	window.allowUnload=true;
 						window.location.reload();
 					}
 				}
@@ -448,14 +503,14 @@
 			UI.dialogPanel({
 				content: [{
 						type: "message",
-						text: "Do you want to close this file?<br>" + url
+						text: "close file?".tr+"<br>" + url
 					}, {
 						type: "button",
-						btntext: "yes",
+						btntext: "yes".tr,
 						btnID: "y"
 					}, {
 						type: "button",
-						btntext: "no",
+						btntext: "no".tr,
 						btnID: "n"
 					}
 				],
@@ -480,14 +535,14 @@
 			UI.dialogPanel({
 				content: [{
 						type: "message",
-						text: "Do you want to save this file?<br>" + url
+						text: "save file?".tr+"<br>" + url
 					}, {
 						type: "button",
-						btntext: "yes",
+						btntext: "yes".tr,
 						btnID: "y"
 					}, {
 						type: "button",
-						btntext: "no",
+						btntext: "no".tr,
 						btnID: "n"
 					}
 				],
@@ -562,7 +617,7 @@
 					]
 				},
 				success: function (d) {
-					UI.setLSToPlace("body", false);
+                  	UI.setLSToPlace("body", false);
 					if (d.error.length > 0) {
 						UI.errors(d.error);
 						return;
@@ -617,7 +672,7 @@
 							UI.dialogPanel({
 								content: [{
 										type: "message",
-										text: "you are already logged in. Relogin?"
+										text: "already logged".tr
 									}
 								],
 								func: function (d) {
@@ -632,7 +687,7 @@
 							UI.dialogPanel({
 								content: [{
 										type: "message",
-										text: "Do you want to add this account to the local store?"
+										text: "account to local?".tr
 									}, {
 										type: "input",
 										inpID: "name",
@@ -642,11 +697,11 @@
 									}, {
 										type: "button",
 										btnID: "ok",
-										btntext: "ok"
+										btntext: "ok".tr
 									}, {
 										type: "button",
 										btnID: "cancel",
-										btntext: "cancel"
+										btntext: "cancel".tr
 									}
 								],
 								onEnter: "ok",
@@ -680,15 +735,15 @@
 									}, {
 										type: "button",
 										btnID: "ok",
-										btntext: "ok"
+										btntext: "ok".tr
 									}, {
 										type: "button",
 										btnID: "no",
-										btntext: "no"
+										btntext: "no".tr
 									}, {
 										type: "button",
 										btnID: "new",
-										btntext: "new store"
+										btntext: "new store".tr
 									}
 								],
 								func: function (res) {
@@ -737,15 +792,15 @@
 			UI.dialogPanel({
 				content: [{
 						type: "message",
-						text: "Do you really want to delete ALL local data?"
+						text: "delete all data?".tr
 					}, {
 						type: "button",
 						btnID: "ok",
-						btntext: "ok"
+						btntext: "ok".tr
 					}, {
 						type: "button",
 						btnID: "cancel",
-						btntext: "cancel"
+						btntext: "cancel".tr
 					}
 				],
 				func: function (req) {
@@ -786,17 +841,17 @@
 			UI.dialogPanel({
 				content: [{
 						type: "message",
-						text: "Do you want to delete it?"
+						text: "delete it?".tr
 					}, {
 						type: "message",
 						text: url
 					}, {
 						type: "button",
-						btntext: "yes",
+						btntext: "yes".tr,
 						btnID: "yes"
 					}, {
 						type: "button",
-						btntext: "no",
+						btntext: "no".tr,
 						btnID: "no"
 					}
 				],
@@ -816,17 +871,17 @@
 			UI.dialogPanel({
 				content: [{
 						type: "message",
-						text: "Do you want to delete it?"
+						text: "delete it?".tr
 					}, {
 						type: "message",
 						text: list.join("<br>")
 					}, {
 						type: "button",
-						btntext: "yes",
+						btntext: "yes".tr,
 						btnID: "yes"
 					}, {
 						type: "button",
-						btntext: "no",
+						btntext: "no".tr,
 						btnID: "no"
 					}
 				],
@@ -843,11 +898,162 @@
 				}
 			});
 		},
+		createZip: function (TH, url, list) {
+			UI.dialogPanel({
+				content: [{
+						type: "message",
+						text: "enter archive".tr+":"
+					}, {
+						type: "input",
+						inpID: "name",
+						opt: {
+							placeholder: "my.zip"
+						}
+					}, {
+						type: "button",
+						btntext: "create".tr,
+						btnID: "create"
+					}, {
+						type: "button",
+						btntext: "cancel".tr,
+						btnID: "cancel"
+					}
+				],
+				onEnter: "create",
+				func: function (data) {
+					if (data.pressed !== "create")
+						return;
+					if (data.values.name == "")
+						return UI.errors(["no name"]);
+					
+					list=list || [];
+					if(list.length<1)
+						return;
+
+					url = url || TH.attrFromPath("_url");					
+
+					var path = PATH(url, UI.errors);
+					UI.setLSToPlace("body", true);
+					path.common("createZip", {
+						name: data.values.name,
+						list: list
+					}).wait(function (vl, W) {
+						UI.setLSToPlace("body", false);
+						vl = vl[0];
+						if (vl.type === "requery" && vl.info === "obj exists" || vl.type === "error")
+							return UI.errors([vl.info]);
+						UI.reloadListsChanges(TH, path.url);
+					});
+				}
+			});
+		},
+		rename: function (TH, parent, oldNames) {
+			UI.dialogPanel({
+				content: [{
+						type: "message",
+						text: "enter rename".tr+":<br><pre>function (oldName,oldExtension,nameIndex){</pre>"
+					}, {
+						type: "message",
+						text: "<pre>var newName;</pre>",
+                      	opt: {
+                          	_CSS:JS_STYLE.renameDialogCodeTab
+                        }
+					}, {
+						type: "textarea",
+						inpID: "name",
+						opt: {
+							placeholder: "new name",
+							_CSS:JS_STYLE.renameDialogTextArea,
+							_LIS:[{
+								"combination":["tab",function(e){
+									document.execCommand("insertText", false, "\t");
+								},false]
+							}]
+						}
+					}, {
+						type: "message",
+						text: "<pre>return newName;</pre>",
+                      	opt: {
+                          	_CSS:JS_STYLE.renameDialogCodeTab
+                        }
+					}, {
+						type: "message",
+						text: "<pre>}</pre>"
+					}, {
+						type: "checkbox",
+						chctext: "this is JS".tr,
+						chcID: "isjs"
+					}, {
+						type: "checkbox",
+						chctext: "no ext rename".tr,
+						chcID: "noext"
+					}, {
+                      	type:"message",
+                      	text:"no ext rename info".tr
+                    }, {
+						type: "button",
+						btntext: "rename".tr,
+						btnID: "rename"
+					}, {
+						type: "button",
+						btntext: "cancel".tr,
+						btnID: "cancel"
+					}
+				],
+				onEnter: "rename",
+				func: function (data) {
+					if (data.pressed !== "rename")
+						return;
+					if (data.values.name == "")
+						return UI.errors(["no name"]);
+                  	if (!oldNames||oldNames.length<1)
+                      	return UI.errors(["no processed"]);
+					
+                  	var send={
+                      	oldNames:oldNames,
+                      	newNames:oldNames.all(function(nm,i){
+                          	nm=PATH(nm).divNameExt();
+                      		if(data.checked.isjs)
+                          		nm= new String(Function("oldName,oldExtension,nameIndex","var newName;\n\r"+data.values.name+";\n\r return newName;")(nm[0],nm[1]||"",i));
+                      		else
+                        	  	nm= new String(data.values.name);
+                          	return nm;
+                    	}).return,
+                      	staticExtension:data.checked.noext
+                    };
+					
+					parent = parent || PATH(TH.attrFromPath("_url")).parentDir;					
+
+					var path = PATH(parent, UI.errors);
+					UI.setLSToPlace("body", true);
+                  	path.common("rename", send).wait(function (vl, W) {
+						UI.setLSToPlace("body", false);
+						vl = vl[0];
+						if (vl.type === "requery" && vl.info === "obj exists" || vl.type === "error")
+							return UI.errors([vl.info]);
+						UI.reloadListsChanges(TH, path.url);
+						UI.dialogPanel({
+							content:[{
+								type:"message",
+								text:"renamed".tr+":<br>"+vl.renames.all(function(rn){
+									return rn[0]+" => "+rn[1];
+								}).return.join("<br>")
+							},{
+								type:"button",
+								btntext:"ok".tr,
+								btnID:"ok"
+							}],
+							onEnter:"ok"
+						});
+					});
+				}
+			});
+		},
 		createDir: function (TH, url) {
 			UI.dialogPanel({
 				content: [{
 						type: "message",
-						text: "Enter dir name:"
+						text: "Enter dir name".tr+":"
 					}, {
 						type: "input",
 						inpID: "name",
@@ -856,11 +1062,11 @@
 						}
 					}, {
 						type: "button",
-						btntext: "create",
+						btntext: "create".tr,
 						btnID: "create"
 					}, {
 						type: "button",
-						btntext: "cancel",
+						btntext: "cancel".tr,
 						btnID: "cancel"
 					}
 				],
@@ -881,8 +1087,8 @@
 					}).wait(function (vl, W) {
 						UI.setLSToPlace("body", false);
 						vl = vl[0];
-						if (vl.type === "requery" && vl.info === "obj exists")
-							return UI.errors(["already exists"]);
+						if (vl.type === "requery" && vl.info === "obj exists" || vl.type === "error")
+							return UI.errors([vl.info]);
 						UI.reloadListsChanges(TH, path.url);
 					});
 				}
@@ -892,7 +1098,7 @@
 			UI.dialogPanel({
 				content: [{
 						type: "message",
-						text: "Enter file name:"
+						text: "Enter file name".tr+":"
 					}, {
 						type: "input",
 						inpID: "name",
@@ -901,11 +1107,11 @@
 						}
 					}, {
 						type: "button",
-						btntext: "create",
+						btntext: "create".tr,
 						btnID: "create"
 					}, {
 						type: "button",
-						btntext: "cancel",
+						btntext: "cancel".tr,
 						btnID: "cancel"
 					}
 				],
@@ -925,8 +1131,8 @@
 					}).wait(function (vl, W) {
 						UI.setLSToPlace("body", false);
 						vl = vl[0];
-						if (vl.type === "requery" && vl.info === "obj exists")
-							return UI.errors(["already exists"]);
+						if (vl.type === "requery" && vl.info === "obj exists" || vl.type === "error")
+							return UI.errors([vl.info]);
 						UI.reloadListsChanges(TH, path.url);
 					});
 				}
@@ -955,10 +1161,10 @@
 				errs.length && UI.dialogPanel({
 					content: [{
 							type: "message",
-							text: "not copied:<br>" + errs.join("<br>")
+							text: "not copied".tr+":<br>" + errs.join("<br>")
 						}, {
 							type: "button",
-							btntext: "ok",
+							btntext: "ok".tr,
 							btnID: "ok"
 						}
 					]
@@ -984,7 +1190,7 @@
 					UI.dialogPanel({
 						content: [{
 								type: "message",
-								text: "Copy to clipboard: Ctrl C, Enter"
+								text: "copy instruction".tr
 							}, {
 								type: "textarea",
 								inpID: ".",
@@ -996,7 +1202,7 @@
 								}
 							}, {
 								type: "button",
-								btntext: "ok",
+								btntext: "ok".tr,
 								btnID: "ok"
 							}
 						],

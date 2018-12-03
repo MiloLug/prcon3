@@ -44,7 +44,7 @@ var PATH = function (url, errFun) {
 						]
 					},
 					success: function (d) {
-						if (d.error.length > 0) {
+                      	if (d.error.length > 0) {
 							errFun && errFun(d.error);
 							w.value = 0;
 							return;
@@ -78,7 +78,29 @@ var PATH = function (url, errFun) {
 				return e !== ".";
 			});
 		return tmp.join("/") + "/";
-	}
+	},
+	divNameExt:function(){
+      	var name = obj.arrUrl().pop(),
+            r="",
+			e="",
+            nm,
+            count;
+        name = name.split(".");
+		if(name.length<2)
+			return name;
+		while((count=name.length)>0){
+			nm=name.shift(),
+			count=name.length;
+			if(count<1){
+				e=nm;
+			}else{
+				r+=nm;
+				if(count>1)
+					r+=".";
+			}
+		}
+		return [r,e];
+    }
 };
 Object.defineProperties(obj, {
 	url: {

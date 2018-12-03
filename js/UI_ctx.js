@@ -87,7 +87,7 @@ window.UI.ctx= {
 				if (TH.opt("opened") === "true")
 					list.content.push({
 						type: "button",
-						btntext: "reload",
+						btntext: "Reload".tr,
 						btnID: "reloadInTree"
 					});
 				UI.ctx.openContextmenu(list, coo, bbl);
@@ -97,35 +97,42 @@ window.UI.ctx= {
 				list = {
 					content: [{
 							type: "button",
-							btntext: "Copy",
+							btntext: "Copy".tr,
 							btnID: "copy" + (sel ? "all" : "")
 						}, {
 							type: "button",
-							btntext: "Copy URL",
+							btntext: "Copy URL".tr,
 							btnID: "copyurl"
 						}, {
 							type: "line",
 						}, {
 							type: "button",
-							btntext: "Delete",
-							btnID: "delete"
+							btntext: "Add to archive".tr,
+							btnID:"addZip" + (sel ? "all" : "")
+						}, {
+							type: "line",
 						}, {
 							type: "button",
-							btntext: "Rename - d.r.",
-							btnID: "rename"
+							btntext: "Delete".tr,
+							btnID: "delete" + (sel ? "all" : "")
+						}, {
+							type: "button",
+							btntext: "Rename".tr,
+							btnID: "rename" + (sel ? "all" : "")
 						}
 					],
 					func: function (data) {
 						var pr = data.pressed,
-						url = TH.attrFromPath("_url");
+						url = TH.attrFromPath("_url"),
+						list = ".dirPlace.selected".all(function (el) {
+								return el.attrFromPath("_url");
+							}).return;
 						switch (pr) {
 						case "delete":
 							UI.deleteDirFile(TH, url);
 							break;
 						case "deleteall":
-							UI.deleteAllList(TH, ".dirPlace.selected".all(function (el) {
-									return el.attrFromPath("_url");
-								}).return);
+							UI.deleteAllList(TH, list);
 							break;
 						case "copy":
 							BUFFER.explorer.copied = [url];
@@ -134,25 +141,24 @@ window.UI.ctx= {
 							UI.copyText(TH, url);
 							break;
 						case "copyall":
-							BUFFER.explorer.copied = ".dirPlace.selected".all(function (el) {
-									return el.attrFromPath("_url");
-								}).return;
+							BUFFER.explorer.copied = list;
+							break;
+						case "addZip":
+							UI.createZip(TH, PATH(url).parentDir,[url]);
+							break;
+						case "addZipall":
+							UI.createZip(TH, PATH(list[0]).parentDir,list);
+							break;
+						case "rename":
+							var tmpP=PATH(url);
+							UI.rename(TH, tmpP.parentDir,[tmpP.name]);
+							break;
+						case "renameall":
+							UI.rename(TH, PATH(list[0]).parentDir,list.all(function(el){return PATH(el).name;}).return);
 							break;
 						}
 					}
 				};
-				if (sel)
-					list.content.push({
-						type: "line",
-					}, {
-						type: "button",
-						btntext: "Delete selected",
-						btnID: "deleteall"
-					}, {
-						type: "button",
-						btntext: "Rename selected - d.r.",
-						btnID: "remaneall"
-					});
 
 				UI.ctx.openContextmenu(list, coo, bbl);
 			},
@@ -160,21 +166,20 @@ window.UI.ctx= {
 				var list = {
 					content: [{
 							type: "button",
-							btntext: "Create file",
+							btntext: "Create file".tr,
 							btnID: "mkfile"
 						}, {
 							type: "button",
-							btntext: "Create dir",
+							btntext: "Create dir".tr,
 							btnID: "mkdir"
 						}, {
 							type: "button",
 							click: !!BUFFER.explorer.copied.length,
-							btntext: "Paste",
-							text: "Paste",
+							btntext: "Paste".tr,
 							btnID: "paste",
 						}, {
 							type: "button",
-							btntext: "Reload",
+							btntext: "Reload".tr,
 							btnID: "reload"
 						}
 					],

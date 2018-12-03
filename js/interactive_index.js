@@ -193,26 +193,6 @@ A({
 					el.remClass("selected");
 				});
 			});
-		},
-		addFromText: function (txt, pos) {
-			var a = this.a(),
-			el = document.createElement('div');
-			el.innerHTML = txt;
-			el.children.all(function (elem) {
-				elem.paste({
-					in: a,
-					pos: pos
-				});
-			});
-			return a;
-		},
-		br: function get() {
-			var a = this.a();
-			a.parentNode.addElem({
-				elem: "br",
-				pos: a
-			});
-			return a;
 		}
 	});
 
