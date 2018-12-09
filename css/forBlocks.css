@@ -104,21 +104,19 @@
 /*</styles for inputs checkbox>*/
 
 /*<styles for login src>*/
-[act=login]>.backcontent,[act=loginFtp]>.backcontent{
+[act=login]>.backcontent>f-scrollplane,[act=loginFtp]>.backcontent>f-scrollplane{
   display: flex;
   flex-direction: column;
   padding:10px;
 }
 /*</styles for login src>*/
 
-/*<styles for loginLocal src AND openedFilesList>*/
-[act=loginLocal]>.backcontent,[act=openedFilesList]>.backcontent{
+/*<styles for disordered lists>*/
+.disorderedList{
   padding:10px;
-  overflow-x: hidden;
-  overflow-y: auto;
   word-break: break-all;
 }
-[act=loginLocal]>.backcontent>button,[act=openedFilesList]>.backcontent>button{
+.disorderedList>.item{
   min-width:200px;
   height: 40px;
   background:rgb(34, 34, 39);
@@ -129,7 +127,7 @@
   position:relative;
   cursor:pointer;
 }
-/*</styles for loginLocal src AND openedFilesList>*/
+/*</styles for disordered lists>*/
 
 /*<styles for dialogs>*/
 .dialogback{
@@ -138,7 +136,7 @@
   position:fixed;
   top:0;
   left:0;
-  background:rgba(0, 0, 0, 0.57);
+  background:rgba(0, 0, 0, 0.77);
   display: flex;
 }
 .dialog{
