@@ -88,9 +88,11 @@
   
 <div class="sources" hidden>
 	<div act="login">
-      	<div class="backcontent center">
-   		<input type="text" class="login inputstyle cls" placeholder="URL">
-      	<input type="text" class="pass inputstyle cls" placeholder="PASSWORD">
+      	<div class="backcontent">
+        @scrollplane::y attrs: class="center",
+          	<input type="text" class="login inputstyle cls" placeholder="URL">
+      		<input type="text" class="pass inputstyle cls" placeholder="PASSWORD">
+        ::@
       	</div>
         <div class="downmenu">
           	<button class="blackbtn bwhitefont cls" funcs="sendLogin">@set::"login".tr::@</button>
@@ -100,10 +102,9 @@
       	</div>
     </div>
   	
-  	<div act="settings" fsopen="<f-scrollplane>" fsclose="</f-scrollplane><f-scroll-y><f-wheel></f-wheel></f-scroll-y>">
+  	<div act="settings">
  		<div class="backcontent">
-   			@set::selfAct.opt("fsopen")::@
-          	@set::selfAct.opt("fsclose")::@
+   			@scrollplane::Y::@
       	</div>
         <div class="downmenu">
           	<button class="blackbtn bwhitefont cls" funcs="resetSettings">@set::"reset settings".tr::@</button>
@@ -113,10 +114,12 @@
   
   	<div act="loginFtp">
       	<div class="backcontent center">
-        <input type="text" class="urlPhp inputstyle cls" placeholder="PHP URL">
-        <input type="text" class="urlFtp inputstyle cls" placeholder="FTP URL">
-   		<input type="text" class="login inputstyle cls" placeholder="FTP LOGIN">
-      	<input type="text" class="pass inputstyle cls" placeholder="FTP PASSWORD">
+        @scrollplane::y attrs: class="center",
+        	<input type="text" class="urlPhp inputstyle cls" placeholder="PHP URL">
+        	<input type="text" class="urlFtp inputstyle cls" placeholder="FTP URL">
+   			<input type="text" class="login inputstyle cls" placeholder="FTP LOGIN">
+      		<input type="text" class="pass inputstyle cls" placeholder="FTP PASSWORD">
+      	::@	
       	</div>
         <div class="downmenu">
           	<button class="blackbtn bwhitefont cls" funcs="sendLoginFtp">@set::"login".tr::@</button>
@@ -128,6 +131,7 @@
   	
   	<div act="loginLocal">
  		<div class="backcontent">
+          	@scrollplane::y attrs: class="disorderedList"::@
  		</div>
   		<div class="downmenu">
           	<button class="blackbtn bwhitefont cls" funcs="openLogin">@set::"new account".tr::@</button>
@@ -184,9 +188,19 @@
 	</div>
   	<div act="openedFilesList">
  		<div class="backcontent">
+          	@scrollplane::y attrs: class="disorderedList"::@
  		</div>
   		<div class="downmenu">
-          	<button class="blackbtn bwhitefont cls" funcs="easyCancel">set::"close".tr::@</button>
+          	<button class="blackbtn bwhitefont cls" funcs="easyCancel">@set::"close".tr::@</button>
+  		</div>
+  	</div>
+  	<div act="loadingProcessList">
+ 		<div class="backcontent">
+          	@scrollplane::y attrs: class="disorderedList"::@
+ 		</div>
+  		<div class="downmenu">
+          	<button class="blackbtn bwhitefont cls" funcs="easyCancel">@set::"close".tr::@</button>
+          	<button class="blackbtn bwhitefont cls" funcs="stopAllLoads">@set::"stop all".tr::@</button>
   		</div>
   	</div>
 </div>
@@ -236,8 +250,8 @@
 			<button class="blackbtn bwhitefont cls" funcs="openSettings">
 			&#10978;
 			</button>
-          	<button class="blackbtn bwhitefont cls" funcs="langSet">
-			&#127757;
+          	<button class="blackbtn bwhitefont cls" funcs="openDownloads">
+			&#129095;
 			</button>
 			<button class="blackbtn bwhitefont cls" funcs="toggleDirSelecting">
 			&#10003;
