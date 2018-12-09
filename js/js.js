@@ -102,6 +102,11 @@ Prev define version: 6.0.0 (15.10.2018)
 				return _cType(this);
 			}
 		},
+		__cName__:{
+			get: function () {
+				return this.constructor.name;
+			}
+		},
 		errored: {
 			value: function (test) {
 				if (this === errored)
@@ -824,8 +829,9 @@ Prev define version: 6.0.0 (15.10.2018)
 								return;
 
 							if (arg.changed) {
+                              	var tmpWt;
 								if (!nwr)
-									obj.value = req.fn(arg.vl, obj);
+                                  	obj.value=req.fn(arg.vl, obj);
 								else
 									req.fn(arg.vl, obj);
 								return;
@@ -858,29 +864,46 @@ Prev define version: 6.0.0 (15.10.2018)
 				wt: false,
 				er: false,
 				pr: false,
+              	nwr: NoWaitReturn,
 				arg: arg,
+              	pro: progress,
 				err: error,
 				time: -1
 			};
 			W.Object.defineProperties(waiter, {
 				value: {
 					set: function (vl) {
-						arg.vl = vl;
-						arg.changed = true;
-						waiter.time = Date.now();
+                      	function _fn(vlW){
+                          	arg.vl=vlW;
+                        	arg.changed = true;
+                        	waiter.time = Date.now();
+                        }
+                      	vl&&vl.constructor===A.start?vl.wait(function(vlW){
+                            _fn(vlW);
+                        }):(_fn(vl));
 					}
 				},
 				errorValue: {
 					set: function (vl) {
-						error.vl = vl;
-						error.changed = true;
-						waiter.time = Date.now();
+						function _fn(vlW){
+                          	error.vl=vlW;
+                        	error.changed = true;
+                        	waiter.time = Date.now();
+                        }
+                      	vl&&vl.constructor===A.start?vl.wait(function(vlW){
+                            _fn(vlW);
+                        }):(_fn(vl));
 					}
 				},
 				progressValue: {
 					set: function (vl) {
-						progress.vl = vl;
-						progress.changed = true;
+						function _fn(vlW){
+                          	progress.vl=vlW;
+                        	progress.changed = true;
+                        }
+                      	vl&&vl.constructor===A.start?vl.wait(function(vlW){
+                            _fn(vlW);
+                        }):(_fn(vl));
 					}
 				}
 			});
@@ -893,14 +916,15 @@ Prev define version: 6.0.0 (15.10.2018)
 				}
 				if (NoWaitReturn || arg.changed || error.changed)
 					return;
-				waiter.value = tmp;
+				waiter.value=tmp;
 			}, 0);
+          	waiter.constructor=A.start;
 			return waiter;
 		},
 		eGetElem: function (e) {
 			return e.srcElement || e.target || e.toElement || e.fromElement || e.relatedTarget;
 		},
-		XMLHTTPRequest: function () {
+		XHR: function () {
 			/**
 			вспомогательная функция для ajax()
 			 **/
@@ -915,9 +939,6 @@ Prev define version: 6.0.0 (15.10.2018)
 				return new W.XMLHttpRequest();
 
 			}
-		},
-		altUrl: function (file) { /**использовать адрес текущего файла, если указана пустота("")**/
-			return W.location.pathname + (file || "");
 		},
 		cPos: function (e) {
 			/**обнаружить позицию курсора относительно scope(стандарт- client)
@@ -957,8 +978,7 @@ Prev define version: 6.0.0 (15.10.2018)
 					ins[nm] !== undefined && (standart[nm] = ins[nm]);
 			return standart;
 		},
-		ajax: function (param) {
-			/**ajax...
+		ajax: function(args){/**ajax...
 			принимает строку или объект
 			если строка, то принимает только адрес файла к торому делается запрос
 			если объект:{
@@ -974,47 +994,108 @@ Prev define version: 6.0.0 (15.10.2018)
 			если была указана функция в succes, то .ajax() вернёт её return,
 			если нет, то будет возвращён ответ сервера.
 			 **/
-			var s = A.args({
-					url: param,
-					type: "GET",
-					cache: !1,
-					header: "application/x-www-form-urlencoded",
-					async: !1,
-					dataType: "text",
-					data: null,
-					sucсess: null,
-					progress: null,
-					resCode: null,
-					error: null
-				}, param),
-			XHR = this.XMLHTTPRequest(),
-			res = "",
-			FD = s.data,
-			url = s.url && s.url[0] !== '?' ? s.url : this.altUrl(s.url);
-			url += s.cache ? ((url.indexOf('?') >= 0) ? '&' : '?') + '_=' + new Date().getTime() : "";
-
-			if (s.dataType === "json")
-				FD = A.json(s.data),
-				s.header = "application/json";
-			else if (s.dataType === "form" || (!A.isEmpty(s.data) && param.data.__typeOfThis__ !== "String")) {
-				s.header = "",
-				FD = new W.FormData;
-				for (var nm in s.data) {
-					FD.append(nm, s.data[nm]);
-				}
-			}
-			XHR.open(s.type, url, s.async),
-			s.header && XHR.setRequestHeader("Content-type", s.header),
-			XHR.onerror = s.error,
-			XHR.onprogress = s.progress,
-			XHR.onreadystatechange = function () {
-				XHR.readyState === 4 && (
-					XHR.status === 200 && (s.success ? (res = s.success(s.dataType === "json" ? A.json(XHR.responseText) : XHR.responseText, XHR.responseText)) : (res = XHR.responseText)),
-					s.resCode && s.resCode(XHR.status));
-			},
-			XHR.send(FD);
-			return res;
-		},
+        	var s=A.args({
+            	url: args,
+				type: "GET",
+				cache: !1,
+				header: "application/x-www-form-urlencoded",
+				async: !1,
+				dataType: "text",
+				data: null,
+				sucсess: null,
+				upprogress: null,
+				downprogress: null,
+              	loadstart: null,
+              	abort: null,
+				error: null,
+				load: null,
+				timeout: null,
+				loadend: null,
+              	end: null,
+				resCode: null
+            },args),
+                XHR=A.XHR(),
+                tmp;
+          
+          	tmp = s.url && s.url.__typeOfThis__ === "String" ? s.url.trim() : "";
+            tmp = tmp[0] === "?" ? W.location.pathname + tmp : tmp;
+          	tmp += s.cache ? ((tmp.indexOf('?') >= 0) ? '&' : '?') + '_=' + new Date().getTime() : "";
+          	
+          	s.url=tmp;
+          	
+          	switch(s.dataType){
+              	case "json":
+                	s.data=A.json(s.data);
+                	s.header="application/json";
+                	break;
+              	case "form":
+                	s.header="";
+                	tmp=new W.FormData();
+                	for(var nm in s.data)
+                      	tmp.append(nm,s.data[nm]);
+                	s.data=tmp;
+            }
+          	
+          	XHR.open(s.type, s.url, s.async);
+          	s.header && XHR.setRequestHeader("Content-type", s.header);
+          
+          	s.upprogress&&XHR.upload.addEventListener("progress",s.upprogress);
+          	s.downprogress&&XHR.addEventListener("progress",s.downprogress);
+          	s.loadstart&&XHR.addEventListener("loadstart",s.loadstart);
+          	s.abort&&XHR.addEventListener("abort",s.abort);
+          	s.error&&XHR.addEventListener("error",s.error);
+          	s.load&&XHR.addEventListener("load",s.load);
+          	s.timeout&&XHR.addEventListener("timeout",s.timeout);
+			s.loadend&&XHR.addEventListener("loadend",s.loadend);
+          	
+          	var ended=false,
+                end=function(e){
+                  	if(ended)
+                      	return;
+                  	ended=true;
+                  	s.end(e);
+                };
+          	s.end&&(
+            	XHR.addEventListener("abort",end),
+              	XHR.addEventListener("error",end),
+              	XHR.addEventListener("timeout",end),
+              	XHR.addEventListener("loadend",end)
+            );
+          	
+          	tmp=A.start(function(obj){
+              	XHR.addEventListener("readystatechange",function (e) {
+					if(XHR.readyState === 4){
+                       	s.resCode && s.resCode(XHR.status);
+                      	s.end&&end(e);
+                      	if(XHR.status === 200){
+                          	var resp = s.dataType === "json" ? A.json(XHR.responseText) : XHR.responseText;
+							obj.value = s.success ? s.success(resp) : resp;
+                        }
+                	}
+				});
+              	XHR.send(s.data);
+            },true);
+			return {
+              	wait:tmp.wait,
+              	XHR:XHR
+            };
+        },
+      	addJS: function(urls){
+      		var el;
+          	if(!urls)
+              	return;
+          	urls=urls.almostArray?urls:[urls];
+    		urls.all(function(url){
+              	el=A.createElem('script',{
+  						src:url,
+  						type:"text/javascript"
+					});
+              		el.async=false;
+              		el.pasteIn("head"); 	
+                
+            });	
+          
+    	},
 		toArray: function (obj, ind) {
 			/**перевод объекта в массив.
 			переводит объект в массив вида [val1,val2,val3]
@@ -1148,7 +1229,8 @@ Prev define version: 6.0.0 (15.10.2018)
 			}
 		},
 		_TEMP: {
-			dataModSeq: A.start()
+			dataModSeq: A.start(),
+          	addJSSeq:A.start()
 		}
 	}, W);
 })(window);

@@ -69,6 +69,7 @@ var ACCOUNT={
                 }
             }
     	},
+        this.downloads = {},
 		this.redactors = {},
         this.windows= {
 			viewInReload: {},
@@ -147,7 +148,32 @@ var ACCOUNT={
     applySettings=function(){
       	var data=BUFFER.localData.settings;
        	"body".opt(data.I);
-    };
+    },
+    b64toBlob=function (b64Data, contentType, sliceSize) {
+		contentType = contentType || '';
+		sliceSize = sliceSize || 512;
+
+		var byteCharacters = atob(b64Data);
+		var byteArrays = [];
+
+		for (var offset = 0; offset < byteCharacters.length; offset += sliceSize) {
+			var slice = byteCharacters.slice(offset, offset + sliceSize);
+
+			var byteNumbers = new Array(slice.length);
+			for (var i = 0; i < slice.length; i++) {
+				byteNumbers[i] = slice.charCodeAt(i);
+			}
+
+			var byteArray = new Uint8Array(byteNumbers);
+
+			byteArrays.push(byteArray);
+		}
+
+		var blob = new Blob(byteArrays, {
+				type: contentType
+			});
+		return blob;
+	};
   	
 /*SET localStorage AND BUFFER localData*/
 (function(){

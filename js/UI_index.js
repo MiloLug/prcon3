@@ -24,35 +24,38 @@
 	},false);
 	window.UI.Ainit({
       	langSet:function(){
-          	var cont=[{
-              	type:"message",
-              	text:"lan reload".tr
-            }, {
-              	type:"button",
-              	btntext:"cancel".tr,
-              	btnID:"cl"
-            }];
-          	LANG_LIST.all(function(ln,i){
-				cont.push({
-                  	type:"checkbox",
-                  	chctext:ln,
-                  	chcID:ln,
-                  	opt:{
-                      	checked:CUR_LANG===ln?".":"",
-                      	_INIT:function(e){
-                      		e.on("change",function(){
-                              	if(!e.checked)
-                                  	return e.checked=true;
-                              	localStorage.setItem(PRCON_LANGUAGE_SAVE_NAME,ln);
-              					window.allowUnload=true;
-              					window.location.reload();
-                			});
-                    	}
-                    }
-                });
-			});
-          	UI.dialogPanel({
-              	content:cont
+          	LANG_LIST.wait(function(list){
+          		var cont=[{
+            	  	type:"message",
+            	  	text:"lan reload".tr
+            	}, {
+            	  	type:"button",
+            	  	btntext:"cancel".tr,
+            	  	btnID:"cl"
+            	}];
+          		A.toArray(list,true).all(function(prop){
+            	  	cont.push({
+            	      	type:"checkbox",
+            	      	chctext:prop[0],
+            	      	chcID:prop[0],
+            	      	opt:{
+            	          	checked:CUR_LANG===prop[1]?".":"",
+            	          	_INIT:function(e){
+            	          		e.on("change",function(){
+            	                  	if(!e.checked)
+            	                      	return e.checked=true;
+            	                  	localStorage.setItem(PRCON_LANGUAGE_SAVE_NAME,prop[1]);
+                                  	console.log(prop[0]);
+            	  					window.allowUnload=true;
+            	  					window.location.reload();
+            	    			});
+            	        	}
+            	        }
+            	    });
+				});
+          		UI.dialogPanel({
+            	  	content:cont
+            	});
             });
         },
 		closeAll: function () {
@@ -80,11 +83,12 @@
 			".back[act=login]".errored().remElem();
 		},
 		openLoginLocal: function () {
-			var back = UI.setSrcToPlace("loginLocal", true);
+			var back = UI.setSrcToPlace("loginLocal", true),
+                sp= back.child(".backcontent>f-scrollplane");
 			".back[act=login]".errored().remElem(),
 			".back[act=loginFtp]".errored().remElem(),
 			BUFFER.localData.accounts.name.all(function (nm, i) {
-				back.child(".backcontent").addElem("button", {
+				sp.addElem("button", {
 					title: BUFFER.localData.accounts.ftp[i] ?
 					"PHP: " + BUFFER.localData.accounts.urlPhp[i] +
 					"\nFTP url: " + BUFFER.localData.accounts.urlFtp[i] +
@@ -92,19 +96,19 @@
 					 :
 					BUFFER.localData.accounts.login[i],
 					funcs: "sendLoginLocal",
-					class: "cls",
+					class: "cls item",
 					_TXT: nm
 				});
 			});
 		},
 		openedFiles: function (TH, url) {
 			var back = UI.setSrcToPlace("openedFilesList", true),
-			cont = back.child(".backcontent");
+			cont = back.child(".backcontent>f-scrollplane");
 			url = PATH(url || TH.attrFromPath("_url")).fixUrl();
 			Object.keys(BUFFER.redactors).all(function (nm, i) {
 				cont.addElem("button", {
 					funcs: "toTopFileRedactor,easyCancel",
-					class: "cls",
+					class: "cls item",
 					emhover: url === nm ? "." : "",
 					_url: nm,
 					_TXT: nm
@@ -731,7 +735,7 @@
 							UI.dialogPanel({
 								content: [{
 										type: "message",
-										text: "This account already exists in the local store (name: " + data.name[pos] + "). <br> Do you want to update the data?"
+										text: "Account exists".tr+"\n("+"name".tr+":" + data.name[pos] + ")"
 									}, {
 										type: "button",
 										btnID: "ok",
@@ -1173,6 +1177,81 @@
 				ok.length && UI.reloadListsChanges(TH, args.destinationDir);
 			});
 		},
+      	download: function (TH, list, reload){
+          	var inLoad=[];
+        	list.all(function(item){
+            	var path=PATH(item, UI.errors),
+                    url=path.fixUrl(),
+                    downObj;
+              	if(BUFFER.downloads[url]){
+                  	if(reload){
+                      	BUFFER.downloads[url].download.XHR.abort();
+                    }else{
+                  		inLoad.push(url);
+                  		return;
+                    }
+                }
+              	BUFFER.downloads[url]=downObj={
+                  	type:A.start(function(){},true),
+                  	name:path.name,
+                  	delete:A.start(function(){},true)
+                };
+              	downObj.type.progress(function(vl){
+                  	if(vl==="complete"){
+                      	downObj.delete.progressValue=true;
+                      	delete BUFFER.downloads[url];
+                    }
+                });
+              	downObj.type.progressValue="getting size";
+              	downObj.size=path.common("sizeOf").wait(function(size){
+                  	if(size===0)
+                    	downObj.type.progressValue="error"; 
+                  	else
+                      	downObj.type.progressValue="downloading";
+                  	return size;
+                });
+              	downObj.download=downObj.size.wait(function(){
+                  	return path.common("getBase64");
+                });
+              	downObj.download.wait(function(vl){
+                	if(vl===0)
+                      	return (downObj.type.progressValue="error",0);  
+                  	downObj.type.progressValue="complete";
+                  	vl=vl[0];
+                    var blob = b64toBlob(vl.content,vl.mime),
+                        tmpUrl=window.URL.createObjectURL(blob),
+                        a = "body".addElem("a",{
+                            href:tmpUrl,
+                            download:downObj.name
+                        });
+                  		a.click();
+                        setTimeout(function() {
+                            a.remElem();
+                            window.URL.revokeObjectURL(tmpUrl);  
+                        }, 0);      
+                });
+            });
+          	if(inLoad.length)
+              	UI.dialogPanel({
+                  	content:[{
+                      	type:"message",
+                      	text:"already in load".tr+"\n"+inLoad.join("\n")
+                    },{
+                      	type:"button",
+                      	btntext:"rename".tr,
+                      	btnID:"rn"
+                    },{
+                      	type:"button",
+                      	btntext:"close".tr,
+                      	btnID:"cl"
+                    }],
+                  	onEnter:"rn",
+                  	func:function(data){
+                      	if(data.pressed==="rn")
+                          	UI.download(TH,inLoad,reload);
+                    }
+                });
+        },
 		copyText: function (TH, txt) {
 			if (window.clipboardData) {
 				window.clipboardData.setData("Text", txt);

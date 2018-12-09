@@ -18,7 +18,12 @@
   	
   	A({
       	tr:function get(){
-          	return window.JS_LANG[this]||this;
+          	var txt=window.JS_LANG[this.toLowerCase()]||this;
+            if(this.charAt(0)!=this.charAt(0).toUpperCase())
+              	txt=txt.charAt(0).toLowerCase()+txt.slice(1);
+        	else
+              	txt=txt.charAt(0).toUpperCase()+txt.slice(1);
+          	return txt;
         }
     });
 	

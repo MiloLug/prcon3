@@ -7,9 +7,9 @@ var PATH = function (url, errFun) {
 			var s = A.args({
 					url: url
 				}, args),
-			notUrl = url === undefined;
-			var wt = A.start(function (w) {
-					A.ajax({
+			notUrl = url === undefined,
+			wt = A.start(function (w) {
+					w.XHR=A.ajax({
 						url: phpUrl(),
 						type: "POST",
 						async: true,
@@ -43,7 +43,35 @@ var PATH = function (url, errFun) {
 							}
 						]
 					},
+                    downprogress:function(prog){
+                      	w.progressValue={
+							type:"down",
+							data:prog
+						};
+                    },
+					upprogress:function(prog){
+                      	w.progressValue={
+							type:"up",
+							data:prog
+						};
+                    },
+                    abort:function(prog){
+                      	w.progressValue={
+							type:"abort",
+							data:prog
+						};
+                    },
+                    timeout: function(prog){
+                    	w.progressValue={
+							type:"timeout",
+							data:prog
+						};
+                    },
 					success: function (d) {
+                      	w.progressValue={
+							type:"success",
+							data:d
+						};
                       	if (d.error.length > 0) {
 							errFun && errFun(d.error);
 							w.value = 0;
@@ -57,13 +85,21 @@ var PATH = function (url, errFun) {
 						w.value = (notUrl ? d.req : d.req[0].return);
 					},
 					resCode: function (c) {
+                      	w.progressValue={
+							type:"resCode",
+							data:c
+						};
 						c === 404 && (w.value = 0, errFun && errFun(["not main"]));
 					},
-					error: function () {
+					error: function (e) {
 						errFun && errFun(["net err"]);
+                      	w.progressValue={
+							type:"error",
+							data:e
+						};
 						w.value = 0;
 					}
-				});
+				}).XHR;
 			}, true);
 		wt.error(console.error);
 		return wt;

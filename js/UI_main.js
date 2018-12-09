@@ -39,13 +39,28 @@
 			_ = {};
 			return Preprocess({
 				js: function (t) {
-					return Function("selfAct,_", t + " ;")(el, _);
+					return Function("selfAct,_", t + "\n;")(el, _);
 				},
 				set: function (t) {
 					return Function("selfAct,_", "return " + t + ";")(el, _);
-				}
+				},
+              	scrollplane: function(t) {
+                  	var txt=t.split(","),attrs,tL,y,x;
+                  	t=txt.splice(0,1)[0];
+                  	tL=t.toLowerCase();
+                  	attrs=t.match(/attrs.*?[\s\S\t\r\n\v]*?:(.*)/mi);
+                  	txt=txt.join(",");
+                  	y=tL.indexOf("y");
+                  	y=y>-1&&(attrs?y<attrs.index:true);
+                  	x=tL.indexOf("x");
+                  	x=x>-1&&(attrs?x<attrs.index:true);
+                  
+                  	return "<f-scrollplane "+(attrs?attrs[1]:"")+" >"+txt+"</f-scrollplane>"
+                    		+(y?"<f-scroll-y><f-wheel></f-wheel></f-scroll-y>":"")
+                      		+(x?"<f-scroll-x><f-wheel></f-wheel></f-scroll-x>":"");
+                }
 			}, {
-				commandStart: "@",
+				start: "@",
 				bodyStart: "::",
 				end: "::@"
 			}, txt);

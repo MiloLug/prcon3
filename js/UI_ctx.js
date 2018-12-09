@@ -119,7 +119,11 @@ window.UI.ctx= {
 							type: "button",
 							btntext: "Rename".tr,
 							btnID: "rename" + (sel ? "all" : "")
-						}
+						}, {
+                          	type: "button",
+							btntext: "Download".tr,
+							btnID: "download" + (sel ? "all" : "")
+                        }
 					],
 					func: function (data) {
 						var pr = data.pressed,
@@ -155,6 +159,12 @@ window.UI.ctx= {
 							break;
 						case "renameall":
 							UI.rename(TH, PATH(list[0]).parentDir,list.all(function(el){return PATH(el).name;}).return);
+							break;
+                        case "download":
+							UI.download(TH, [url]);
+							break;
+						case "downloadall":
+							UI.download(TH, list);
 							break;
 						}
 					}

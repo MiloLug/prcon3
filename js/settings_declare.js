@@ -39,7 +39,7 @@ var TEMP_SETTINGS_DECLARE=[
  	  	{
  	      	type:"checkbox",
  	      	chctext:"show back and forward buttons".tr,
-          	group:"path row".tr,
+          	group:"explorer".tr,
  	      	realtime:true,
  	      	info:"",
  	      	param:{
@@ -51,7 +51,7 @@ var TEMP_SETTINGS_DECLARE=[
  	  	{
  	      	type:"checkbox",
  	      	chctext:"show path".tr,
- 	      	group:"path row".tr,
+ 	      	group:"explorer".tr,
  	      	realtime:true,
  	      	info:"show path row".tr,
  	      	param:{
@@ -99,7 +99,7 @@ var TEMP_SETTINGS_DECLARE=[
  	  	{
  	      	type:"checkbox",
  	      	chctext:"show account save message".tr,
- 	      	group:"local storage".tr,
+ 	      	group:"other".tr,
  	      	realtime:false,
  	      	info:"suggest save account".tr,
  	      	param:{
@@ -113,20 +113,15 @@ var TEMP_SETTINGS_DECLARE=[
  	      	btntext:"clear local data".tr,
           	funcs:"clearLocal",
           	realtime:true,
- 	      	group:"local storage".tr,
+ 	      	group:"other".tr,
  	      	info:"clear all data".tr,
  	    },
-      	{
- 	      	type:"input",
- 	      	inptext:"zadeklariroval input",
-          	inptype:"number",
- 	      	group:"gother",
- 	      	realtime:false,
- 	      	info:"ggvp",
- 	      	param:{
- 	          	name:"govoracovora",
- 	          	def:123,
- 	          	iteration:false
- 	        }
+  		{
+ 	      	type:"button",
+ 	      	btntext:"change language".tr,
+          	funcs:"langSet",
+          	realtime:false,
+ 	      	group:"other".tr,
+ 	      	info:"",
  	    }
  	];
