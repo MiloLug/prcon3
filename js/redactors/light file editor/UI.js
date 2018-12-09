@@ -43,11 +43,11 @@ window.UI.Ainit({
 					text: "save file?".tr+"<br>" + window.thisUrl
 				}, {
 					type: "button",
-					btntext: "yes",
+					btntext: "yes".tr,
 					btnID: "y"
 				}, {
 					type: "button",
-					btntext: "no",
+					btntext: "no".tr,
 					btnID: "n"
 				}
 			],
