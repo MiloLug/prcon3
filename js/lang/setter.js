@@ -1,18 +1,7 @@
-window.LANG_LIST=[
-	"ru",
-  	"en"
-],
-window.CUR_LANG=window.CUR_LANG||localStorage.getItem(PRCON_LANGUAGE_SAVE_NAME)||"en";
-A.ajax({
-  	url:"js/lang/"+CUR_LANG+".js",
-  	type:"GET",
-  	async:false,
-  	cache:true,
-  	success:function(data){
-      	A.createElem('script',{
-  			_TXT:data,
-  			type:"text/javascript",
-  			async:false
-		}).pasteIn("head");
-    }
-});
+window.LANG_LIST=A.ajax({
+  	url:"langs.json",
+  	async:true,
+  	dataType:"json"
+}),
+window.CUR_LANG=window.CUR_LANG||localStorage.getItem(PRCON_LANGUAGE_SAVE_NAME)||"en.js";
+document.write("<script src='js/lang/"+CUR_LANG+"'></script>");
