@@ -645,7 +645,7 @@ Prev define version: 6.0.0 (15.10.2018)
 						continue;
 				}
 			else
-				for (let i = 0, len = a.length; i < len; i++)
+				for (var i = 0, len = a.length; i < len; i++)
 					req.push(args[0](a[i], i));
 			return {
 				allEl: a,
