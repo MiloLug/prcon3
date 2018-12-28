@@ -1,25 +1,4 @@
 var TEMP_SETTINGS_DECLARE=[
-      	{
- 	      	type:"select",
- 	      	options:{
-              	_InitClass:function get(){
-                  	return window.FILE_REDACTORS_INIT?Object.keys(window.FILE_REDACTORS_INIT):[];
-                }
-            },
-          	group:"file editor".tr,
- 	      	realtime:false,
-          	compareBy:"value",
- 	      	info:"select file editor".tr,
- 	      	param:{
- 	          	_InitClass:function get(){
-                  	return {
-                      	name:"fileEditor",
- 	          			def:window.FILE_REDACTORS_INIT?Object.keys(window.FILE_REDACTORS_INIT)[0]:"",
- 	          			iteration:false
-                    }
-                }
- 	        }
- 	    },
 		{
  	      	type:"select",
  	      	options:[
@@ -34,6 +13,22 @@ var TEMP_SETTINGS_DECLARE=[
 				name:"defaultFileEditorType",
  	          	def:1,
  	          	iteration:false
+ 	        }
+ 	    },
+  		{
+ 	      	type:"select",
+ 	      	options:[
+				"tile".tr,
+				"list".tr
+			],
+          	group:"explorer".tr,
+          	compareBy:"selectedIndex",
+ 	      	realtime:true,
+ 	      	info:"obj list looks".tr,
+ 	      	param:{
+				name:"foldersView",
+ 	          	def:0,
+ 	          	iteration:true
  	        }
  	    },
  	  	{
@@ -122,6 +117,14 @@ var TEMP_SETTINGS_DECLARE=[
           	funcs:"langSet",
           	realtime:false,
  	      	group:"other".tr,
+ 	      	info:"",
+ 	    },
+  		{
+ 	      	type:"button",
+          	group:"file editor".tr,
+ 	      	btntext:"select file editor".tr,
+          	funcs:"redactorSet",
+          	realtime:false,
  	      	info:"",
  	    }
  	];

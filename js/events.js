@@ -308,6 +308,9 @@ Prev define version: -
 							});
 						rep();
 					};
+					W.addEventListener("blur",function(){
+						rep();
+					});
 					W.A.on("touchend", function (e) {
 						waits = waits.wait(function (vl) {
 								if (vl === 2 && time())

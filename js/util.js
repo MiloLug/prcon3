@@ -33,6 +33,32 @@ var ACCOUNT={
 		      	t[newDec.name]=newDec.def;
         });
     },
+	E_SETTINGS=function(){
+		var t=window.BUFFER.localData.settings;
+      	t.I=t.I||{};
+      	SETTINGS_DECLARE=[];
+      	TEMP_SETTINGS_DECLARE.all(function(dec){
+          	var newDec={},
+                tmpObj={};
+          	for(var nm in dec){
+              	if(dec[nm].constructor===Object&&dec[nm]._InitClass){
+                  	tmpObj[nm]=dec[nm]._InitClass;
+                  	newDec.Ainit(tmpObj);
+                  	continue;
+                }
+              	newDec[nm]=dec[nm];
+            }
+          	SETTINGS_DECLARE.push(newDec);
+		});
+      	SETTINGS_DECLARE.all(function(dec){
+          	var newDec=dec.param;
+		  	if(!newDec)return;
+		  	if(newDec.iteration)
+		    	t.I[newDec.name]=t.I[newDec.name]!==undefined?t.I[newDec.name]:newDec.def;
+		  	else
+		      	t[newDec.name]=t[newDec.name]!==undefined?t[newDec.name]:newDec.def;
+        });
+	},
     N_LOCAL=function(){
       	var t=this;
     	t.accounts= {
@@ -76,6 +102,7 @@ var ACCOUNT={
 			redactors: {}
 		},
       	this.loadprocess={
+          	reloadDownloads:A.start(function(){},true),
           	openDir:A.start(),
           	reloadTree:A.start()
         };
@@ -93,6 +120,8 @@ var ACCOUNT={
     clearLocal=function(){
       	localStorage.setItem(PRCON_LOCAL_STORAGE_NAME, A.json(new N_LOCAL()));
       	localToBUFFER();
+		localStorage.removeItem(PRCON_LANGUAGE_SAVE_NAME),
+      	localStorage.removeItem(PRCON_REDACTOR_CURRENT_NAME),
       	window.location.reload();
     },
     getAccRow=function(name){

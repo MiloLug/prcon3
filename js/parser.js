@@ -23,9 +23,11 @@ window.Preprocess = function (commands, punctuation, txt) {
 		return tmp;
 	};
 	root: for (var i = 0, len = splittxt.length, s, tmp; (s = splittxt[i], tmp = i, i < len); i++) {
-		if (s === pn.end[0]) {
+		if (req.commandStart > -1 && req.bodyStart > -1 && req.end > -1)
+			break;
+      	if (s === pn.end[0]) {
 			if (req.bodyStart > -1) {
-				i=proc(i,s,tmp,"end");
+              	i=proc(i,s,tmp,"end");
 				continue root;
 			}
 		}
@@ -41,10 +43,8 @@ window.Preprocess = function (commands, punctuation, txt) {
 				continue root;
 			}
 		}
-		if (req.commandStart > -1 && req.bodyStart > -1 && req.end > -1)
-			break;
 	}
-	if (!(req.commandStart > -1 && req.bodyStart > -1 && req.end > -1))
+  	if (!(req.commandStart > -1 && req.bodyStart > -1 && req.end > -1))
 		return txt;
 
 	req.body = splittxt.slice(req.bodyStart +1, req.end +1 - pn.end.length).join("");

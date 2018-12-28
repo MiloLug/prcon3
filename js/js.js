@@ -100,12 +100,18 @@ Prev define version: 6.0.0 (15.10.2018)
 		__typeOfThis__: {
 			get: function () {
 				return _cType(this);
-			}
+			},
+          	set: function (v){
+              	return v;
+            }
 		},
 		__cName__:{
 			get: function () {
 				return this.constructor.name;
-			}
+			},
+          	set: function (v){
+              	return v;
+            }
 		},
 		errored: {
 			value: function (test) {
@@ -504,6 +510,10 @@ Prev define version: 6.0.0 (15.10.2018)
 				return (a.remClass(srch[0][0]).addClass(srch[1][0]), srch[1][1]);
 		},
 		createElem: function (elem, attrs) { /**создать элемент с атрибутами. attrs принимает то же, что и .opt()**/
+          	if(elem.match("<.*?>")){
+            	var elems=A.createElem("div",{_TXT:elem}).children;
+              	return elems.length===1?elems[0]:elems;
+            }
 			return W.document.createElement(elem).opt(attrs || {});
 		},
 		addElem: function (args, attrs) {
@@ -698,8 +708,8 @@ Prev define version: 6.0.0 (15.10.2018)
 			если deep=true(стандарт- false), то поиск будет вестись на всех уровнях
 			 **/
 			var a = this.a(!!1),
-			deep = deep || false,
 			c = 0;
+          	deep = deep || false;
 			deep ? a.all(function (l) {
 				l === vl && c++;
 				if (l.__typeOfThis__ === "Array")
@@ -782,7 +792,7 @@ Prev define version: 6.0.0 (15.10.2018)
 				vl: false
 			},
 			progress = {
-				changed: true,
+				changed: false,
 				vl: false
 			},
 			mult = function (func, nwr, iserr, isprog) {
@@ -878,9 +888,19 @@ Prev define version: 6.0.0 (15.10.2018)
                         	arg.changed = true;
                         	waiter.time = Date.now();
                         }
-                      	vl&&vl.constructor===A.start?vl.wait(function(vlW){
-                            _fn(vlW);
-                        }):(_fn(vl));
+                      	if(vl&&vl.constructor===A.start){
+                          	vl.wait(function(vlW){
+                            	_fn(vlW);
+                            });
+                          	vl.progress(function(vlW){
+                              	waiter.progressValue=vlW;
+                            });
+                          	vl.error(function(vlW){
+                              	waiter.errorValue=vlW;
+                            });
+                          	return;
+                        }
+                      	_fn(vl);
 					}
 				},
 				errorValue: {
@@ -1019,7 +1039,7 @@ Prev define version: 6.0.0 (15.10.2018)
           
           	tmp = s.url && s.url.__typeOfThis__ === "String" ? s.url.trim() : "";
             tmp = tmp[0] === "?" ? W.location.pathname + tmp : tmp;
-          	tmp += s.cache ? ((tmp.indexOf('?') >= 0) ? '&' : '?') + '_=' + new Date().getTime() : "";
+          	tmp += !s.cache ? ((tmp.indexOf('?') >= 0) ? '&' : '?') + '_=' + new Date().getTime() : "";
           	
           	s.url=tmp;
           	
@@ -1080,19 +1100,37 @@ Prev define version: 6.0.0 (15.10.2018)
               	XHR:XHR
             };
         },
-      	addJS: function(urls){
-      		var el;
-          	if(!urls)
+      	include: function(type, urls, documentWrite){
+      		var el,
+                str;
+          	if(!urls||!type||type.__typeOfThis__!=="String")
               	return;
           	urls=urls.almostArray?urls:[urls];
+          	type=type.toLowerCase();
+          	switch(type){
+              	case "js":
+                	str='<script src="@URL" type="text/javascript"></script>';
+                	break;
+                case "css":
+                	str='<link rel="stylesheet" type="text/css" href="@URL"/>';
+                	break;
+              	case "js text":
+                	str='<script type="text/javascript">@URL</script>';
+                	break;
+                case "css text":
+                	str='<style>@URL</style>';
+                	break;
+            }
+          	documentWrite=documentWrite===undefined?true:documentWrite;
     		urls.all(function(url){
-              	el=A.createElem('script',{
-  						src:url,
-  						type:"text/javascript"
-					});
-              		el.async=false;
-              		el.pasteIn("head"); 	
-                
+				if(!url)
+					return;
+              	if(type==="txt text")
+                  	return W.document.write(url);
+              	if(documentWrite)
+                  	W.document.write(str.replace(/@URL/gm, url));
+                else
+                  	A.createElem(str.replace(/@URL/gm, url)).pasteIn("head");
             });	
           
     	},
@@ -1128,21 +1166,20 @@ Prev define version: 6.0.0 (15.10.2018)
 			var req = false,
 			c;
 			if (a !== undefined && a !== null) {
-				c = a.__typeOfThis__;
-				switch (true) {
-				case c === "Object":
+				switch (a.__typeOfThis__) {
+				case "Object":
 					req = !0;
 					for (var v in a) {
 						req = !1;
 						break;
 					}
 					break;
-				case c === "Array":
-				case c === "NodeList":
-				case c === "HTMLCollection":
+				case "Array":
+				case "NodeList":
+				case "HTMLCollection":
 					req = !a.length;
 					break;
-				case c === "String":
+				case "String":
 					req = !a;
 					break;
 				}

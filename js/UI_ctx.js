@@ -119,11 +119,7 @@ window.UI.ctx= {
 							type: "button",
 							btntext: "Rename".tr,
 							btnID: "rename" + (sel ? "all" : "")
-						}, {
-                          	type: "button",
-							btntext: "Download".tr,
-							btnID: "download" + (sel ? "all" : "")
-                        }
+						}
 					],
 					func: function (data) {
 						var pr = data.pressed,
@@ -164,11 +160,23 @@ window.UI.ctx= {
 							UI.download(TH, [url]);
 							break;
 						case "downloadall":
+                            list=[];
+                            ".dirPlace.selected".all(function (el) {
+								el.attrFromPath("_type")==="file"&&list.push(el.attrFromPath("_url"));
+							});
 							UI.download(TH, list);
 							break;
 						}
 					}
 				};
+             	
+              	if(TH.attrFromPath("_type")==="file"){
+                  	list.content.push({
+                    	type: "button",
+						btntext: "Download".tr,
+						btnID: "download" + (sel ? "all" : "")
+                    });
+                }
 
 				UI.ctx.openContextmenu(list, coo, bbl);
 			},

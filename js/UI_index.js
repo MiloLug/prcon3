@@ -24,38 +24,72 @@
 	},false);
 	window.UI.Ainit({
       	langSet:function(){
-          	LANG_LIST.wait(function(list){
-          		var cont=[{
-            	  	type:"message",
-            	  	text:"lan reload".tr
-            	}, {
-            	  	type:"button",
-            	  	btntext:"cancel".tr,
-            	  	btnID:"cl"
-            	}];
-          		A.toArray(list,true).all(function(prop){
-            	  	cont.push({
-            	      	type:"checkbox",
-            	      	chctext:prop[0],
-            	      	chcID:prop[0],
-            	      	opt:{
-            	          	checked:CUR_LANG===prop[1]?".":"",
-            	          	_INIT:function(e){
-            	          		e.on("change",function(){
-            	                  	if(!e.checked)
-            	                      	return e.checked=true;
-            	                  	localStorage.setItem(PRCON_LANGUAGE_SAVE_NAME,prop[1]);
-                                  	console.log(prop[0]);
-            	  					window.allowUnload=true;
-            	  					window.location.reload();
-            	    			});
-            	        	}
-            	        }
-            	    });
-				});
-          		UI.dialogPanel({
-            	  	content:cont
-            	});
+          	var cont=[{
+              	type:"message",
+              	text:"lan reload".tr
+            }, {
+              	type:"button",
+              	btntext:"cancel".tr,
+              	btnID:"cl"
+            }];
+          	A.toArray(LANG_LIST,true).all(function(prop){
+              	if(prop[0]==="@default@")
+                  	return;
+              	cont.push({
+                  	type:"checkbox",
+                  	chctext:prop[0],
+                  	chcID:prop[0],
+                  	opt:{
+                      	checked:CUR_LANG===prop[1]?".":"",
+                      	_INIT:function(e){
+                      		e.on("change",function(){
+                              	if(!e.checked)
+                                  	return e.checked=true;
+                              	localStorage.setItem(PRCON_LANGUAGE_SAVE_NAME,prop[1]);
+                               	console.log(prop[0]);
+              					window.allowUnload=true;
+              					window.location.reload();
+                			});
+                    	}
+                    }
+                });
+			});
+          	UI.dialogPanel({
+              	content:cont
+            });
+        },
+      	redactorSet:function(){
+          	var cont=[{
+              	type:"message",
+              	text:"red reload".tr
+            }, {
+              	type:"button",
+              	btntext:"cancel".tr,
+              	btnID:"cl"
+            }];
+          	A.toArray(REDACTORS_LIST,true).all(function(prop){
+              	if(prop[0]==="@default@")
+                  	return;
+              	cont.push({
+                  	type:"checkbox",
+                  	chctext:prop[0],
+                  	chcID:prop[0],
+                  	opt:{
+                      	checked:CUR_REDACTOR===prop[1]?".":"",
+                      	_INIT:function(e){
+                      		e.on("change",function(){
+                              	if(!e.checked)
+                                  	return e.checked=true;
+                              	localStorage.setItem(PRCON_REDACTOR_CURRENT_NAME,prop[1]);
+                                window.allowUnload=true;
+              					window.location.reload();
+                			});
+                    	}
+                    }
+                });
+			});
+          	UI.dialogPanel({
+              	content:cont
             });
         },
 		closeAll: function () {
@@ -115,9 +149,26 @@
 				});
 			});
 		},
+      	openDownloads: function(TH){
+          	var back = UI.setSrcToPlace("downloads", true),
+			cont = back.child(".backcontent>f-scrollplane");
+          	for(var nm in BUFFER.downloads){
+              	var el=A.createElem("div",{
+					_TXT:UI.getAct("downloadsFileSrc")
+				}).children[0].pasteIn(cont);
+              	el.opt({
+					url:nm
+				});
+              	el.child(".name").html=PATH(nm).name;
+              	BUFFER.downloads[nm].inDownloads=el;
+              	BUFFER.downloads[nm].inDownSpeed=el.child(".speed");
+              	BUFFER.downloads[nm].inDownIng=el.child(".downloading");
+              	BUFFER.downloads[nm].inDownBar=el.child(".bar");
+            }
+        },
 		toTopFileRedactor: function (TH, url) {
 			url = PATH(url || TH.attrFromPath("_url")).fixUrl();
-			UI.toTopLayer(BUFFER.redactors[url]);
+			UI.toTopLayer(BUFFER.redactors[url].a().parent(function(el){return el.className==="back";})||BUFFER.redactors[url]);
 		},
 		openSettings: function () {
 			var bc = UI.setSrcToPlace("settings", true).child(".backcontent>f-scrollplane"),
@@ -374,6 +425,7 @@
 					dom.push({
 						div: {
 							class: "tree cls " + tree[nm].type,
+                          	_type:tree[nm].type,
 							_url: tree[nm].url,
 							opened: tree[nm].opened,
 							contextfuncs: "dirFileMenu, treeMenu",
@@ -438,7 +490,7 @@
 						var path = PATH(url, UI.errors);
 						(list ? A.start(function () {
 								return list;
-							}) : path.common("getList")).wait(function (d) {
+							}) : path.common("getList", {getSize:true})).wait(function (d) {
 							UI.setLSToPlace(".rightexplorer", false);
 							if (d === 0) {
 								UI.setPathRow(BUFFER.explorer.curDir);
@@ -463,6 +515,7 @@
 									return "continue";
 								RE.addElem("div", {
 									class: "dirPlace",
+                                  	_type:r.type,
 									_url: r.url,
 									funcs: "selectIfSelecting," + (r.type === "dir" ? "openDir" : "openFile"),
 									contextfuncs: "dirFileMenu",
@@ -474,14 +527,20 @@
 											}
 										}, {
 											div: {
-												class: "rowtext txtnowrap",
+												class: "rowtext",
 												_TXT: r.name
 											}
 										}, {
 											div: {
-												class: "closer"
+												class: "closer",
+                                              	title: r.type==="dir"?"":formatBytes(r.size||0)
 											}
-										}
+										}, r.type==="dir"?{}:{
+											div: {
+												class: "size center",
+												_TXT: formatBytes(r.size||0)
+											}
+										}	
 									]);
 							}, "break", "continue");
 							RE.opt("_url", url);
@@ -490,8 +549,8 @@
 					}, true));
 		},
 		fileEditor: function (fn, args, windowed) {
-			if (BUFFER.localData.settings.fileEditor) {
-				var red = FILE_REDACTORS_INIT[BUFFER.localData.settings.fileEditor];
+			if (FILE_REDACTOR) {
+				var red = FILE_REDACTOR;
 				if (windowed)
 					red = red.windowed;
 				return red[fn].apply(red, args);
@@ -968,6 +1027,7 @@
 						opt: {
 							placeholder: "new name",
 							_CSS:JS_STYLE.renameDialogTextArea,
+                          	_VAL:oldNames.length<2?oldNames[0]:"",
 							_LIS:[{
 								"combination":["tab",function(e){
 									document.execCommand("insertText", false, "\t");
@@ -1182,7 +1242,12 @@
         	list.all(function(item){
             	var path=PATH(item, UI.errors),
                     url=path.fixUrl(),
-                    downObj;
+                    downObj,
+                    tmp=[-1,-1],
+                    reloadInfo=0,
+                    tm,
+                    speed,
+                    per;
               	if(BUFFER.downloads[url]){
                   	if(reload){
                       	BUFFER.downloads[url].download.XHR.abort();
@@ -1194,12 +1259,24 @@
               	BUFFER.downloads[url]=downObj={
                   	type:A.start(function(){},true),
                   	name:path.name,
-                  	delete:A.start(function(){},true)
+                  	delete:A.start(function(){},true),
+                  	speed:A.start(function(){},true),
+                  	downloaded:A.start(function(){},true)
                 };
+              	downObj.delete.wait(function(){
+                  	var tmpin=downObj.inDownloads;
+                  	tmpin&&setTimeout(function(){
+                      	tmpin.remElem();
+                    },1000);
+                  	downObj.inDownloads=undefined;
+                    delete BUFFER.downloads[url];
+                });
               	downObj.type.progress(function(vl){
+                  	downObj.inDownIng&&downObj.inDownIng.html(vl.tr);
                   	if(vl==="complete"){
-                      	downObj.delete.progressValue=true;
-                      	delete BUFFER.downloads[url];
+                      	downObj.inDownSpeed&&downObj.inDownSpeed.html(formatBytes(0)),
+                        downObj.inDownBar&&downObj.inDownBar.css("width","100%")
+                      	downObj.delete.value=true;
                     }
                 });
               	downObj.type.progressValue="getting size";
@@ -1208,15 +1285,15 @@
                     	downObj.type.progressValue="error"; 
                   	else
                       	downObj.type.progressValue="downloading";
-                  	return size;
+                  	return [size[0]*4/3,formatBytes(size[0]*4/3)];
                 });
               	downObj.download=downObj.size.wait(function(){
                   	return path.common("getBase64");
                 });
               	downObj.download.wait(function(vl){
+                  	downObj.type.value=downObj.speed.value=downObj.downloaded.value=true;
                 	if(vl===0)
                       	return (downObj.type.progressValue="error",0);  
-                  	downObj.type.progressValue="complete";
                   	vl=vl[0];
                     var blob = b64toBlob(vl.content,vl.mime),
                         tmpUrl=window.URL.createObjectURL(blob),
@@ -1228,8 +1305,35 @@
                         setTimeout(function() {
                             a.remElem();
                             window.URL.revokeObjectURL(tmpUrl);  
-                        }, 0);      
+                        }, 0);    
+                  	downObj.type.progressValue="complete";
                 });
+              	downObj.download.progress(function(dt){
+                  	tm=downObj.size.wait(function(vl){return vl;});
+                  	tm.wait(function(vl){
+                      	if(dt.type==="down"&&dt.data.loaded<=vl[0]){
+                            downObj.downloaded.progressValue=dt.data.loaded;
+                            if(tmp[0]>-1){
+                    	      	var tmp1=[tmp[0],tmp[1]],
+                                    tm1=(tm.time-reloadInfo)>500;
+                                speed=(dt.data.loaded-tmp1[1])/(tm.time-tmp1[0])*1000;
+                                per=dt.data.loaded/vl[0]*100;
+                              	per>100&&(per=100);
+                              	if(tm1)
+                                  	reloadInfo=tm.time;
+                              	tm1&&(
+                                	downObj.inDownIng&&downObj.inDownIng.html(formatBytes(dt.data.loaded)+"/"+vl[1]),
+                              		downObj.inDownSpeed&&downObj.inDownSpeed.html(formatBytes(speed)),
+                                	downObj.inDownBar&&downObj.inDownBar.css("width",per+"%"));
+                              	
+                    	      	downObj.speed.progressValue=speed;
+                    	    }
+                    	  	tmp[0]=tm.time;
+                    	  	tmp[1]=dt.data.loaded;
+                    	}
+                	}).error(console.error);
+                });
+              	BUFFER.loadprocess.reloadDownloads.progressValue=true;
             });
           	if(inLoad.length)
               	UI.dialogPanel({
@@ -1238,7 +1342,7 @@
                       	text:"already in load".tr+"\n"+inLoad.join("\n")
                     },{
                       	type:"button",
-                      	btntext:"rename".tr,
+                      	btntext:"reload".tr,
                       	btnID:"rn"
                     },{
                       	type:"button",

@@ -33,10 +33,10 @@
 			});
           	return elem;
 		},
-		getAct: function (act, text) {
+		getAct: function (act, text, args) {
           	var el = (".sources>" + "[act=" + act + "]"),
 			txt = text||el.all(function(sr){return sr.html();}).return[0]||window.JS_SRC[act],
-			_ = {};
+			_ = args||{};
 			return Preprocess({
 				js: function (t) {
 					return Function("selfAct,_", t + "\n;")(el, _);
