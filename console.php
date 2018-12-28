@@ -16,7 +16,6 @@ echo '
 ';
 flush();
 
-
 if (!isset($acc["password"]))
     $error[] = "no password";
 
@@ -177,7 +176,7 @@ class FN
         $url = self::normUrl($url, $FTP);
         return $FTP ? ftp_size($ftpcon, $url) < 0 : is_dir($url);
     }
-    public static function getList($url, $FTP)
+    public static function getList($args, $FTP)
     {
         if ($FTP !== false) {
             global $FTP;
@@ -185,7 +184,9 @@ class FN
         global $ftpcon;
         
         $r   = array();
-        $url = self::normUrl($url, $FTP);
+        $url = self::normUrl($args, $FTP);
+		$gs  = $args["getSize"];
+
         if ($FTP) {
             $list = (array) ftp_nlist($ftpcon, $url);
         } else {
@@ -196,11 +197,17 @@ class FN
                 $item = self::arrUrl($item, $FTP);
                 $item = $item[count($item) - 1];
             }
-            $r[] = array(
-                "type" => (self::isDir($url . "/" . $item, $FTP) ? "dir" : "file"),
-                "url" => self::shortUrl($url . "/" . $item, $FTP),
+			$itemUrl=$url . "/" . $item;
+			$itemIsDir=self::isDir($itemUrl, $FTP);
+			$itemR = array(
+                "type" => ($itemIsDir ? "dir" : "file"),
+                "url" => self::shortUrl($itemUrl, $FTP),
                 "name" => $item
             );
+			if($gs && !$itemIsDir)
+				$itemR["size"]=self::sizeOf($itemUrl, $FTP);
+
+            $r[] = $itemR;
         }
         return $r;
     }
@@ -296,7 +303,7 @@ class FN
             function d($fd)
             {
                 foreach ($fd as $f) {
-                    unlink($fd);
+                    unlink($f);
                 }
             }
             ;

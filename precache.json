@@ -1,6 +1,19 @@
 {
 	"cacheName": "PRCON_CACHE",
 	"cacheFiles": {
+		".": [
+			".",
+			"console.php",
+			"index.html",
+			"langs.js",
+			"manifest.json",
+			"precache.js",
+			"precache.json",
+			"redactors.js",
+			"sw.js",
+			"test.js",
+			"version.js"
+		],
 		"css": [
 			".",
 			"common.css",
@@ -10,45 +23,6 @@
 			"loader.css",
 			"rules.css",
 			"scroll.css"
-		],
-		"js": [
-			".",
-			"CE.js",
-			"PATH.js",
-			"UI_click.js",
-			"UI_contextmenu.js",
-			"UI_ctx.js",
-			"UI_index.js",
-			"UI_main.js",
-			"common.js",
-			"events.js",
-			"interactive.js",
-			"interactive_index.js",
-			"js.js",
-			"jsSrc.js",
-			"jsStyle.js",
-			"parser.js",
-			"scroll.js",
-			"settings_declare.js",
-			"util.js"
-		],
-        "js/redactors":[
-        	"."
-        ],
-        "js/lang":[
-        	".",
-            "setter.js",
-            "en.js",
-            "ru.js"
-        ],
-		"js/redactors/light file editor":[
-			".",
-			"UI.js",
-			"index.js",
-			"js.js",
-			"src.js",
-			"style.css",
-			"style.js"
 		],
 		"icons": [
 			".",
@@ -81,11 +55,95 @@
 			"ms-icon-310x310.png",
 			"ms-icon-70x70.png"
 		],
-		".": [
+		"js": [
 			".",
+			"CE.js",
+			"PATH.js",
+			"UI_click.js",
+			"UI_contextmenu.js",
+			"UI_ctx.js",
+			"UI_index.js",
+			"UI_main.js",
+			"common.js",
+			"events.js",
+			"interactive.js",
+			"interactive_index.js",
+			"js.js",
+			"jsSrc.js",
+			"jsStyle.js",
+			"parser.js",
+			"scroll.js",
+			"settings_declare.js",
+			"util.js"
+		],
+		"css/fonts": [
+			"."
+		],
+		"css/fonts/hack": [
+			".",
+			"index.css"
+		],
+		"js/lang": [
+			".",
+			"en.js",
+			"ru.js",
+			"setter.js"
+		],
+		"js/redactors": [
+			".",
+			"setter.js"
+		],
+		"js/redactors/codeMirror editor": [
+			".",
+			"UI.js",
+			"codeMirror_init.js",
+			"index.js",
 			"index.html",
-			"manifest.json",
-			"precache.js"
+			"src.js",
+			"style.css"
+		],
+		"js/redactors/light file editor": [
+			".",
+			"UI.js",
+			"index.js",
+			"js.js",
+			"src.js",
+			"style.css",
+			"style.js"
+		],
+		"css/fonts/hack/fonts": [
+			".",
+			"hack-bold-subset.woff",
+			"hack-bold-subset.woff2",
+			"hack-bold.woff2",
+			"hack-bolditalic-subset.woff",
+			"hack-bolditalic-subset.woff2",
+			"hack-bolditalic.woff",
+			"hack-bolditalic.woff2",
+			"hack-italic-subset.woff",
+			"hack-italic-subset.woff2",
+			"hack-italic.woff",
+			"hack-italic.woff2",
+			"hack-regular-subset.woff",
+			"hack-regular-subset.woff2",
+			"hack-regular.woff",
+			"hack-regular.woff2"
+		],
+		"js/redactors/codeMirror editor/codeMirror": [
+			".",
+			"CoffeeScript.js",
+			"HTML + CSS.lint.js",
+			"HTML + JS + CSS.lint.js",
+			"HTML + JS.lint.js",
+			"HTML.hint.js",
+			"HTML.lint.js",
+			"PHP + CSS.lint.js",
+			"PHP + HTML.lint.js",
+			"PHP + JS + CSS + HTML.lint.js",
+			"PHP + JS.lint.js",
+			"PHP.hint.js",
+			"PHP.lint.js",
+			"coffeescript.hint.js"
 		]
 	},
 	"updateIf": {

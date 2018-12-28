@@ -8,13 +8,16 @@
 <script>
   var PRCON_CHACHE_NAME="PRCON_CACHE_TEMP",
       PRCON_LOCAL_STORAGE_NAME="PRCON_LOCAL_STORAGE",
-      PRCON_LANGUAGE_SAVE_NAME="PRCON_LANGUAGE";
+      PRCON_LANGUAGE_SAVE_NAME="PRCON_LANGUAGE",
+      PRCON_REDACTOR_CURRENT_NAME="PRCON_FILE_REDACTOR",
+      REDACTORS_PATH="js/redactors/";
   
 (function () {
 	precache("precache.json",PRCON_CHACHE_NAME);
 })();
 </script>
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" charset="utf-8">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <link rel="apple-touch-icon" sizes="57x57" href="icons/apple-icon-57x57.png">
 <link rel="apple-touch-icon" sizes="60x60" href="icons/apple-icon-60x60.png">
 <link rel="apple-touch-icon" sizes="72x72" href="icons/apple-icon-72x72.png">
@@ -54,31 +57,27 @@
       	<div></div>
 	</div>
 </div>
-  
 
 <script src="js/CE.js"></script>
 <script src="js/js.js"></script>
 <script src="js/events.js"></script>
 <script src="js/lang/setter.js"></script>  
-
+  
 <script src="js/common.js"></script>
 <script src="js/interactive.js"></script>
 <script src="js/parser.js"></script>
 <script src="js/PATH.js"></script>
 <script src="js/jsStyle.js"></script>
 <script src="js/jsSrc.js"></script>
-  
-<script src="js/redactors/light file editor/index.js"></script>
-<script src="js/redactors/light file editor/style.js"></script>
-<script src="js/redactors/light file editor/src.js"></script>
-<link rel="stylesheet" type="text/css" href="js/redactors/light file editor/style.css"/>
 
 <script src="js/settings_declare.js"></script>
 <script src="js/util.js"></script>
+
+<script src="js/redactors/setter.js"></script>
   
 <script src="js/scroll.js"></script>
 <link rel="stylesheet" type="text/css" href="css/scroll.css"/>
-  
+<link rel="stylesheet" type="text/css" href="css/fonts/hack/index.css"/>
 <link rel="stylesheet" type="text/css" href="css/common.css"/>
 <link rel="stylesheet" type="text/css" href="css/generalStructure.css"/>
 <link rel="stylesheet" type="text/css" href="css/forBlocks.css"/>
@@ -194,9 +193,21 @@
           	<button class="blackbtn bwhitefont cls" funcs="easyCancel">@set::"close".tr::@</button>
   		</div>
   	</div>
-  	<div act="loadingProcessList">
+  	<div act="downloadsFileSrc">
+      	<div class="blackbtn file" url="">
+       		<div class="content">
+       			<div class="name"></div>
+       			<div class="progress">
+       				  	<div class="bar"></div>
+                  		<pre class="info">@set::"Speed".tr::@: <text class="speed"></text><br>@set::"Downloading".tr::@: <text class="downloading"></text></pre>
+       			</div>
+       		</div>
+       		<button class="blackbtn bwhitefont cls" funcs="stopLoading">X</button>
+   		</div>
+  	</div>
+  	<div act="downloads">
  		<div class="backcontent">
-          	@scrollplane::y attrs: class="disorderedList"::@
+          	@scrollplane::y::@
  		</div>
   		<div class="downmenu">
           	<button class="blackbtn bwhitefont cls" funcs="easyCancel">@set::"close".tr::@</button>
