@@ -81,8 +81,12 @@ window.JS_LANG={
   	"reload":"Reload",
   	"change language":"change language",
   	"stop all":"stop all",
-  	"already in load":"These files are already being downloaded",
+  	"already in load":"these files are already being downloaded",
   	"download":"download",
   	"name":"name",
-  	"account exists":"This account already exists in the local store.\nDo you want to update the data?"
+  	"account exists":"this account already exists in the local store.\nDo you want to update the data?",
+  	"red reload":"page will reload after file editor selection.\nAll unsaved data will be lost!",
+	"list":"list",
+	"tile":"tile",
+	"obj list looks":"what folders list looks like"
 };
