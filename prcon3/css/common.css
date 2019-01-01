@@ -1,0 +1,105 @@
+/*<common styles>*/
+*{
+  margin:0;
+  padding:0;
+  outline:0;
+  text-decoration:none;
+  border:0;
+  box-sizing: border-box;
+  tap-highlight-color:rgba(0,0,0,0);
+  -webkit-tap-highlight-color:rgba(0,0,0,0);
+  font-size: 13px;
+  font-family:hack;
+}
+.NOSELECT,[hidden]{
+  -webkit-touch-callout: none !important; 
+    -webkit-user-select: none !important; 
+     -khtml-user-select: none !important; 
+       -moz-user-select: none !important; 
+        -ms-user-select: none !important; 
+            user-select: none !important;
+}
+[hidden]{
+  width:0 !important;
+  height:0 !important;
+  position:fixed !important;
+  display:none !important;
+}
+.txtnowrap{
+  word-wrap: unset;
+  word-break: unset;
+  line-break: unset;
+  white-space: nowrap;
+  overflow:hidden;
+}
+.center{
+  text-align:center;
+  align-items:center;
+  vertical-align:middle;
+}
+.center > * {
+	margin-left:auto;
+	margin-right:auto;
+}
+.center > :first-child{
+	margin-top:auto;
+}
+.center > :last-child{
+	margin-bottom:auto;
+}
+f-scrollplane,f-scrollplane{
+  width:100%;
+  height:100%;
+}
+.blackbtn{
+  width:100%;
+  height:45px;
+  background:rgb(34, 34, 39);
+  cursor:pointer;
+}
+.bwhitefont{
+  font-size:27px;
+  color:white;
+}
+	/*<styles for clicks>*/
+.cls[taped],.cls[emtaped]{
+  background:rgb(10, 10, 10);
+}
+.cls[hover]:not([taped]),.cls[emhover]:not([taped]):not([emtaped]){
+  background:rgb(20, 20, 20);
+}
+	/*</styles for clicks>*/
+
+.srcplace{
+  position: absolute;
+  width: calc(100% - 45px);
+  height:100%;
+}
+
+	/*<styles for panels>*/
+.back{
+  width:100%;
+  height:100%;
+  position:absolute;
+}
+.backcontent{
+  width:100%;
+  height:calc(100% - 45px);
+  background:rgb(26, 26, 29);
+  position:relative;
+}
+.downmenu{
+  position: relative;
+  width: 100%;
+  height: 45px;
+  display: flex;
+  bottom: 0;
+  background:rgb(34, 34, 39);
+  box-shadow: 0px 5px 20px black;
+}
+.downmenu>.bwhitefont{
+  font-size:2.8vw;
+}
+	/*</styles for panels>*/
+
+/*</common styles>*/
