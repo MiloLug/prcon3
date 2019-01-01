@@ -1,0 +1,1392 @@
+<!DOCTYPE html>
+<html><head>
+<meta name="viewport" content="width=device-width" charset="utf-8">
+<link rel="stylesheet" type="text/css" href="css.css"/>
+<script src="main.js"></script>
+</head>
+<body>
+<div id="cont">
+	<div id="req">
+	<div id="cpn2"></div>
+	</div>
+	<div id="cPanel">
+			<button class="bc btn backbtn"><</button>
+			<button class="fw btn forward">></button>
+			<textarea id="curp"></textarea>
+			<button class="ok2 btn">&#8627;</button>
+		</div>
+	<div id="cmd">
+		<div id="cpn">
+			<button class="reg list t btn2 btn">
+			<text class="reg list t">&#9094;</text>
+			</button>
+			<button class="res btn2 btn">
+			<text class="res">&#8693;</text>
+			</button>
+			<button class="men btn2 btn">
+			<text class="men">&#10978;</text>
+			</button>
+			<button class="reb btn2 btn">
+			<text class="reb">&#8635;</text>
+			</button>
+			<button class="sel btn2 btn">
+			<text class="sel">&#10003;</text>
+			</button>
+		</div>
+	</div>
+	<div id="middle">
+		<button id="circ">&#8693;</button>
+	</div>
+		
+</div>
+<button id="loading" class="hide">LOADING<hr id="h264"></hr><hr id="h265"></hr></button>
+<script>
+var consolePort,
+startDir = "../",
+tmpFW = [],
+tmpBC = [],
+windows = [],
+objWindows = {},
+openFiles = [],
+viewInReload={},
+openmirs = {},
+curData = [],
+curPath = startDir,
+pass,
+username,
+er404 = function (file) {
+	alert("Error of port");
+	return {
+		name: "Connection error",
+		message: "file '" + file + "' not found",
+		ecode: "404",
+		out: !0,
+		nothrow: !0
+	};
+};
+window.onunload = function () {
+	closeAll();
+};
+AddTo("Afunc", {
+	resizer: function auto() {
+		var a = this.a(),
+		tpos = cpos = {},
+		rwi,
+		cwi,
+		f1 = function (e) {
+			var tmp = A.cPos().t - cpos.t;
+			if (tpos.top + tmp > 10 && cwi - tmp > 10) {
+				a.offset({
+					top: tpos.top + tmp
+				});
+				"#req".css({
+					height: (rwi + tmp) + "px"
+				});
+				"#cmd".css({
+					height: (cwi - tmp) + "px"
+				});
+			}
+		},
+		ff = function () {
+			return false;
+		};
+		window.addEventListener("resize", function () {
+			"#cmd".css({
+				height: ("#cont".css("height") - a.offset().top - "#middle".css("height")) + "px"
+			});
+		});
+		a.on("mousedown", function () {
+			document.on("select", ff);
+			"html".addClass("noselect");
+			tpos = a.offset();
+			cpos = A.cPos();
+			rwi = "#req".css("height");
+			cwi = "#cmd".css("height");
+			document.on("mousemove", f1);
+		});
+		document.on("mouseup", function () {
+			document.not("mousemove", f1);
+			document.not("select", ff);
+			"html".remClass("noselect");
+		});
+	},
+	child: function (el) {
+		return this.a().querySelector(el);
+	}
+});
+window.Ainit({
+	b: function auto() {
+		var elm = "#back4".a(!0);
+		if (elm.length)
+			elm[0].remElem();
+		var elm = "#back5".a(!0);
+		if (elm.length)
+			elm[0].remElem();
+		var elm = "#back6".a(!0);
+		if (elm.length)
+			elm[0].remElem();
+		remSel();
+	}
+});
+"#middle".resizer;
+var modal = function (clbc, clbcCl, inppl, inp2pl) {
+	"#cmd".opt({
+		_DOM: {
+			div: {
+				id: "back",
+				class: "ground",
+				_DOM: {
+					p: {
+						class: "connect",
+						_DOM: [
+							["textarea", {
+									class: "input",
+									placeholder: inppl
+								}
+							],
+							["textarea", {
+									class: "input2",
+									placeholder: inp2pl
+								}
+							],
+							["button", {
+									class: "ok btn",
+									_TXT: "OK"
+								}
+							],
+							["button", {
+									class: "cl btn",
+									_TXT: "CANCEL"
+								}
+							]
+						]
+					}
+				}
+			}
+		}
+	});
+	".input".a().focus();
+	".ok".a().onmouseup = function () {
+		var inp = ".input".val(),
+		inp2 = ".input2".val();
+		'#back'.remElem();
+		clbc(inp, inp2);
+	};
+	".cl".a().onmouseup = function () {
+		'#back'.remElem();
+		clbcCl && clbcCl();
+	};
+},
+setMode = function (exp) {
+	var req = "javascript";
+	switch (exp) {
+	case "js":
+	case "json":
+		req = "javascript";
+		break;
+	case "php":
+		req = "application/x-httpd-php";
+		break;
+	case "html":
+	case "svg":
+		req = "htmlmixed";
+		break;
+	case "css":
+	case "less":
+	case "gss":
+	case "sass":
+		req = "text/css";
+		break;
+	}
+	return req;
+},
+codemirOptions = function (exp) {
+	return {
+		lineNumbers: true,
+		allowDropFileTypes: ["text/html", "text/css", "text/plain", "text/log", "text/x-php", "text/xml"],
+		mode: setMode(exp),
+		theme: 'bespin',
+		matchBrackets: true,
+		htmlMode: false
+	};
+},
+redactor = function (exp, url, txt, onl, td) {
+	var w = window,
+	h = objWindows.hasOwnProperty(url);
+	if (h) {
+		w = objWindows[url];
+		w.focus();
+	}
+	if ((openFiles.fined(url) === -1 || onl) && !h) {
+		!onl && setTimeout(loadingLo, 0);
+		"#cmd".opt({
+			_DOM: {
+				div: {
+					id: "back2",
+					class: "ground",
+					_DOM: {
+						p: {
+							class: "redact",
+							_DOM: [
+								["textarea", {
+										id: "xxx",
+										url: url,
+										exp: exp
+									}
+								],
+								["button", {
+										class: "sv btn taped",
+										_TXT: "SAVE"
+									}
+								],
+								["button", {
+										class: "close btn",
+										_TXT: "CLOSE"
+									}
+								],
+								["button", {
+										class: 'alOp btn',
+										_TXT: "OPEN FILES"
+									}
+								],
+								["button", {
+										class: 'opNp btn',
+										_TXT: "▄▀"
+									}
+								]
+							]
+						}
+					}
+				}
+			}
+		});
+		var elem;
+		"#xxx".all(function (l) {
+			if (l.opt("url") === url) {
+				elem = l;
+				l.parent(2).opt({
+					show: "t"
+				});
+			} else {
+				l.parent(2).opt({
+					show: "f"
+				});
+			}
+		});
+		openmirs[url] = CodeMirror.fromTextArea(elem, codemirOptions(exp));
+		openmirs[url].on('change', function(){
+			elem.parent().child('.sv.btn').remClass('taped');
+		});
+		!onl && openFiles.push(url);
+		!onl && setTimeout(loadingLo, 0);
+		redactor(exp, url, txt, false, onl);
+	} else {
+		setTimeout(w.loadingLo, 0);
+		if (!td) {
+			A.ajax({
+				url: consolePort + "?t=getcontent",
+				type: "POST",
+				async: true,
+				data: {
+					pass: pass,
+					url: url
+				},
+				success: function (d) {
+					if (d !== "_getPass_") {
+						d = d.split("_isContent_");
+						d.splice(0, 1);
+						d = d.join("_isContent_");
+						openmirs[url].setValue(d);
+						setTimeout(function () {
+							openmirs[url].getTextArea().parent().child('.sv.btn').addClass('taped');
+						}, 1);
+					} else
+						alert("Error of password"), closeAll(), connector();
+					setTimeout(w.loadingLo(), 0);
+				},
+				statuscode: {
+					404: function (x) {
+						setTimeout(w.loadingLo(), 0);
+						A.error(er404(x.responseURL));
+					}
+				}
+			});
+		} else {
+			openmirs[url].setValue(txt);
+			setTimeout(loadingLo, 0);
+		}
+	};
+},
+loadingLo = function (fun) {
+	if ('#loading'.opt("class") === "hide" || fun) {
+		'#loading'.opt({
+			class: "show"
+		});
+	} else {
+		'#loading'.opt({
+			class: "hide"
+		});
+	}
+},
+openPOST = function (vl, dop) {
+	var w = window.open();
+	w.document.write("<form id='tmpForm' method='POST' action='" + consolePort + "?t=" + dop +
+		"'><input name='pass' type='password' value='" +
+		pass +
+		"'></input>" +
+		A.toArray(vl, !!1).all(function (l) {
+			return "<input value='" + l[1] + "' name='" + l[0] + "'></input>";
+		}).return.join("") +
+		"</form>" +
+		"<scr\ipt>document.getElementById('tmpForm').submit();</scr\ipt>");
+},
+getree = function (path, clear, ubc, clbc) {
+	remSel();
+	if (clear) {
+		"#req".val = "";
+		"#req".addElem("div", {
+			id: "cpn2"
+		});
+		return;
+	}
+	setTimeout(loadingLo, 0);
+	A.ajax({
+		url: consolePort + "?t=getdirs",
+		type: "POST",
+		async: true,
+		data: {
+			pass: pass,
+			path: path
+		},
+		success: function (tmp) {
+			!ubc && fixPath(path) !== fixPath(tmpBC.end) && (tmpFW = [], tmpBC.push(fixPath()));
+			if (tmp === "_pathNotFined_") {
+				if (!ubc) {
+					alert("path '" + path + "' not found or you dont have access to it");
+					setTimeout(loadingLo, 0);
+					"#curp".val = fixPath();
+				} else {
+					if (!!tmpBC.length) {
+						var pth = fixPath(tmpBC.splice(tmpBC.length - 1, 1)[0]);
+						tmpFW = [];
+						getree(pth, !1, !0, function () {
+							tmpBC.splice(tmpBC.length - 1, 1);
+						});
+					}
+				}
+				return;
+			}
+			clbc && clbc();
+			setTimeout(loadingLo, 0);
+			if (tmp !== "_getPass_" && tmp !== "_openFile_") {
+				"#req".html = "";
+				tmp = A.json(tmp);
+				var DOM;
+				"#req".addElem("div", {
+					id: "cpn2"
+				});
+				curData = [];
+				tmp.all(function (r) {
+					curData.push(r[0]);
+					DOM = [
+						["button", {
+								class: (r[3] === "no access" ? "ze taped full " : "") + "lineno " + r[1] + " sml",
+								exp: r[2] || "",
+								url: r[0],
+								_TXT: r[0]
+							}
+						],
+						["div", {
+								class: r[1] === "file" ? "shinfo" : "",
+								_TXT: r[1] === "file" ? r[3] + "<br>" + r[4] : ""
+							}
+						]
+					];
+					if (r[3] !== "no access")
+						DOM.unshift(["button", {
+									class: "para btn btn2 btn2mod"
+								}
+							]);
+					if (r[0] !== ".") {
+						"#req".addElem("div", {
+							class: "ze lineno " + r[1],
+							_DOM: DOM
+						});
+					}
+				});
+				"#curp".val = path;
+				curPath = path;
+				"#req".a().scrollTop = 0;
+			} else if (tmp === "_getPass_") {
+				alert("Error of password");
+				connector();
+			} else if (tmp === "_openFile_") {
+				if (path[path.length - 1] == "/") {
+					var p = path.split("");
+					p[p.length - 1] = "";
+					path = p.join("");
+				}
+				var exp = path.split(".");
+				exp = exp[exp.length - 1];
+				openfile(path, exp);
+				"#curp".val = curPath;
+			}
+		},
+		statuscode: {
+			404: function (x) {
+				setTimeout(loadingLo, 0);
+				A.error(er404(x.responseURL));
+				connector();
+			}
+		}
+	});
+},
+close = function (url, func) {
+	openFiles.fined(url) !== -1 && openFiles.splice(openFiles.fined(url), 1);
+	windows.fined(url) !== -1 && windows.splice(windows.fined(url), 1);
+	delete objWindows[url];
+	delete openmirs[url];
+	func && func();
+},
+closeAll = function () {
+	A.toArray(objWindows, !!1).all(function (l) {
+		l[1].close();
+	});
+	tmpFW = [];
+	windows = [];
+	objWindows = {};
+	openFiles = [];
+	openmirs = {};
+	".ground".all(function (l) {
+		l.remElem();
+	});
+},
+VINReload=function (){
+	A.toArray(viewInReload).all(function(_w_){
+		_w_.location.reload&&_w_.location.reload();
+	});
+},
+save = function (th, url, txt, wind) {
+	if(th.hasClass('taped'))return;
+	var w = (wind || window);
+	if (w.confirm("Are you want to save '" + url + "' ?")) {
+		setTimeout(w.loadingLo, 0);
+		A.ajax({
+			url: consolePort + "?t=savecontent",
+			type: "POST",
+			async: true,
+			data: {
+				pass: pass,
+				url: url,
+				text: txt
+			},
+			success: function (x) {
+				x === "_getPass_" && (w.alert("Error of password"), closeAll(), connector());
+				x === "_notSave_" && w.alert("Error, file not saved!!!");
+				x === "_newCreate_" && w.confirm("File not found (maybe it's deleted). Create and save new file?") && create("file", url, txt);
+				VINReload();
+				th.addClass('taped');
+				setTimeout(w.loadingLo, 0);
+			},
+			statuscode: {
+				404: function (x) {
+					setTimeout(w.loadingLo(), 0);
+					w.A.error(er404(x.responseURL));
+				}
+			}
+		});
+	}
+},
+openfile = function (url, exp) {
+	switch (exp) {
+	case "png":
+	case "jpg":
+	case "ico":
+		openPOST({
+			url: url,
+			exp: exp !== "ico" ? exp : "png"
+		}, "openimg");
+		break;
+	default:
+		redactor(exp, url);
+	}
+
+},
+connector = function (nw) {
+	b;
+	if (nw) {
+		if (confirm("After login, all open files will be closed without saving!!.\nOpen another profile in a new tab?")) {
+			window.open(window.location, "blank");
+			return;
+		}
+	}
+	if (!!"#back".a(!!1).length)
+		"#back".a(!!1).all(function (l) {
+			l.remElem();
+		});
+	modal(function (port, passw) {
+		setTimeout(loadingLo, 0);
+		A.ajax({
+			type: "POST",
+			url: port,
+			data: {
+				pass: passw
+			},
+			async: true,
+			success: function (req) {
+				setTimeout(loadingLo, 0);
+				if (req !== "_getPass_") {
+					var pr = prompt("Do you want to save data for a quick login using a username?\n(you need to think of it and enter it below, after which a window with an inquiry will be displayed when you enter)"),
+					allowSave = true;
+					if (!A.isEmpty(pr)) {
+						!A.isEmpty(localStorage.getItem(pr)) && (allowSave = confirm("Does this user already exist. Replace his data?"));
+						allowSave && localStorage.setItem(pr, A.json({
+								port: port,
+								pass: passw
+							}));
+						username = pr;
+					}
+					consolePort = port || consolePort;
+					pass = passw;
+					curPath = startDir;
+					closeAll();
+					getree(startDir);
+					return;
+				}
+				alert("Error of password");
+				connector();
+			},
+			statuscode: {
+				404: function (x) {
+					setTimeout(loadingLo(), 0);
+					connector();
+					A.error(er404(x.responseURL));
+				}
+			}
+		});
+	}, !1, "URL", "PASSWORD");
+
+},
+setpass = function () {
+	b;
+	if (!!"#back".a(!!1).length)
+		"#back".a(!!1).all(function (l) {
+			l.remElem();
+		});
+	modal(function (oldp, newp) {
+		setTimeout(loadingLo, 0);
+		A.ajax({
+			type: "POST",
+			url: consolePort + "?t=setpass",
+			data: {
+				pass: pass,
+				oldpass: oldp,
+				newpass: newp
+			},
+			async: true,
+			success: function (req) {
+				setTimeout(loadingLo, 0);
+				if (req !== "_getPass_" && req !== "_invalidPass_" && req !== "_notSave_") {
+					pass = newp;
+					return;
+				}
+				if (req !== "_invalidPass_") {
+					alert("Old password incorrect!");
+					return;
+				}
+				if (req !== "_notSave_") {
+					alert("New password not saved");
+					return;
+				}
+				alert("Error of password");
+				connector();
+			},
+			statuscode: {
+				404: function (x) {
+					setTimeout(loadingLo(), 0);
+					connector();
+					A.error(er404(x.responseURL));
+				}
+			}
+		});
+	}, !1, "OLD PASSWORD", "NEW PASSWORD");
+},
+create = function (type, name, txt) {
+	var fname = A.isEmpty(name) ? prompt("Create " + type + "...\nname:") : name,
+	i = 0,
+	allow = true;
+	if (!A.isEmpty(fname)) {
+		if (curData.fined(fname) !== -1) {
+			while (curData.fined(fname + "_" + i) !== -1) {
+				i++;
+			}
+			fname += "_" + i;
+			allow = confirm("does such a name already exist. Create a " + type + " named '" + fname + "' ?");
+		}
+		allow && (
+			setTimeout(loadingLo(), 0),
+			A.ajax({
+				url: consolePort + "?t=create" + type,
+				type: "POST",
+				async: true,
+				data: {
+					pass: pass,
+					url: fixPath(curPath) + fname,
+					txt: A.isEmpty(txt) ? "" : txt
+				},
+				success: function (x) {
+					setTimeout(loadingLo(), 0);
+					if (x !== "_fileExists_")
+						getree(curPath);
+					else
+						alert(type + " is exists");
+				},
+				statuscode: {
+					404: function (x) {
+						setTimeout(loadingLo(), 0);
+						A.error(er404(x.responseURL));
+					}
+				}
+			}));
+	}
+},
+listuse = function (cl, nw) {
+	var els = "#back".a(!!1);
+	if (!!els.length)
+		"#back".remElem();
+	if (cl[1] === "inpdat" && !localStorage.length) {
+		connector(nw);
+		return;
+	}
+	if (nw) {
+		if (confirm("After login, all open files will be closed without saving!!.\nOpen another profile in a new tab?")) {
+			window.open(window.location, "blank");
+			return;
+		}
+	}
+	b;
+	"#cmd".DOMTree({
+		div: {
+			id: "back6",
+			class: "ground",
+			_DOM: {
+				div: {
+					id: "connect",
+					_DOM: {
+						button: {
+							class: "close2 btn" + (cl[1] === "inpdat" ? " cl haf" : ""),
+							_TXT: "CLOSE"
+						},
+						div: {
+							id: "users",
+							_DOM: [
+								["button", {
+										class: "ze lineno file color2 bottomshad nocur overf color3",
+										_TXT: cl[1] === "inpdat" ? "Log In:" : "Click on the name to delete it."
+									}
+								]
+							]
+						}
+					}
+				}
+			}
+		}
+	});
+	for (var i = 0; i < localStorage.length; i++) {
+		"#users".DOMTree({
+			button: {
+				name: localStorage.key(i),
+				class: cl[1] + " lineno color2" + (localStorage.key(i) === username ? " color4" : ""),
+				_TXT: localStorage.key(i)
+			}
+		});
+	}
+	cl[1] === "inpdat" && "#users".parent().DOMTree({
+		button: {
+			class: "reg connect f btn ok haf",
+			_TXT: "LOGIN"
+		}
+	});
+},
+fixPath = function (nf) {
+	var cp = nf || curPath;
+	if (cp[cp.length - 1] !== "/")
+		cp += "/";
+	return cp;
+},
+setSel = function () {
+	".para".all(function (element) {
+		var cls = element.getClass;
+		cls[0] = "select";
+		element.className = cls.join(" ");
+	});
+},
+remSel = function () {
+	".select".all(function (element) {
+		var cls = element.getClass;
+		cls[0] = "para";
+		element.className = cls.join(" ");
+	});
+	var elm = "#back7".a(!0);
+	if (elm.length)
+		elm[0].remElem();
+	".selected".all(function (elem) {
+		elem.remClass("selected");
+		elem.html = "";
+	});
+},
+getprops = function (type, path, fun) {
+	setTimeout(loadingLo(), 0);
+	A.ajax({
+		url: consolePort + "?t=getprops",
+		type: "POST",
+		async: true,
+		data: {
+			pass: pass,
+			path: path,
+			type: type
+		},
+		success: function (x) {
+			setTimeout(loadingLo(), 0);
+			fun();
+		},
+		statuscode: {
+			404: function (x) {
+				setTimeout(loadingLo(), 0);
+				A.error(er404(x.responseURL));
+			}
+		}
+	});
+};
+listuse(["", "inpdat"]);
+document.on("combination", 13, function () {
+	!A.isEmpty("#curp:focus".a()) && (
+		b,
+		getree(A.isEmpty("#curp".val()) ? startDir : "#curp".val()),
+		A.keyLis.pressed = []);
+}); //enter
+document.on("combination", [83, 17], function () {
+	var url;
+	!A.isEmpty(".ground[show=t]".a()) && (
+		b,
+		url = ".ground[show=t] #xxx".opt("url"),
+		save(url, openmirs[url].getValue()),
+		A.keyLis.pressed = []);
+}); //ctrl+s
+document.on("combination", [16, 70, 17], function (e) {
+	create("file");
+	A.keyLis.pressed = [];
+}); //ctrl+shift+f
+document.on("combination", [16, 68, 17], function () {
+	create("dir");
+	A.keyLis.pressed = [];
+}); //ctrl+shift+d
+document.on("click", function (e) {
+	var el = e.toElement || e.srcElement || e.target;
+	var th = el.getClass;
+	curPath = fixPath();
+	switch (th[0]) {
+	case "lineno":
+		b;
+		if (th[1] === "dir") {
+			getree(curPath + el.opt("url"));
+		} else if (th[1] === "file") {
+			openfile(curPath + el.opt("url"), el.opt("exp"));
+		}
+		break;
+	case "bc":
+		b;
+		if (!!tmpBC.length) {
+			var pth = fixPath(tmpBC.splice(tmpBC.length - 1, 1)[0]);
+			tmpFW.push(curPath);
+			getree(pth, !1, !0);
+		}
+		break;
+	case "fw":
+		b;
+		if (!!tmpFW.length) {
+			var pth = fixPath(tmpFW.splice(tmpFW.length - 1, 1)[0]);
+			tmpBC.push(curPath);
+			getree(pth, !1, !0);
+		}
+		break;
+	case "ok2":
+		b;
+		getree(A.isEmpty("#curp".val()) ? startDir : "#curp".val());
+		break;
+	case "sv":
+		b;
+		var url = el.parent().child("#xxx").opt("url");
+		save(el, url, openmirs[url].getValue());
+		break;
+	case "close":
+		b;
+		close(el.parent().child("#xxx").opt("url"), function () {
+			var nf = ".ground[show=f]".a(!!1);
+			!!nf.length && nf[0].opt({
+				show: "t"
+			});
+			el.parent(2).remElem();
+		});
+		break;
+	case "alOp":
+		b;
+		"#cmd".DOMTree({
+			div: {
+				id: "back3",
+				class: "ground",
+				_DOM: {
+					div: {
+						id: "connect",
+						_DOM: {
+							button: {
+								class: "close2 btn",
+								_TXT: "CLOSE"
+							},
+							div: {
+								id: "alOpCont"
+							}
+						}
+					}
+				}
+			}
+		});
+		openFiles.all(function (l, i, len) {
+			"#alOpCont".addElem("div", {
+				class: "ze lineno",
+				_DOM: {
+					button: {
+						class: "op lineno dir " + ("#cmd .ground[show=t] #xxx".opt("url") === l ? "taped" : "") + " color2 overf",
+						_TXT: l
+					}
+				}
+			});
+		});
+		break;
+	case "close2":
+		el.parent(2).remElem();
+		remSel();
+		break;
+	case "op":
+		b;
+		var elem,
+		url = el.html();
+		if (!objWindows.hasOwnProperty(url)) {
+			"#xxx".all(function (l) {
+				if (l.opt("url") === url) {
+					elem = l;
+					l.parent(2).opt({
+						show: "t"
+					});
+				} else {
+					l.parent(2).opt({
+						show: "f"
+					});
+				}
+			});
+		} else {
+			objWindows[url].focus();
+		}
+		el.parent(4).remElem();
+		break;
+	case "opNp":
+		b;
+		var url = el.parent().child("#xxx").opt("url"),
+		exp = el.parent().child("#xxx").opt("exp");
+		txt = openmirs[url].getValue();
+		windows.fined(url) === -1 && windows.push(url);
+		var nf = ".ground[show=f]".a(!!1);
+		!!nf.length && nf.opt({
+			show: "t"
+		});
+		var file = fixPath(url).split("/"),
+		file = file[file.length - 2],
+		win = window.open();
+		win.url = url;
+		win.txt = txt;
+		win.XP = codemirOptions(exp);
+		win.exp = exp;
+		win.document.write("<head><meta name='viewport' content='width=device-width'><link rel='stylesheet' type='text/css' href='css.css'/><scr\ipt src='main.js'></scr\ipt><title>" + file + "</title>" + "</head><b\ody><p class='redact fix'>" +
+			"<textarea id='xxx'>" +
+			"</textarea>" +
+			"<button class='sv btn hl taped' onmousedown='opener.save(this,url,codemir.getValue(),window)'>SAVE</button>" +
+			"<button class='close btn hl' onmousedown='opener.close(url,function(){opener.focus();window.close();});'>CLOSE</button>" +
+			"<button class='opNp btn' onmousedown='delete opener.objWindows[url];opener.windows.splice(opener.windows.fined(url),1);opener.redactor(exp,url,codemir.getValue(),true);window.close();opener.focus();'>▄▀</button>" +
+			"</p>" +
+			"<button id=\"loading\" class=\"hide\">LOADING<hr id=\"h264\"></hr><hr id=\"h265\"></hr></button>" +
+			"<scr\ipt>" +
+			"var codemir=CodeMirror.fromTextArea('textarea'.a(),XP);" +
+			"codemir.setValue(txt);txt='';" +
+			"codemir.on('change', function(){'.sv.btn'.remClass('taped');});" +
+			"opener.openmirs[url]=codemir;" +
+			"var loadingLo=function(fun){if('#loading'.opt('class')==='hide'||fun){'#loading'.opt({class:'show'});}else{'#loading'.opt({class:'hide'});}};" +
+			"document.on('combination',[83,17],function(){" +
+			"	opener.save(url,codemir.getValue(),window);" +
+			"	A.keyLis.pressed=[];" +
+			"});" +
+			"</scr\ipt>" +
+			"</b\ody>");
+		win.onunload = function () {
+			if (objWindows.hasOwnProperty(url))
+				close(url);
+		};
+		objWindows[url] = win;
+		el.parent(2).remElem();
+		break;
+	case "reg":
+		b;
+		if (th[1] === "connect")
+			connector(th[2] === "t" && !A.isEmpty(pass));
+		if (th[1] === "list")
+			listuse(["", "inpdat"], th[2] === "t" && !A.isEmpty(pass));
+		break;
+	case "res":
+		if ("#circ".opt("class") !== "show")
+			"#circ".addClass("show");
+		else
+			"#circ".remClass("show");
+		break;
+	case "men":
+		var elm = "#back4".a(!0);
+		if (elm.length)
+			elm[0].remElem();
+		else {
+			b;
+			"#cmd".DOMTree({
+				div: {
+					id: "back4",
+					class: "ground",
+					_DOM: {
+						div: {
+							id: "connect",
+							_DOM: {
+								button: {
+									class: "close2 btn",
+									_TXT: "CLOSE"
+								},
+								div: {
+									id: "parama"
+								}
+							}
+						}
+					}
+				}
+			});
+		}
+		"#parama".a(!0).length && "#parama".addElem("div", {
+			class: "ze lineno",
+			_DOM: [
+				["button", {
+						class: "NF lineno color2 overf",
+						_TXT: "New File"
+					}
+				],
+				["button", {
+						class: "ND lineno color2 overf",
+						_TXT: "New Dir"
+					}
+				],
+				["hr", {
+						class: "menhr nocur"
+					}
+				],
+				["button", {
+						class: "listuse remuse lineno color2 overf",
+						_TXT: "Deleting users saved in the browser"
+					}
+				],
+				["button", {
+						class: "nPass lineno color2 overf",
+						_TXT: "Set new password"
+					}
+				],
+				["hr", {
+						class: "menhr nocur"
+					}
+				],
+				["button", {
+						class: "delal lineno color2 overf",
+						_TXT: "Delete server-side manager"
+					}
+				]
+			]
+		});
+		break;
+	case "remuse":
+		var tmp = localStorage.getItem(el.name);
+		if (!A.isEmpty(tmp)) {
+			localStorage.removeItem(el.name);
+		}
+		listuse(["", "remuse"]);
+		break;
+	case "listuse":
+		listuse(th);
+		break;
+	case "inpdat":
+		if (!!localStorage.length) {
+			var usname = el.name;
+			if (!A.isEmpty(usname)) {
+				var passlog = localStorage.getItem(usname);
+				if (A.isEmpty(passlog)) {
+					alert("Username not found in localStorage");
+					listuse(["", "remuse"]);
+					return;
+				}
+				passlog = A.json(passlog);
+				setTimeout(loadingLo(), 0);
+				A.ajax({
+					type: "POST",
+					url: passlog.port,
+					async: true,
+					data: {
+						pass: passlog.pass
+					},
+					success: function (req) {
+						setTimeout(loadingLo(), 0);
+						if (req !== "_getPass_") {
+							username = usname;
+							consolePort = passlog.port;
+							pass = passlog.pass;
+							curPath = startDir;
+							closeAll();
+							getree(startDir);
+							return;
+						}
+						alert("Error of password");
+						listuse(["", "inpdat"]);
+					},
+					statuscode: {
+						404: function (x) {
+							setTimeout(loadingLo(), 0);
+							listuse(["", "inpdat"]);
+							A.error(er404(x.responseURL));
+						}
+					}
+				});
+				return;
+			}
+		}
+		break;
+	case "delal":
+		b;
+		var tmppass = prompt("This function deletes the server-side of the application.\nThat is, you can not connect to this address anymore!!.\nIf you want to do this, enter th password and click OK");
+		if (!A.isEmpty(tmppass)) {
+			setTimeout(loadingLo(), 0);
+			A.ajax({
+				url: consolePort + "?t=delal",
+				type: "POST",
+				async: true,
+				data: {
+					pass: pass,
+					tp: tmppass
+				},
+				success: function (x) {
+					setTimeout(loadingLo(), 0);
+					if (x !== "_getPass_") {
+						consolePort = "";
+						pass = "";
+						curPath = startDir;
+						closeAll();
+						getree("", !0);
+						var tmp = localStorage.getItem(el.name);
+						if (!A.isEmpty(tmp)) {
+							localStorage.removeItem(el.name);
+						}
+						listuse(["", "remuse"]);
+					} else {
+						alert("Error of password");
+					}
+				},
+				statuscode: {
+					404: function (x) {
+						setTimeout(loadingLo(), 0);
+						A.error(er404(x.responseURL));
+					}
+				}
+			});
+		}
+		break;
+	case "nPass":
+		b;
+		setpass();
+		break;
+	case "NF":
+		create("file");
+		break;
+	case "ND":
+		create("dir");
+		break;
+	case "reb":
+		getree(curPath);
+		break;
+	case "para":
+		b;
+		var elm = "#back5".a(!0),
+		shurl = el.parent().child(".lineno").opt("url"),
+		url = fixPath() + shurl,
+		type = el.parent().child(".lineno").getClass[1],
+		exp = el.parent().child(".lineno").opt("exp");
+		if (elm.length)
+			elm[0].remElem();
+		"#cmd".DOMTree({
+			div: {
+				id: "back5",
+				class: "ground",
+				_DOM: {
+					div: {
+						id: "connect",
+						_DOM: {
+							button: {
+								class: "close2 btn",
+								_TXT: "CLOSE"
+							},
+							div: {
+								id: "props",
+								_DOM: [
+									["button", {
+											class: "ze lineno file color2 bottomshad nocur overf color3",
+											_TXT: url
+										}
+									],
+									["button", {
+											url: url,
+											type: type,
+											class: "SP lineno color2",
+											_TXT: "show properties"
+										}
+									],
+									["button", {
+											class: "op3 lineno color2",
+											exp: exp || "",
+											url: url,
+											_TXT: "Open"
+										}
+									],
+									["button", {
+											class: "VIN lineno color2",
+											exp: exp || "",
+											url: url,
+											_TXT: "View in reloader"
+										}
+									],
+									["button", {
+											class: "ren lineno color2",
+											url: shurl,
+											_TXT: "Rename"
+										}
+									],
+									["button", {
+											url: url,
+											class: "RM lineno color2",
+											_TXT: "Delete"
+										}
+									]
+								]
+							}
+						}
+					}
+				}
+			}
+		});
+		break;
+	case "ren":
+		var newname = prompt("Rename...\nnew name :"),
+		expname = newname.split(".");
+		if (!A.isEmpty(newname)) {
+			var urls = (th[1] === "SEL" ? ".selected" : [el]).all(function (elem, ind) {
+				var tmp,
+				i = 0,
+				curl = elem.parent().child((th[1] === "SEL" ? ".lineno" : ".ren")).opt("url");
+				if (expname.length > 1) {
+					tmp = expname.slice(0, expname.length - 1).join(".") + (ind > 0 ? "_" + ind : "") + "." + expname.end;
+				} else {
+					tmp = newname + (ind > 0 ? "_" + ind : "");
+				}
+				return [
+					curPath + curl,
+					curPath + tmp
+				];
+			}).return;
+			A.ajax({
+				url: consolePort + "?t=rename",
+				type: "POST",
+				async: true,
+				data: {
+					pass: pass,
+					urls: A.json(urls)
+				},
+				success: function (x) {
+					x = A.isEmpty(x) ? [] : A.json(x);
+					A.toArray(x, !0).all(function (xa) {
+						if (xa[0] === "_notFound_" && !A.isEmpty(xa[1])) {
+							alert("path\n" + xa[1].join("\n") + "\nnot found");
+						}
+					});
+					b;
+					getree(curPath);
+				},
+				statuscode: {
+					404: function (x) {
+						setTimeout(loadingLo(), 0);
+						A.error(er404(x.responseURL));
+					}
+				}
+			});
+		}
+		break;
+	case "SP":
+		setTimeout(loadingLo(), 0);
+		A.ajax({
+			url: consolePort + "?t=getprops",
+			type: "POST",
+			async: true,
+			data: {
+				pass: pass,
+				path: el.opt("url"),
+				type: el.opt("type")
+			},
+			success: function (x) {
+				setTimeout(loadingLo(), 0);
+				if (x !== "_notFound_") {
+					var elm = ".proptable".a(!0);
+					if (elm.length)
+						elm[0].remElem();
+					el.parent().addElem("table", {
+						class: "proptable"
+					});
+					var props = A.json(x);
+					for (var nm in props) {
+						".proptable".opt({
+							_DOM: [
+								["tr", {
+										_DOM: [
+											["td", {
+													_TXT: nm
+												}
+											],
+											["td", {
+													_TXT: props[nm]
+												}
+											]
+										]
+									}
+								]
+							]
+						});
+					}
+				} else
+					alert("File not found");
+			},
+			statuscode: {
+				404: function (x) {
+					setTimeout(loadingLo(), 0);
+					A.error(er404(x.responseURL));
+				}
+			}
+		});
+		break;
+	case "op3":
+		b;
+		getree(el.opt("url"));
+		break;
+	case "VIN":
+		var url=el.opt("url");
+		if (viewInReload.hasOwnProperty(url)) {
+			viewInReload[url].close();
+		}
+		var win = window.open(url, '_blank');
+		viewInReload[url] = win;
+		break;
+	case "RM":
+		var elurl = th[1] !== "SEL" ?
+			[el.opt("url")]
+			 :
+			".selected".all(function (elem) {
+				return fixPath() + elem.parent().child(".lineno").opt("url");
+			}).return;
+		if (confirm("Are you want to delete \n" + elurl.join("\n") + "\n ?")) {
+			setTimeout(loadingLo(), 0);
+			A.ajax({
+				url: consolePort + "?t=delete",
+				type: "POST",
+				async: true,
+				data: {
+					pass: pass,
+					url: A.json(elurl)
+				},
+				success: function (x) {
+					setTimeout(loadingLo(), 0);
+					x = A.json(x);
+					if (!A.isEmpty(x))
+						alert("path not found:\n" + x.join("\n"));
+					getree(curPath, !1, !0);
+				},
+				statuscode: {
+					404: function (x) {
+						setTimeout(loadingLo(), 0);
+						A.error(er404(x.responseURL));
+					}
+				}
+			});
+			b;
+		}
+		break;
+	case "sel":
+		var elm = "#back7".a(!0);
+		if (elm.length) {
+			elm[0].remElem();
+			remSel();
+		} else {
+			b;
+			"#cmd".DOMTree({
+				div: {
+					id: "back7",
+					class: "ground",
+					_DOM: {
+						div: {
+							id: "connect",
+							_DOM: {
+								button: {
+									class: "close2 btn",
+									_TXT: "CLOSE"
+								},
+								div: {
+									id: "select"
+								}
+							}
+						}
+					}
+				}
+			});
+			setSel();
+		}
+		"#select".a(!0).length && "#select".addElem("div", {
+			class: "ze lineno",
+			_DOM: [
+				["button", {
+						class: "RM SEL lineno color2",
+						_TXT: "Delete"
+					}
+				],
+				["button", {
+						class: "ren SEL lineno color2",
+						_TXT: "Rename"
+					}
+				]
+			]
+		});
+		break;
+	case "select":
+		var tmp = el.hasClass("txt") ? el.parent() : el;
+		tmp.hasClass("selected") ? (
+			tmp.remClass("selected"),
+			tmp.html = "") : (
+			tmp.addClass("selected"),
+			tmp.html = "<text class='select txt'>&#10003;</text>");
+		break;
+	}
+
+});
+</script>
+<script>var e="div".a(!!1);e[e.length-1].opt("style")!==e[e.length-1]&&e[e.length-1].remElem();</script>
+<html>
