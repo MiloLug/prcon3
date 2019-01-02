@@ -1,8 +1,8 @@
-**
+
 
 # Greetings to all!
 
-**
+
 Just want to say that the project was written for myself, and only as a hobby, so I am not eager to tell all the details.
 
 ## Immediately short:
