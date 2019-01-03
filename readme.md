@@ -7,10 +7,20 @@ Just want to say that the project was written for myself, and only as a hobby, s
 
 ## Immediately short:
 This is an online explorer that gives access to files through php or ftp functions.
-(Ie, you can upload it to the host and edit files directly through PHP , without the use of FTP)
-### using:
+(Ie, you can upload it to the host and edit files directly through PHP , without the use of FTP).
+On phones the site also works great :)
+### What can:
+
+ - [x] Access your files through FTP or directly from PHP on the host
+ - [x] Upload and download files
+ - [x] Create and extract .zip archives
+ - [x] Two file editors. The first is light version, second- with code highlighting, linting, searching...
+ - [x] delete, cut, copy, paste files
+ - [x] easy add new UI languages, redactors
+
+### Setup and using:
 1. Download the folder ***prcon3***, upload it to the host.
-2. Go to it through the browser ( http(s)://blablabla/prcon3/ )
+2. Go to it through the browser ( http(s)://yoursite/prcon3/ )
 3. Click on this button 
 ![enter image description here](https://i.ibb.co/RDGzDhj/image.png)
 4. login from php:
@@ -26,9 +36,34 @@ Well, you understand
 5. Login from FTP
 ![
 ](https://i.ibb.co/KhDsPsH/image.png)
-### after logging
+## Sundries
+#### @ROOT:
 ![
 ](https://i.ibb.co/8BPJW70/image.png)
 @ROOT:/ - This is the root folder for php and ftp (for php, this is usually the path from the root of the disk to the host folder)
-## 
-## I hope, you will understand further. Good luck to all!
+
+#### select file editor:
+![
+](https://i.ibb.co/HrWDNcj/image.png)
+#### highlighting code languages:
+Linting:
+
+ - PHP
+ - CSS
+ - JS
+ - HTML
+ - JSON
+ - Coffee Script
+
+Highlighting:
+
+ - SASS
+ - Coffee Script
+ - PHP
+ - markdown
+ - python
+ - CSS
+ - C like languages (C, C++ etc.)
+ - javascript
+ - HTML
+ - XML
