@@ -101,11 +101,11 @@ window.UI.ctx = {
 				return el.attrFromPath("_url");
 			}).return,
 		content = {
-			content: [{
+			content: [type==="file"?{
 					type: "button",
 					btntext: "Edit".tr,
 					btnID: "edit" + (sel ? "all" : "")
-				}, {
+				}:{}, {
 					type: "button",
 					btntext: "Copy".tr,
 					btnID: "copy" + (sel ? "all" : "")
@@ -160,8 +160,8 @@ window.UI.ctx = {
 					UI.openFile(TH, url);
 					break;
 				case "editall":
-					list.all(function(item){
-						UI.openFile(TH, item);
+					".dirPlace.selected".all(function (el) {
+						el.attrFromPath("_type") === "file" && UI.openFile(TH, el.attrFromPath("_url"));
 					});
 					break;
 				case "deleteall":
