@@ -1,10 +1,15 @@
 <?php
 define("PASS", "111");
-function Main($data, $acc){
-	$error  = array();
-	$req    = array();
-	$ftpcon = false;
-	
+$error  = array();
+$req    = array();
+$ftpcon = false;
+$FTP=false;
+$data=json_decode($_POST["query"], true);
+$acc=isset($data["acc"])?$data["acc"]:array();
+$files=isset($_FILES["files"])?$_FILES["files"]:false;
+$nFN;
+function Main(){
+	global $FTP,$ftpcon,$req,$error,$data,$acc,$nFN;
 	//json echo start .req
 	//	{
 	//		"req":[
@@ -30,13 +35,15 @@ function Main($data, $acc){
 		
 		if (!isset($acc["login"]))
 			$error[] = "no ftp login";
+      	
+      	$port=isset($acc["portFtp"])&&is_int($acc["portFtp"])?$acc["portFtp"]:21;
 		
-		$ftpcon = ftp_connect($acc["urlFtp"]);
+      	$ftpcon = ftp_connect($acc["urlFtp"],$port);
 		if (!$ftpcon)
 			$error[] = "ftp con err";
 		
 		$ftplog = ftp_login($ftpcon, $acc["login"], $acc["password"]);
-	
+    	
 		if (!$ftplog)
 			$error[] = "ftp login err";
 		
@@ -57,11 +64,14 @@ function Main($data, $acc){
 		}
 	}
 	
-	function _echo($fn,$args,$arr,$_FTP){
-		while(count($fn)>0) {
+	function _echo($fn,$args,$arr,$FTP){
+      	if ($FTP !== false) {
+			global $FTP;
+		}
+      	while(count($fn)>0) {
 			$t=array_shift($fn);
 			$a=array_shift($args);
-			$t=$arr?$t:$t($a,$_FTP);
+			$t=$arr?$t:$t($a,$FTP);
 			if($t!=="__echo_inserted__"){
 				echo json_encode($t);
 			}
@@ -71,7 +81,6 @@ function Main($data, $acc){
 			flush();
 		}
 	}
-	$nFN;
 	class FN
 	{
 		public function login()
@@ -147,10 +156,10 @@ function Main($data, $acc){
 			;
 			return $tmp;
 		}
-		public function divNameExp($url)
+		public function divNameExt($url)
 		{
-			$url = self::gUrl($url, $FTP);
-			$name = array_pop(self::arrUrl($url));
+			$url = self::gUrl($url, null);
+			$name = array_pop(self::arrUrl($url, null));
 			$name = explode(".",$name);
 			$r="";
 			$e="";
@@ -427,8 +436,9 @@ function Main($data, $acc){
 			$oldNames  = $args["oldNames"];
 			$newNames  = $args["newNames"];
 			$staticExt = $args["staticExtension"];
-		
-			$list    = self::getList($url, $FTP);
+			$onlyStr   = $args["onlyStr"];
+			
+			$list    = $onlyStr?$args["list"]:self::getList($url, $FTP);
 			$names   = array();
 			$types   = array();
 			$renames = array();
@@ -446,8 +456,8 @@ function Main($data, $acc){
 				$newName = array_shift($newNames);
 				if($oldName==$newName)
 					continue;
-				$newDiv = self::divNameExp($newName);
-				$oldDiv = self::divNameExp($oldName);
+				$newDiv = self::divNameExt($newName);
+				$oldDiv = self::divNameExt($oldName);
 				$mod=-1;	
 				$newExt = count($staticExt?$oldDiv:$newDiv)>1?".".($staticExt?$oldDiv[1]:$newDiv[1]):"";
 			
@@ -471,9 +481,9 @@ function Main($data, $acc){
 	
 				$ok;
 				if($FTP)
-					$ok=ftp_rename($ftpcon,$oldUrl,$newUrl);
+					$ok=$onlyStr?true:ftp_rename($ftpcon,$oldUrl,$newUrl);
 				else
-					$ok=rename($oldUrl,$newUrl);
+					$ok=$onlyStr?true:rename($oldUrl,$newUrl);
 				
 				if($ok){
 					$renames[]=array(self::shortUrl($oldUrl,$FTP),self::shortUrl($newUrl,$FTP));
@@ -642,9 +652,11 @@ function Main($data, $acc){
 			$url           = self::normUrl($args, $FTP);
 			$name          = self::arrUrl($url, $FTP);
 			$name          = $name[count($name) - 1];
+			$newName       = $name;
 			$destination   = self::normUrl($args["destinationDir"], $FTP);
 			$inDest        = $destination . "/" . $name;
 			$replace       = $args["replace"] || false;
+			$deleteSource  = $args["deleteSource"] || false;
 			$commonError   = array(
 				"type" => "error",
 				"info" => "obj copying error",
@@ -682,16 +694,30 @@ function Main($data, $acc){
 				return $commonRequery;
 			}
 			if (self::isAvailable($inDest, $FTP) && !$replace) {
-				$commonRequery["info"] = "obj exists";
-				return $commonRequery;
+				$divName=self::divNameExt($name);
+				$renamed=self::rename(array(
+					"oldNames"=>array(
+						$name
+					),
+					"newNames"=>array(
+						$divName[0]."_copy".(count($divName)>1?".".$divName[1]:"")
+					),
+					"staticExtension"=>true,
+					"onlyStr"=>true,
+					"list"=>self::getList($destination, $FTP)
+				),$FTP);
+				$renamed=self::arrUrl($renamed["renames"][0][1],$FTP);
+				$renamed=$renamed[count($renamed)-1];
+				$inDest=$destination . "/" . $renamed;
+				$newName=$renamed;
 			}
 			if ($replace) {
 				self::delete($inDest, $FTP);
 			}
-			if (self::isDir($url)) {
+			if (self::isDir($url, $FTP)) {
 				$create = self::create(array(
 					"type" => "dir",
-					"name" => $name,
+					"name" => $newName,
 					"url" => $destination
 				), $FTP);
 				if ($create["type"] != "ok") {
@@ -710,7 +736,7 @@ function Main($data, $acc){
 			} else {
 				$copied = false;
 				if ($FTP) {
-					$tmpName = sys_get_temp_dir() . "/" . uniqid("PRCON_TMP", true) . $name;
+					$tmpName = sys_get_temp_dir() . "/" . uniqid("PRCON_TMP", true) . $newName;
 					if (ftp_get($ftpcon, $tmpName, $url, FTP_BINARY) && ftp_put($ftpcon, $inDest, $tmpName, FTP_BINARY)) {
 						$copied = true;
 						unlink($tmpName);
@@ -721,14 +747,118 @@ function Main($data, $acc){
 				if (!$copied) {
 					return $commonError;
 				}
+				if($deleteSource){
+					self::delete($url, $FTP);
+				}
 			}
 			return array(
 				"type" => "ok",
-				"objName" => $name,
+				"objName" => $newName,
 				"url" => self::shortUrl($url, $FTP),
 				"destinationDir" => self::shortUrl($destination, $FTP),
 				"funcName" => $FN,
 				"includes" => $includes
+			);
+		}
+		public function uploadFile($args,$FTP){
+			if ($FTP !== false) {
+				global $FTP;
+			}
+			$FN = "uploadFiles";
+			
+			$name          = $args["name"];
+			$destination   = self::normUrl($args, $FTP);
+			$fileIndex     = $args["index"];
+			$inDest        = $destination . "/" . $name;
+			$replace       = $args["replace"] || false;
+			$commonError   = array(
+				"type" => "error",
+				"info" => "not have uploads",
+				"objName" => $name,
+				"url" => self::shortUrl($destination, $FTP),
+				"funcName" => $FN
+			);
+			if(!isset($_FILES) || !isset($_FILES["files"]) || !isset($_FILES["files"]["tmp_name"][$fileIndex]))
+				return $commonError;
+			if (self::isAvailable($inDest, $FTP) && !$replace) {
+				$divName=self::divNameExt($name);
+				$renamed=self::rename(array(
+					"oldNames"=>array(
+						$name
+					),
+					"newNames"=>array(
+						$divName[0]."_uploaded".(count($divName)>1?".".$divName[1]:"")
+					),
+					"staticExtension"=>true,
+					"onlyStr"=>true,
+					"list"=>self::getList($destination, $FTP)
+				),$FTP);
+				$renamed=self::arrUrl($renamed["renames"][0][1],$FTP);
+				$renamed=$renamed[count($renamed)-1];
+				$inDest=$destination . "/" . $renamed;
+				$name=$renamed;
+			}
+			if ($replace) {
+				self::delete($inDest, $FTP);
+			}
+			$uploaded=false;
+			$tmpName=$_FILES['files']['tmp_name'][$fileIndex];
+			if ($FTP) {
+				if (ftp_put($ftpcon, $inDest, $tmpName, FTP_BINARY)) {
+					$uploaded = true;
+					unlink($tmpName);
+				}
+			} else {
+				$uploaded = @move_uploaded_file($tmpName, $inDest);
+				unlink($tmpName);
+			}
+			if(!$uploaded){
+				$commonError["info"]="create error";
+				return $commonError;
+			}
+			return array(
+				"type" => "ok",
+				"objName" => $name,
+				"url" => self::shortUrl($destination, $FTP),
+				"funcName" => $FN
+			);
+		}
+		public function uploadFiles($args,$FTP){
+			if ($FTP !== false) {
+				global $FTP;
+			}
+			$FN = "uploadFiles";
+			
+			$names         = $args["names"];
+			$fileIndexes   = $args["indexes"];
+			$commonError   = array(
+				"type" => "error",
+				"info" => "not full data",
+				"objName" => $name,
+				"url" => self::shortUrl($destination, $FTP),
+				"funcName" => $FN
+			);
+			if(!isset($fileIndexes) || !isset($names))
+				return $commonError;
+			return array(
+				"type" => "ok",
+				"objName" => $name,
+				"url" => self::shortUrl($destination, $FTP),
+				"funcName" => $FN
+			);
+			$r=array();
+			for ($i = 0; $i < count($args["indexes"]); $i++) {
+				$r[] = self::uploadFile(array(
+					"url" => $args["url"],
+					"name" => $args["names"][$i],
+					"index" => $args["indexes"][$i],
+					"replace" => @$args["replace"] || false
+				), $FTP);
+			}
+			return array(
+				"type" => "ok",
+				"objList" => $r,
+				"funcName" => $FN
 			);
 		}
 		public function copyListTo($args, $FTP)
@@ -742,7 +872,9 @@ function Main($data, $acc){
 			for ($i = 0; $i < count($args["list"]); $i++) {
 				$r[] = self::copyTo(array(
 					"url" => $args["list"][$i],
-					"destinationDir" => $args["destinationDir"]
+					"destinationDir" => $args["destinationDir"],
+					"deleteSource" => @$args["deleteSource"] || false,
+					"replace" => @$args["replace"] || false
 				), $FTP);
 			}
 			return array(
@@ -1025,9 +1157,8 @@ function Main($data, $acc){
 			if ($FTP !== false) {
 				global $FTP;
 			}
-			global $ftpcon;
+			global $ftpcon, $nFN;
 			$FN = "ifEqual";
-			$nFN = new self();
 			
 			$if      = $args["if"];
 			$then    = $args["then"];
@@ -1060,7 +1191,7 @@ function Main($data, $acc){
 					$funcs[]=array($nFN,$t["name"]);
 					$args[]=$t["args"];
 				}
-				_echo($funcs,$args,null,null);
+				_echo($funcs,$args,null,$FTP);
 			} elseif ($else) {
 				$funcs=array();
 				$args=array();
@@ -1068,7 +1199,7 @@ function Main($data, $acc){
 					$funcs[]=array($nFN,$t["name"]);
 					$args[]=$t["args"];
 				}
-				_echo($funcs,$args,null,null);
+				_echo($funcs,$args,null,$FTP);
 			}
 		
 			echo '
@@ -1082,7 +1213,9 @@ function Main($data, $acc){
 	;
 	$_echoFN=array();
 	$_echoArgs=array();
+  
 	$nFN=new FN();
+	
 	if (count($error) == 0) {
 		foreach($data["funcs"] as $t){
 			$_echoFN[] = array($nFN,$t["name"]);
@@ -1094,7 +1227,7 @@ function Main($data, $acc){
 	//	{
 	//	//	"req":[
 	//			content
-	_echo($_echoFN,$_echoArgs,null,null);
+	_echo($_echoFN,$_echoArgs,null,$FTP);
 	
 	//json echo end of .req & start .error
 	//	{
@@ -1116,7 +1249,7 @@ function Main($data, $acc){
 	//	//	"error":[
 	//			content
 	//
-	_echo($error,array(),true,null);
+	_echo($error,array(),true,$FTP);
 	
 	//json echo end of .error & echo
 	//	{
@@ -1133,6 +1266,5 @@ function Main($data, $acc){
 	if ($FTP)
 		ftp_close($ftpcon);
 }
-$dt=json_decode(file_get_contents("php://input"), true);
-@Main($dt,$dt["acc"]);
+@Main();
 ?>

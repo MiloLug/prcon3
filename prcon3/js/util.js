@@ -68,6 +68,7 @@ var ACCOUNT={
     		ftp:[],
     		urlPhp:[],
     		urlFtp:[],
+          	portFtp:[],
     		data:{
      	      	explorer:{}
      	    }
@@ -83,6 +84,7 @@ var ACCOUNT={
 		this.explorer={
           	back:[],
           	copied:[],
+			copiedCut:false,
 			forward:[],
           	curDir:"@ROOT:",
           	tree:{
@@ -125,26 +127,29 @@ var ACCOUNT={
       	window.location.reload();
     },
     getAccRow=function(name){
-      	var pos=-1;
+      	var pos=-1,
+            cur;
       	BUFFER.localData.accounts.name.all(function(nm,i){
         	if(nm===name){
             	pos=i;
               	return "break";
             }
         },"break");
+      	cur=BUFFER.localData.accounts;
       	return {
           	index:pos,
           	row:{
               	name:name,
-              	login:BUFFER.localData.accounts.login[pos],
-              	password:BUFFER.localData.accounts.password[pos],
-          		ftp:BUFFER.localData.accounts.ftp[pos],
-          		urlPhp:BUFFER.localData.accounts.urlPhp[pos],
-          		urlFtp:BUFFER.localData.accounts.urlFtp[pos]
+              	login:cur.login[pos],
+              	password:cur.password[pos],
+          		ftp:cur.ftp[pos],
+          		urlPhp:cur.urlPhp[pos],
+          		urlFtp:cur.urlFtp[pos],
+              	portFtp:cur.portFtp[pos]
             }
         };
     },
-    setAccount=function (name,ftp, log, pass, urlPhp, urlFtp){
+    setAccount=function (name,ftp, log, pass, urlPhp, urlFtp, portFtp){
       	UI.closeAll();
       	if(name.constructor===Object)
       		for(var k in name){
@@ -156,7 +161,8 @@ var ACCOUNT={
         	ACCOUNT.password=pass,
         	ACCOUNT.urlPhp=urlPhp,
         	ACCOUNT.urlFtp=urlFtp,
-        	ACCOUNT.name=name;
+        	ACCOUNT.name=name,
+      		ACCOUNT.portFtp=portFtp;
       	localToBUFFER();
       	UI.parseTree();
       	UI.openDir(false,false,"stay");

@@ -1,5 +1,4 @@
-window.addEventListener("contextmenu", function (e, ccount) {
-		e.preventDefault();
+window.addEventListener("contextmenu", function (e, ccount) {   
 		e = new BJSEvent(e);
 		".contextmenu".all(function (cm) {
 			UI.ctx.closeContextmenu(cm.opt("uid"));
@@ -11,6 +10,7 @@ window.addEventListener("contextmenu", function (e, ccount) {
 			FN = TH.opt("contextfuncs");
 			if (!FN || (ind > 0 && !TH.opt("bubblecontext")) || (ccount > 0 && !TH.opt("mergecontext")))
 				return "continue";
+          	e.origin.preventDefault();
 			FN = FN.split(","),
 			FN.all(function (fun, fnInd) {
 				return UI.ctx[fun.trim()](TH, e, ccount > 0 || fnInd > 0);

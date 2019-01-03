@@ -134,6 +134,7 @@
         	<input type="text" class="urlFtp inputstyle cls" placeholder="FTP URL">
    			<input type="text" class="login inputstyle cls" placeholder="FTP LOGIN">
       		<input type="text" class="pass inputstyle cls" placeholder="FTP PASSWORD">
+          	<input type="text" class="port inputstyle cls" placeholder="FTP PORT (default 21)">
       	::@	
       	</div>
         <div class="downmenu">
@@ -217,6 +218,18 @@
        			<div class="progress">
        				  	<div class="bar"></div>
                   		<pre class="info">@set::"Speed".tr::@: <text class="speed"></text><br>@set::"Downloading".tr::@: <text class="downloading"></text></pre>
+       			</div>
+       		</div>
+       		<button class="blackbtn bwhitefont cls" funcs="stopLoading">X</button>
+   		</div>
+  	</div>
+	<div act="uploadsFileSrc">
+      	<div class="blackbtn file" url="">
+       		<div class="content">
+       			<div class="name"></div>
+       			<div class="progress">
+       				  	<div class="bar"></div>
+                  		<pre class="info">@set::"Speed".tr::@: <text class="speed"></text><br>@set::"Uploading".tr::@: <text class="downloading"></text></pre>
        			</div>
        		</div>
        		<button class="blackbtn bwhitefont cls" funcs="stopLoading">X</button>

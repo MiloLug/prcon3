@@ -125,7 +125,7 @@ var TEMP_SETTINGS_DECLARE=[
           	funcs:"getLocalData",
           	realtime:true,
  	      	group:"other".tr,
- 	      	info:""
+ 	      	info:"down local info"
  	    },
 		{
  	      	type:"button",
@@ -133,7 +133,7 @@ var TEMP_SETTINGS_DECLARE=[
           	funcs:"setLocalData",
           	realtime:false,
  	      	group:"other".tr,
- 	      	info:""
+ 	      	info:"up local info"
  	    },
   		{
  	      	type:"button",

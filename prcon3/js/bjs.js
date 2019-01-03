@@ -1086,8 +1086,9 @@ Prev define version: 6.0.0 (15.10.2018)
               	case "form":
                 	s.header="";
                 	tmp=new W.FormData();
-                	for(var nm in s.data)
-                      	tmp.append(nm,s.data[nm]);
+					s.data.all(function(vl){
+						tmp.append(vl.name,vl.value);
+					});
                 	s.data=tmp;
             }
           	

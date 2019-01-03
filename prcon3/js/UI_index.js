@@ -153,12 +153,12 @@
 			cont = back.child(".backcontent>f-scrollplane");
           	for(var nm in BUFFER.downloads){
               	var el=A.createElem("div",{
-					_TXT:UI.getAct("downloadsFileSrc")
+					_TXT:UI.getAct(BUFFER.downloads[nm].up?"uploadsFileSrc":"downloadsFileSrc")
 				}).children[0].pasteIn(cont);
               	el.opt({
-					url:nm
+					_url:nm
 				});
-              	el.child(".name").html=PATH(nm).name;
+              	el.child(".name").html=BUFFER.downloads[nm].up?BUFFER.downloads[nm].name:PATH(nm).name;
               	BUFFER.downloads[nm].inDownloads=el;
               	BUFFER.downloads[nm].inDownSpeed=el.child(".speed");
               	BUFFER.downloads[nm].inDownIng=el.child(".downloading");
@@ -670,16 +670,20 @@
 				url: row.ftp ? row.urlPhp : row.login,
 				type: "POST",
 				async: true,
-				dataType: "json",
-				data: {
-					acc: row,
-					funcs: [{
-							name: "login"
-						}
-					]
-				},
+				dataType: "form",
+				data: [{
+					name:"query",
+					value:A.json({
+						acc: row,
+						funcs: [{
+								name: "login"
+							}
+						]
+					})
+				}],
 				success: function (d) {
-                  	UI.setLSToPlace("body", false);
+					d=A.json(d);
+					UI.setLSToPlace("body", false);
 					if (d.error.length > 0) {
                       	UI.errors(d.error);
 						return;
@@ -697,31 +701,37 @@
 				}
 			});
 		},
-		sendLogin: function (TH, ftp, log, pass, urlPhp, urlFtp) {
+		sendLogin: function (TH, ftp, log, pass, urlPhp, urlFtp, portFtp) {
 			log = log || ".back .login".val(),
 			pass = pass || ".back .pass".val(),
 			ftp && (
 				urlPhp = urlPhp || ".back .urlPhp".val(),
-				urlFtp = urlFtp || ".back .urlFtp".val()),
+				urlFtp = urlFtp || ".back .urlFtp".val(),
+            	portFtp = !A.isEmpty(portFtp) ? parseFloat(portFtp) : 21),
 			UI.setLSToPlace("body", true);
 			A.ajax({
 				url: ftp ? urlPhp : log,
 				type: "POST",
 				async: true,
-				dataType: "json",
-				data: {
-					acc: {
-						ftp: ftp,
-						password: pass,
-						login: log,
-						urlFtp: urlFtp
-					},
-					funcs: [{
-							name: "login"
-						}
-					]
-				},
+				dataType: "form",
+				data: [{
+					name:"query",
+					value:A.json({
+						acc: {
+							ftp: ftp,
+							password: pass,
+							login: log,
+							urlFtp: urlFtp,
+                          	portFtp: portFtp
+						},
+						funcs: [{
+								name: "login"
+							}
+						]
+					})
+				}],
 				success: function (e) {
+					e=A.json(e);
 					UI.setLSToPlace("body", false);
 					if (e.error.length > 0) {
 						UI.errors(e.error);
@@ -738,11 +748,11 @@
 									}
 								],
 								func: function (d) {
-									d.pressed === "ok" && setAccount(nm || "", ftp, log, pass, urlPhp, urlFtp);
+									d.pressed === "ok" && setAccount(nm || "", ftp, log, pass, urlPhp, urlFtp, portFtp);
 								}
 							});
 						else
-							setAccount(nm || "", ftp, log, pass, urlPhp, urlFtp);
+							setAccount(nm || "", ftp, log, pass, urlPhp, urlFtp, portFtp);
 					},
 					store = {
 						newAcc: function (login, password) {
@@ -780,6 +790,7 @@
 											data.ftp.push(ftp),
 											data.urlFtp.push(urlFtp),
 											data.urlPhp.push(urlPhp),
+                                            data.portFtp.push(portFtp),
 											data.password.push(password),
 											BUFFERToLocal(),
 											setLogin(name);
@@ -814,6 +825,7 @@
 										data.ftp[pos] = ftp,
 										data.urlFtp[pos] = urlFtp,
 										data.urlPhp[pos] = urlPhp,
+                                      	data.portFtp[pos] = portFtp,
 										data.login[pos] = login,
 										BUFFERToLocal()),
 									res.pressed === "new" && store.newAcc(login, password),
@@ -1308,6 +1320,18 @@
 				}
 			});
 		},
+		stopLoading: function(TH, url){
+			url = PATH(url||TH.attrFromPath("_url")).fixUrl();
+			BUFFER.downloads[url]&&BUFFER.downloads[url].xhr.wait(function(vl){
+				vl.x.XHR.abort();
+			});
+		},
+		stopAllLoads: function(TH){
+			for(var nm in BUFFER.downloads)
+				BUFFER.downloads[nm].xhr.wait(function(vl){
+					vl.x.XHR.abort();
+				});
+		},
 		paste: function (TH, args) {
 			if (!args || !args.list.length)
 				return;
@@ -1428,7 +1452,8 @@
                   	name:path.name,
                   	delete:A.start(function(){},true),
                   	speed:A.start(function(){},true),
-                  	downloaded:A.start(function(){},true)
+                  	downloaded:A.start(function(){},true),
+					xhr:A.start(function(){},true)
                 };
               	downObj.delete.wait(function(){
                   	var tmpin=downObj.inDownloads;
@@ -1445,6 +1470,10 @@
                         downObj.inDownBar&&downObj.inDownBar.css("width","100%")
                       	downObj.delete.value=true;
                     }
+					if(vl==="stop"||vl==="error"){
+                      	downObj.inDownSpeed&&downObj.inDownSpeed.html(formatBytes(0)),
+                        downObj.delete.value=true;
+                    }
                 });
               	downObj.type.progressValue="getting size";
               	downObj.size=path.common("sizeOf").wait(function(size){
@@ -1455,7 +1484,7 @@
                   	return [size[0]*4/3,formatBytes(size[0]*4/3)];
                 });
               	downObj.download=downObj.size.wait(function(){
-                  	return path.common("getBase64");
+                  	return (downObj.xhr.value={x:path.common("getBase64")}).x;
                 });
               	downObj.download.wait(function(vl){
                   	downObj.type.value=downObj.speed.value=downObj.downloaded.value=true;
@@ -1466,6 +1495,9 @@
                     downObj.type.progressValue="complete";
                 });
               	downObj.download.progress(function(dt){
+					if(dt.type==="abort"){
+						return downObj.download.value=0;
+					}
                   	tm=downObj.size.wait(function(vl){return vl;});
                   	tm.wait(function(vl){
                       	if(dt.type==="down"&&dt.data.loaded<=vl[0]){
@@ -1491,6 +1523,22 @@
                 	}).error(console.error);
                 });
               	BUFFER.loadprocess.reloadDownloads.progressValue=true;
+				var downPlace=".srcplace>[act=downloads]".a();
+				if(downPlace){
+					var cont = downPlace.child(".backcontent>f-scrollplane"),
+          			el=A.createElem("div",{
+						_TXT:UI.getAct("downloadsFileSrc")
+					}).children[0].pasteIn(cont);
+            	 		el.opt({
+						_url:url
+					});
+            	 	el.child(".name").html=path.name;
+            	 	downObj.inDownloads=el;
+            	 	downObj.inDownSpeed=el.child(".speed");
+            	 	downObj.inDownIng=el.child(".downloading");
+            	 	downObj.inDownBar=el.child(".bar");
+            	
+				}
             });
           	if(inLoad.length)
               	UI.dialogPanel({
@@ -1512,6 +1560,122 @@
                           	UI.download(TH,inLoad,reload);
                     }
                 });
+        },
+		upload: function (TH, list, destination, reload){
+          	var inLoad=[];
+        	list.all(function(item){
+            	var path=PATH(destination, UI.errors),
+                    url=path.fixUrl(),
+                    downObj,
+                    tmp=[-1,-1],
+                    reloadInfo=0,
+                    tm,
+                    speed,
+                    per;
+              	if(BUFFER.downloads[url]){
+                  	(function newUrl(c){
+						url=c+"_"+url;
+						if(BUFFER.downloads[url])
+							newUrl(c+1);
+					})(0);
+                }
+              	BUFFER.downloads[url]=downObj={
+                  	type:A.start(function(){},true),
+					up:true,
+                  	name:item.name,
+                  	delete:A.start(function(){},true),
+                  	speed:A.start(function(){},true),
+                  	downloaded:A.start(function(){},true),
+					xhr:A.start(function(){},true),
+					name:item.name
+                };
+              	downObj.delete.wait(function(){
+                  	var tmpin=downObj.inDownloads;
+                  	tmpin&&setTimeout(function(){
+                      	tmpin.remElem();
+                    },1000);
+                  	downObj.inDownloads=undefined;
+                    delete BUFFER.downloads[url];
+                });
+              	downObj.type.progress(function(vl){
+                  	downObj.inDownIng&&downObj.inDownIng.html(vl.tr);
+                  	if(vl==="complete"){
+                      	downObj.inDownSpeed&&downObj.inDownSpeed.html(formatBytes(0)),
+                        downObj.inDownBar&&downObj.inDownBar.css("width","100%")
+                      	downObj.delete.value=true;
+						UI.reloadListsChanges(TH, destination);
+                    }
+					if(vl==="stop"||vl==="error"){
+                      	downObj.inDownSpeed&&downObj.inDownSpeed.html(formatBytes(0)),
+                        downObj.delete.value=true;
+                    }
+                });
+              	downObj.type.progressValue="getting size";
+              	downObj.size=A.start(function(){
+                  	return [item.size,formatBytes(item.size)];
+                });
+              	downObj.download=downObj.size.wait(function(){
+                  	return (downObj.xhr.value={x:path.common("uploadFile",{name:item.name,index:0},[item])}).x;
+                });
+              	downObj.download.wait(function(vl){
+					console.log(vl);
+                  	downObj.type.value=downObj.speed.value=downObj.downloaded.value=true;
+                	if(vl===0)
+                      	return (downObj.type.progressValue="error",0);  
+                  	vl=vl[0];
+                    if(vl.type==="ok")
+						return downObj.type.progressValue="complete";
+					else{
+						console.log(vl);
+						return downObj.type.progressValue="error";
+					}
+                });
+              	downObj.download.progress(function(dt){
+					if(dt.type==="abort"){
+						return downObj.download.value=0;
+					}
+                  	tm=downObj.size.wait(function(vl){return vl;});
+                  	tm.wait(function(vl){
+                      	if(dt.type==="up"&&dt.data.loaded<=vl[0]){
+                            downObj.downloaded.progressValue=dt.data.loaded;
+                            if(tmp[0]>-1){
+                    	      	var tmp1=[tmp[0],tmp[1]],
+                                    tm1=(tm.time-reloadInfo)>500;
+                                speed=(dt.data.loaded-tmp1[1])/(tm.time-tmp1[0])*1000;
+                                per=dt.data.loaded/vl[0]*100;
+                              	per>100&&(per=100);
+                              	if(tm1)
+                                  	reloadInfo=tm.time;
+                              	tm1&&(
+                                	downObj.inDownIng&&downObj.inDownIng.html(formatBytes(dt.data.loaded)+"/"+vl[1]),
+                              		downObj.inDownSpeed&&downObj.inDownSpeed.html(formatBytes(speed)),
+                                	downObj.inDownBar&&downObj.inDownBar.css("width",per+"%"));
+                              	
+                    	      	downObj.speed.progressValue=speed;
+                    	    }
+                    	  	tmp[0]=tm.time;
+                    	  	tmp[1]=dt.data.loaded;
+                    	}
+                	}).error(console.error);
+                });
+              	BUFFER.loadprocess.reloadDownloads.progressValue=true;
+				var downPlace=".srcplace>[act=downloads]".a();
+				if(downPlace){
+					var cont = downPlace.child(".backcontent>f-scrollplane"),
+          			el=A.createElem("div",{
+						_TXT:UI.getAct("uploadsFileSrc")
+					}).children[0].pasteIn(cont);
+            	 		el.opt({
+						_url:url
+					});
+            	 	el.child(".name").html=item.name;
+            	 	downObj.inDownloads=el;
+            	 	downObj.inDownSpeed=el.child(".speed");
+            	 	downObj.inDownIng=el.child(".downloading");
+            	 	downObj.inDownBar=el.child(".bar");
+            	
+				}
+            });
         },
 		getLocalFiles: function(TH, multiple, accept){
 			multiple=multiple||TH.attrFromPath("multiple");

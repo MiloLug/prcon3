@@ -50,6 +50,7 @@ Prev define version: -
 				this.toElement = tmp[0],
 				this.touch = touch || (touch = !!(W.TouchEvent && e.constructor === W.TouchEvent)),
 				this.stopEvent = W.StopEvent(e, touch),
+				this.origin = e,
 				!W.A.isEmpty(e.height) && (this.height = e.height),
 				!W.A.isEmpty(e.width) && (this.width = e.width);
 		}
@@ -308,9 +309,6 @@ Prev define version: -
 							});
 						rep();
 					};
-					W.addEventListener("blur",function(){
-						rep();
-					});
 					W.A.on("touchend", function (e) {
 						waits = waits.wait(function (vl) {
 								if (vl === 2 && time())
@@ -349,10 +347,9 @@ Prev define version: -
 					W.A.on("mousemove", function (e) {
 						move <= (params.moveDistanceForNotClick + 1) && down && move++;
 					}),
-					W.addEventListener("contextmenu", rep, false);
+					W.addEventListener("contextmenu", rep, false),
 					W.addEventListener("dragend", rep, false),
-					W.addEventListener("dragstart", rep, false),
-					W.addEventListener("select", rep, false);
+					W.addEventListener("dragstart", rep, false);
 				}
 			});
 		}
@@ -387,26 +384,26 @@ Prev define version: -
 							return;
 						touch = true;
 						fun(e, "touchstart");
-					});
+					},false);
 					W.addEventListener("mousedown", function (e) {
 						if (touch || tend)
 							return (tend = false);
 						mouse = true;
 						fun(e, "mousedown");
-					});
+					},false);
 					W.addEventListener("mouseup", function (e) {
 						touch = mouse = false;
-					});
+					},false);
 					W.addEventListener("touchend", function (e) {
 						tend = !mv;
 						mouse = touch = mv = false;
-					});
+					},false);
 					W.addEventListener("dragend", function () {
 						touch = mouse = false;
 					}, false);
 					W.addEventListener("touchmove", function () {
 						mv = true;
-					});
+					},false);
 				}
 			});
 		}
