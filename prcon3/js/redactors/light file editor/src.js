@@ -20,11 +20,15 @@ W.JS_SRC.lightFileRedactorWindowed='\
 <body>\
 	<div class="lsplace">\
 		<div class="loadscreen start">\
-			<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" preserveAspectRatio="xMidYMid meet" viewBox="0 0 180 180" width="100%" height="100%">\
-	          	<circle class="SVGloaderCirc1" cx="50%" cy="50%" r="80"></circle>\
-	          	<circle class="SVGloaderCirc2"></circle>\
-	      	</svg>\
-	      	<div></div>\
+			<div class="box">\
+				<div></div>\
+				<div></div>\
+				<div></div>\
+				<div></div>\
+				<div></div>\
+				<div></div>\
+				<div></div>\
+			</div>\
 		</div>\
 	</div>\
 	<script src="js/CE.js"></script>\
@@ -51,11 +55,15 @@ W.JS_SRC.lightFileRedactorWindowed='\
 	      	<label class="chbstyle"><input type="checkbox" hidden><div>&#10003;</div><text></text></label>\
 	  	</div>\
 	  	<div act="loadscreen">\
-			<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" preserveAspectRatio="xMidYMid meet" viewBox="0 0 180 180" width="100%" height="100%">\
-	          	<circle class="SVGloaderCirc1" cx="50%" cy="50%" r="80"/>\
-	          	<circle class="SVGloaderCirc2"/>\
-	      	</svg>\
-	      	<div></div>\
+			<div class="box">\
+				<div></div>\
+				<div></div>\
+				<div></div>\
+				<div></div>\
+				<div></div>\
+				<div></div>\
+				<div></div>\
+			</div>\
 		</div>\
 	</div>\
 	<div class="backcontent">\

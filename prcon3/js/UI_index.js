@@ -1363,7 +1363,14 @@
 						}
 					]
 				});
-
+				var checked=[];
+				args.deleteSource&&args.list.all(function(url){
+					url=PATH(url).parentDir;
+					if(checked.indexOf(url)>-1)
+						return;
+					checked.push(url);
+					ok.length && UI.reloadListsChanges(TH, url);
+				});
 				ok.length && UI.reloadListsChanges(TH, args.destinationDir);
 			});
 		},

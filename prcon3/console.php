@@ -216,7 +216,7 @@ function Main(){
 					"name" => $item
 				);
 				if($gs && !$itemIsDir)
-					$itemR["size"]=self::sizeOf($itemUrl, $FTP);
+					$itemR["size"]=self::sizeOf($itemUrl, $FTP, false);
 	
 				$r[] = $itemR;
 			}
@@ -1091,27 +1091,49 @@ function Main(){
 				"funcName" => $FN
 			);
 		}
-		public function sizeOf($url, $FTP)
+		public function sizeOf($args, $FTP)
 		{
 			if ($FTP !== false) {
 				global $FTP;
 			}
 			global $ftpcon;
 			
-			$url  = self::normUrl($url, $FTP);
+			$flushing=is_array($args)?$args["chunked"]:false;
+			
+			if($flushing){
+				echo '[';
+				flush();
+			}
+			
 			$size = 0;
-			if (self::isDir($url, $FTP)) {
-				$list = self::dotListFilter(self::getList($url, $FTP), $FTP);
-				foreach ($list as $item) {
-					if ($item["type"] == "dir") {
-						$size += self::sizeOf($item["url"], $FTP);
-					} else {
-						$tmpUrl = self::normUrl($item["url"], $FTP);
-						$size += $FTP ? ftp_size($ftpcon, $tmpUrl) : filesize($tmpUrl);
+			$stack=array(
+				array(self::normUrl($args, $FTP),self::isDir($args, $FTP))
+			);
+			while(count($stack)){
+				$stackItem=array_shift($stack);
+				if($stackItem[1]){
+					$list = self::dotListFilter(self::getList($stackItem[0], $FTP), $FTP);
+					foreach ($list as $item) {
+						$stack[]=array(
+							$item["url"],
+							$item["type"] == "dir"
+						);
+					}
+				}else{
+					$tmp_url=self::normUrl($stackItem[0],$FTP);
+					if($flushing){
+						echo "".($FTP ? ftp_size($ftpcon, $tmp_url) : filesize($tmp_url));
+						if(count($stack))
+							echo ',';
+						flush();
+					}else{
+						$size+=$FTP ? ftp_size($ftpcon, $tmp_url) : filesize($tmp_url);
 					}
 				}
-			} else {
-				$size = $FTP ? ftp_size($ftpcon, $url) : filesize($url);
+			}
+			if($flushing){
+				echo ']';
+				return "__echo_inserted__";
 			}
 			return $size;
 		}
@@ -1147,7 +1169,7 @@ function Main(){
 			global $ftpcon;
 			$url = self::normUrl($url, $FTP);
 			$r   = array(
-				"size" => self::sizeOf($url, $FTP),
+				"size" => self::sizeOf($url, $FTP, false),
 				"type" => self::isDir($url, $FTP) ? "dir" : "file"
 			);
 			return $r;
