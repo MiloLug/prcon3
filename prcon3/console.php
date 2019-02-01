@@ -1,5 +1,6 @@
 <?php
 define("PASS", "111");
+
 $error  = array();
 $req    = array();
 $ftpcon = false;

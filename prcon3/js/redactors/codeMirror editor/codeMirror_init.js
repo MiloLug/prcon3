@@ -2,59 +2,59 @@
   	var s = BUFFER.localData.settings,
 	CMP = CUR_REDACTOR_PATH + "codeMirror/";
 	A.include("css", [
-			"https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.42.0/codemirror.min.css",
-			s.HCODE_T === "bespin" ? "https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.42.0/theme/bespin.min.css" : "",
-			s.HCODE_T === "isotope" ? "https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.42.0/theme/isotope.min.css" : "",
-			s.HCODE_F ? "https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.42.0/addon/fold/foldgutter.min.css" : "",
-			"https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.42.0/addon/dialog/dialog.min.css",
-			"https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.42.0/addon/hint/show-hint.min.css",
-			"https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.42.0/addon/lint/lint.min.css"
+			CMP + "def/codemirror.min.css",
+			s.HCODE_T === "bespin" ? CMP + "def/bespin.min.css" : "",
+			s.HCODE_T === "isotope" ? CMP + "def/isotope.min.css" : "",
+			s.HCODE_F ? CMP + "def/foldgutter.min.css" : "",
+			CMP + "def/dialog.min.css",
+			CMP + "def/show-hint.min.css",
+			CMP + "def/lint.min.css"
 		]);
-	A.include("js", "https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.42.0/codemirror.min.js");
+	A.include("js", CMP + "def/codemirror.min.js");
 
 	s.HCODE_F && A.include("js", [
-			"https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.42.0/addon/fold/foldcode.min.js",
-			"https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.42.0/addon/fold/foldgutter.min.js",
-			"https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.42.0/addon/fold/brace-fold.min.js",
-			"https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.42.0/addon/fold/xml-fold.min.js",
-			"https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.42.0/addon/fold/indent-fold.min.js",
-			"https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.42.0/addon/fold/markdown-fold.min.js",
-			"https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.42.0/addon/fold/comment-fold.min.js"
+			CMP + "def/foldcode.min.js",
+			CMP + "def/foldgutter.min.js",
+			CMP + "def/brace-fold.min.js",
+			CMP + "def/xml-fold.min.js",
+			CMP + "def/indent-fold.min.js",
+			CMP + "def/markdown-fold.min.js",
+			CMP + "def/comment-fold.min.js"
 		]);
 	A.include("js", [
-			s.HCODE_H_XML ? "https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.42.0/mode/xml/xml.min.js" : "",
-			s.HCODE_H_XML && s.HCODE_H_HTML ? "https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.42.0/mode/htmlmixed/htmlmixed.min.js" : "",
-			s.HCODE_H_javascript ? "https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.42.0/mode/javascript/javascript.min.js" : "",
-			s.HCODE_H_CSS ? "https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.42.0/mode/css/css.min.js" : "",
-			s.HCODE_H_Clike ? "https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.42.0/mode/clike/clike.min.js" : "",
-			s.HCODE_H_python ? "https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.42.0/mode/python/python.min.js" : "",
-			s.HCODE_H_markdown ? "https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.42.0/mode/markdown/markdown.min.js" : "",
-			s.HCODE_H_XML && s.HCODE_H_HTML && s.HCODE_H_javascript && s.HCODE_H_CSS && s.HCODE_H_PHP ? "https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.42.0/mode/php/php.min.js" : "",
-			s.HCODE_H_coffeescript ? "https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.42.0/mode/coffeescript/coffeescript.min.js" : "",
-			s.HCODE_H_SASS ? "https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.42.0/mode/sass/sass.min.js" : "",
+			s.HCODE_H_XML ? CMP + "def/xml.min.js" : "",
+			s.HCODE_H_XML && s.HCODE_H_HTML ? CMP + "def/htmlmixed.min.js" : "",
+			s.HCODE_H_javascript ? CMP + "def/javascript.min.js" : "",
+			s.HCODE_H_CSS ? CMP + "def/css.min.js" : "",
+			s.HCODE_H_Clike ? CMP + "def/clike.min.js" : "",
+			s.HCODE_H_python ? CMP + "def/python.min.js" : "",
+			s.HCODE_H_markdown ? CMP + "def/markdown.min.js" : "",
+			s.HCODE_H_XML && s.HCODE_H_HTML && s.HCODE_H_javascript && s.HCODE_H_CSS && s.HCODE_H_PHP ? CMP + "def/php.min.js" : "",
+			s.HCODE_H_coffeescript ? CMP + "def/coffeescript.min.js" : "",
+			s.HCODE_H_SASS ? CMP + "def/sass.min.js" : "",
 
-			s.HCODE_A_brackets ? "https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.42.0/addon/edit/closebrackets.min.js" : "",
-			s.HCODE_M_brackets ? "https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.42.0/addon/edit/matchbrackets.min.js" : "",
-			s.HCODE_A_tags ? "https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.42.0/addon/edit/closetag.min.js" : "",
-			s.HCODE_M_tags ? "https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.42.0/addon/edit/matchtags.min.js" : "",
+			s.HCODE_A_brackets ? CMP + "def/closebrackets.min.js" : "",
+			s.HCODE_M_brackets ? CMP + "def/matchbrackets.min.js" : "",
+			s.HCODE_A_tags ? CMP + "def/closetag.min.js" : "",
+			s.HCODE_M_tags ? CMP + "def/matchtags.min.js" : "",
 
-			"https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.42.0/addon/dialog/dialog.min.js",
-			"https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.42.0/addon/search/search.min.js",
-			"https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.42.0/addon/search/searchcursor.min.js",
-			"https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.42.0/addon/lint/lint.min.js",
+			CMP + "def/dialog.min.js",
+			CMP + "def/search.min.js",
+			CMP + "def/searchcursor.min.js",
+			CMP + "def/lint.min.js",
 
-			s.HCODE_L_javascript ? "https://cdnjs.cloudflare.com/ajax/libs/jshint/2.9.6/jshint.min.js" : "",
-			s.HCODE_L_CSS ? "https://unpkg.com/csslint@1.0.5/dist/csslint.js" : "",
+			s.HCODE_L_javascript ? CMP + "def/jshint.min.js" : "",
+			s.HCODE_L_CSS ? CMP + "def/csslint.js" : "",
 			s.HCODE_L_PHP ? CMP + "PHP.hint.js" : "",
 			s.HCODE_L_HTML ? CMP + "HTML.hint.js" : "",
-			s.HCODE_L_JSON ? "https://unpkg.com/jsonlint@1.6.3/web/jsonlint.js" : "",
+			s.HCODE_L_JSON ? CMP + "def/jsonlint.js" : "",
 			s.HCODE_L_coffeescript ? CMP + "CoffeeScript.js" : "",
 			s.HCODE_L_coffeescript ? CMP + "coffeescript.hint.js" : "",
 
-			s.HCODE_L_JSON ? "https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.42.0/addon/lint/json-lint.min.js" : "",
-			s.HCODE_L_javascript ? "https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.42.0/addon/lint/javascript-lint.min.js" : "",
-			s.HCODE_L_coffeescript ? "https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.42.0/addon/lint/coffeescript-lint.min.js" : "",
-			s.HCODE_L_CSS ? "https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.42.0/addon/lint/css-lint.min.js" : "",
+			s.HCODE_L_JSON ? CMP + "def/json-lint.min.js" : "",
+			s.HCODE_L_javascript ? CMP + "def/javascript-lint.min.js" : "",
+			s.HCODE_L_coffeescript ? CMP + "def/coffeescript-lint.min.js" : "",
+			s.HCODE_L_CSS ? CMP + "def/css-lint.min.js" : "",
 		]);
 
 	if (s.HCODE_L_PHP)

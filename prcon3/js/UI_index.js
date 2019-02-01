@@ -1581,9 +1581,9 @@
                     per;
               	if(BUFFER.downloads[url]){
                   	(function newUrl(c){
+						if(BUFFER.downloads[c+"_"+url])
+							return newUrl(c+1);
 						url=c+"_"+url;
-						if(BUFFER.downloads[url])
-							newUrl(c+1);
 					})(0);
                 }
               	BUFFER.downloads[url]=downObj={

@@ -1,8 +1,43 @@
 (function (w,d) {
 	"use strict";
+	w.scrollJS_scrollEvent=function (e, path) {
+			if (e.constructor === w.scrollJS_scrollEvent)
+				this.Ainit(e,w);
+			else
+				this.Ainit(new w.BJSEvent(e, path, false),w),
+				this.axis = e.axis || "Y",
+				this.direction = Math.sign(e.direction||1);
+		};
+	w.A._DATA.BJSListeners.ListenersList.scrollJS_scroll={
+		lisData: "scrollJS_scroll",
+		remover: function (a,func) {
+			a.remLisData(this.lisData, func);
+		},
+		emitter: function (a, ev, e, exp) {
+			e.path=a.path;
+			A.activateLis(e, this.lisData, false, w.scrollJS_scrollEvent);
+		},
+		adder: function (a, ev, func, s, exp) {
+			var lis = this.lisData;
+			a.addLisData(lis, func, s, ev);
+		}
+	};
     var f0 = [],
         f1={},
         f2={},
+		debounce= function(fn,time,_this){
+  			var allow=false;
+  			(function interval(){
+  				allow=true;
+  				setTimeout(interval,time);
+  			})();
+  			return function(){
+  				if(!allow)
+  					return;
+  				fn.apply(_this||null,arguments);
+  				allow=false;
+  			}
+  		},
 	f3 = {
 		gets: function (obj, type, e, temp) {
 			obj.x = type === "X",
@@ -55,11 +90,16 @@
 		scrollSP: function (obj, reverse, pos, temp) {
           	w.requestAnimationFrame(function(){
 				reverse = reverse || false;
+				var temp=obj.SP[obj.stl];
 				if (reverse)
 					obj.SP[obj.stl] = pos,
 					obj.th.css(obj.tl, pos * (obj.thPSize - obj.thSize) / (obj.SPScrollSize - obj.SPSize) + "px");
 				else
 					obj.SP[obj.stl] = pos * (obj.SPScrollSize - obj.SPSize) / (obj.thPSize - obj.thSize);
+				obj.SP.emitEvent("scrollJS_scroll",{
+					axis:obj.coo,
+					direction:temp-obj.SP[obj.stl]
+				});
             });
 		},
 		move: function (e, obj, temp) {
@@ -72,23 +112,40 @@
         },
 		touchMoveX: function (e, obj, temp) {
           	obj=obj||f1;
+			var tmpDelta=obj.cpStart - e[obj.coo];
 			w.requestAnimationFrame(function(){
-	          	temp = (temp = obj.SPScrollOffset + obj.cpStart - e[obj.coo]) < 0 ? 0 : temp > obj.SPScrollSize - obj.SPSize ? obj.SPScrollSize - obj.SPSize : temp,
+				temp = (temp = obj.SPScrollOffset + tmpDelta) < 0 ? 0 : temp > obj.SPScrollSize - obj.SPSize ? obj.SPScrollSize - obj.SPSize : temp,
 				f3.scrollSP(obj, true, temp);
-            });
+			});
         },
 		touchMoveY: function (e, obj, temp) {
           	obj=obj||f2;
-          	w.requestAnimationFrame(function(){
-				temp = (temp = obj.SPScrollOffset + obj.cpStart - e[obj.coo]) < 0 ? 0 : temp > obj.SPScrollSize - obj.SPSize ? obj.SPScrollSize - obj.SPSize : temp,
+			var tmpDelta=obj.cpStart - e[obj.coo];
+			w.requestAnimationFrame(function(){
+				temp = (temp = obj.SPScrollOffset + tmpDelta) < 0 ? 0 : temp > obj.SPScrollSize - obj.SPSize ? obj.SPScrollSize - obj.SPSize : temp,
 				f3.scrollSP(obj, true, temp);
-            });
+			});
 		},
-		wheelMove: function (e, obj, temp) {
-          	w.requestAnimationFrame(function(){
-				temp = (temp = ((e["delta" + obj.coo] || e.deltaY) < 0 ? -1 : 1) * 10 + obj.SP[obj.stl]) < 0 ? 0 : temp > obj.SPScrollSize - obj.SPSize ? obj.SPScrollSize - obj.SPSize : temp,
-				f3.scrollSP(obj, true, temp);
-            });
+		wheelMove: function (e, obj, max) {
+			var delta=e["wheelDelta"+obj.coo],
+				sign=Math.sign(delta),
+				summ=0;
+			max=max||17;
+				delta=delta*sign>max?max*sign:delta;
+			(function interval(){
+				var temp,
+					tempDelta=(delta-=sign);
+				if(Math.sign(tempDelta)!==sign)
+					return;
+				w.requestAnimationFrame(function(){
+					summ+=tempDelta*sign;
+					if(summ>=obj.SPSize)
+						return (delta=0);
+					temp = (temp = obj.SP[obj.stl] - tempDelta) < 0 ? 0 : temp > obj.SPScrollSize - obj.SPSize ? obj.SPScrollSize - obj.SPSize : temp;
+					f3.scrollSP(obj, true, temp);
+				});
+				setTimeout(interval,10);
+			})();
 		},
 		toCurPos: function (obj,temp) {
           	obj.th.css(obj.tl,((temp= obj.SP[obj.stl] * (obj.thPSize - obj.thSize) / (obj.SPScrollSize - obj.SPSize)) < 0 ? 0 : temp + obj.thSize > obj.thPSize ? obj.thPSize - obj.thSize : temp) + "px");
@@ -138,18 +195,15 @@
 			f1.SP = f2.SP = temp,
 			f1.thP = f1.SP.parentNode.child("f-scroll-x", !1, !0),
 			f2.thP = f1.SP.parentNode.child("f-scroll-y", !1, !0);
-
 			if (f1.thP)
 				f1.th = f1.thP.child("f-wheel", !1, !0),
 				f3.gets(f1, "X", docE),
-                
                 w.A.on("touchmove", f3.touchMoveX, true);
 
 			if (f2.thP)
 				f2.th = f2.thP.child("f-wheel", !1, !0),
 				f3.gets(f2, "Y", docE),
-                
-				w.A.on("touchmove", f3.touchMoveY, true);
+                w.A.on("touchmove", f3.touchMoveY, true);
 		}
 	}),
 	d.on("wheel", function (e, tmp) {
@@ -168,17 +222,17 @@
 		f1.thP = f1.SP.parentNode.child("f-scroll-y", !1, !0);
 		if (f1.thP && !e.shiftKey && e.deltaY)
 			f1.th = f1.thP.child("f-wheel", !1, !0),
-			f3.gets(f1, "Y", e),
+			f3.gets(f1,"Y",e),
 			f3.wheelMove(e, f1);
 		if (f2.thP && (e.shiftKey || e.deltaX))
 			f2.th = f2.thP.child("f-wheel", !1, !0),
-			f3.gets(f2, "X", e),
+			f3.gets(f1,"X",e),
 			f3.wheelMove(e, f2);
 
 	},{
-                    	capture:false,
-                      	passive:true
-                    }),
+    	capture:false,
+        passive:true
+	}),
 	w.A.on("mouseup", function () {
 		"html".remClass("NOSELECT"),
 		w.removeEventListener("scroll", f3.preventer),
@@ -188,6 +242,7 @@
 		w.A.not("mousemove", f3.move),
         w.A.not("mousemove", f3.touchMoveY),
         w.A.not("mousemove", f3.touchMoveX);
+		
 	});
 
 	var el = CE({}),

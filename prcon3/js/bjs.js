@@ -402,7 +402,7 @@ Prev define version: 6.0.0 (15.10.2018)
 			}
 			if (!A.isEmpty(vl))
 				tmp = a.currentStyle ? a.currentStyle[vl] : W.getComputedStyle(a).getPropertyValue(vl),
-				pf = parseFloat(tmp),
+				pf = tmp.match(/[,  %]/) ? NaN : parseFloat(tmp),
 				req = A.isNumeric(pf) ? pf : tmp;
 			else
 				req = a.currentStyle ? a.currentStyle() : W.getComputedStyle(a);
@@ -514,7 +514,7 @@ Prev define version: 6.0.0 (15.10.2018)
 		createElem: function (elem, attrs) { /**создать элемент с атрибутами. attrs принимает то же, что и .opt()**/
           	if(elem.match("<.*?>")){
             	var elems=A.createElem("div",{_TXT:elem}).children;
-              	return elems.length===1?elems[0]:elems;
+              	return elems.length===1?elems[0]:elems.all(function(el){return el;}).return;
             }
 			return W.document.createElement(elem).opt(attrs || {});
 		},
@@ -534,15 +534,17 @@ Prev define version: 6.0.0 (15.10.2018)
 			CE = [];
 			A.isEmpty(a) && A.error(A.errs.E_1);
 			for (var i = 1; i <= count; i++) {
-				createdElem = W.document.createElement(elem);
-				createdElem.pasteIn({
-					in: a,
-					pos: args.pos
+				createdElem = A.createElem(elem);
+				createdElem.all(function(el,ind){
+					el.pasteIn({
+						in: a,
+						pos: args.pos
+					});
+					attrs !== undefined && el.opt(attrs);
+					CE.push(el);
 				});
-				attrs !== undefined && createdElem.opt(attrs);
-				CE.push(createdElem);
 			}
-			return count != 1 ? CE : CE[0];
+			return CE.length>1?	CE : CE[0];
 		},
 		parent: function (step) {
 			/**перейти на step родителей a вверх.

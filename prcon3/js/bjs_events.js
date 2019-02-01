@@ -203,7 +203,7 @@ Prev define version: -
 		activateLis: function (e, lis, cur, eventConstrcutor) {
 			var els = e.path || (e.srcElement || e.target || e.toElement || e.fromElement || e.relatedTarget).path,
 			tmp;
-			DT[lis].element.all(function (el, ind) {
+			DT[lis]&&DT[lis].element.all(function (el, ind) {
 				if ((tmp = els.indexOf(el)) > -1) {
 					DT[lis].funcs[ind].all(function (fn) {
 						if (fn[1].level < tmp)
