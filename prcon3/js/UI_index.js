@@ -1,99 +1,103 @@
+/*END*/
 (function (A, window, document) {
 	"use strict";
 	window.A.on("combination", "ctrl+r", function (e) {
 		UI.dialogPanel({
-			content:[{
-				type:"message",
-				text:"close page?".tr	
-			},{
-				type:"button",
-				btnID:"y",
-				btntext:"yes".tr
-			},{
-				type:"button",
-				btnID:"n",
-				btntext:"no".tr
-			}],
-			onEnter:"y",
-			func:function(data){
-				if(data.pressed==="y")
-					window.allowUnload=true,
+			content: [{
+					type: "message",
+					text: "close page?".tr
+				}, {
+					type: "button",
+					btnID: "y",
+					btntext: "yes".tr
+				}, {
+					type: "button",
+					btnID: "n",
+					btntext: "no".tr
+				}
+			],
+			onEnter: "y",
+			func: function (data) {
+				if (data.pressed === "y")
+					window.allowUnload = true,
 					window.location.reload();
 			}
 		});
-	},false);
+	}, false);
 	window.UI.Ainit({
-      	langSet:function(){
-          	var cont=[{
-              	type:"message",
-              	text:"lan reload".tr
-            }, {
-              	type:"button",
-              	btntext:"cancel".tr,
-              	btnID:"cl"
-            }];
-          	A.toArray(LANG_LIST,true).all(function(prop){
-              	if(prop[0]==="@default@")
-                  	return;
-              	cont.push({
-                  	type:"checkbox",
-                  	chctext:prop[0],
-                  	chcID:prop[0],
-                  	opt:{
-                      	checked:CUR_LANG===prop[1]?".":"",
-                      	_INIT:function(e){
-                      		e.on("change",function(){
-                              	if(!e.checked)
-                                  	return e.checked=true;
-                              	localStorage.setItem(PRCON_LANGUAGE_SAVE_NAME,prop[1]);
-                               	window.allowUnload=true;
-              					window.location.reload();
-                			});
-                    	}
-                    }
-                });
+		langSet: function () {
+			var cont = [{
+					type: "message",
+					text: "lan reload".tr
+				}, {
+					type: "button",
+					btntext: "cancel".tr,
+					btnID: "cl"
+				}
+			];
+			A.toArray(LANG_LIST, true).all(function (prop) {
+				if (prop[0] === "@default@")
+					return;
+				cont.push({
+					type: "checkbox",
+					chctext: prop[0],
+					chcID: prop[0],
+					opt: {
+						checked: CUR_LANG === prop[1] ? "." : "",
+						_INIT: function (e) {
+							e.on("change", function () {
+								if (!e.checked)
+									return e.checked = true;
+								localStorage.setItem(PRCON_LANGUAGE_SAVE_NAME, prop[1]);
+								window.allowUnload = true;
+								window.location.reload();
+							});
+						}
+					}
+				});
 			});
-          	UI.dialogPanel({
-              	content:cont
-            });
-        },
-      	redactorSet:function(){
-          	var cont=[{
-              	type:"message",
-              	text:"red reload".tr
-            }, {
-              	type:"button",
-              	btntext:"cancel".tr,
-              	btnID:"cl"
-            }];
-          	A.toArray(REDACTORS_LIST,true).all(function(prop){
-              	if(prop[0]==="@default@")
-                  	return;
-              	cont.push({
-                  	type:"checkbox",
-                  	chctext:prop[0],
-                  	chcID:prop[0],
-                  	opt:{
-                      	checked:CUR_REDACTOR===prop[1]?".":"",
-                      	_INIT:function(e){
-                      		e.on("change",function(){
-                              	if(!e.checked)
-                                  	return e.checked=true;
-                              	localStorage.setItem(PRCON_REDACTOR_CURRENT_NAME,prop[1]);
-                                window.allowUnload=true;
-              					window.location.reload();
-                			});
-                    	}
-                    }
-                });
+			UI.dialogPanel({
+				content: cont
 			});
-          	UI.dialogPanel({
-              	content:cont
-            });
-        },
+		},
+		redactorSet: function () {
+			var cont = [{
+					type: "message",
+					text: "red reload".tr
+				}, {
+					type: "button",
+					btntext: "cancel".tr,
+					btnID: "cl"
+				}
+			];
+			A.toArray(REDACTORS_LIST, true).all(function (prop) {
+				if (prop[0] === "@default@")
+					return;
+				cont.push({
+					type: "checkbox",
+					chctext: prop[0],
+					chcID: prop[0],
+					opt: {
+						checked: CUR_REDACTOR === prop[1] ? "." : "",
+						_INIT: function (e) {
+							e.on("change", function () {
+								if (!e.checked)
+									return e.checked = true;
+								localStorage.setItem(PRCON_REDACTOR_CURRENT_NAME, prop[1]);
+								window.allowUnload = true;
+								window.location.reload();
+							});
+						}
+					}
+				});
+			});
+			UI.dialogPanel({
+				content: cont
+			});
+		},
 		closeAll: function () {
-			var wcloser=function (w) {
-				w.allowUnload=true;
+			var wcloser = function (w) {
+				w.allowUnload = true;
 				w.close();
 			};
 			A.toArray(BUFFER.windows.viewInReload).all(wcloser);
@@ -117,7 +121,8 @@
 		},
 		openLoginLocal: function () {
 			var back = UI.setSrcToPlace("loginLocal", true),
-                sp= back.child(".backcontent>f-scrollplane");
+			sp = back.child(".backcontent>f-scrollplane");
+			".back[act=loginLocal] f-scrollplane".selects(".back[act=loginLocal] f-scrollplane", ".forsel"),
 			".back[act=login]".errored().remElem(),
 			".back[act=loginFtp]".errored().remElem(),
 			BUFFER.localData.accounts.name.all(function (nm, i) {
@@ -129,7 +134,9 @@
 					 :
 					BUFFER.localData.accounts.login[i],
 					funcs: "sendLoginLocal",
-					class: "cls item",
+					class: "cls item forsel",
+					contextfuncs: "loginLocalListItem",
+					name:nm,
 					_TXT: nm
 				});
 			});
@@ -148,26 +155,28 @@
 				});
 			});
 		},
-      	openDownloads: function(TH){
-          	var back = UI.setSrcToPlace("downloads", true),
+		openDownloads: function (TH) {
+			var back = UI.setSrcToPlace("downloads", true),
 			cont = back.child(".backcontent>f-scrollplane");
-          	for(var nm in BUFFER.downloads){
-              	var el=A.createElem("div",{
-					_TXT:UI.getAct(BUFFER.downloads[nm].up?"uploadsFileSrc":"downloadsFileSrc")
-				}).children[0].pasteIn(cont);
-              	el.opt({
-					_url:nm
+			for (var nm in BUFFER.downloads) {
+				var el = A.createElem("div", {
+						_TXT: UI.getAct(BUFFER.downloads[nm].up ? "uploadsFileSrc" : "downloadsFileSrc")
+					}).children[0].pasteIn(cont);
+				el.opt({
+					_url: nm
 				});
-              	el.child(".name").html=BUFFER.downloads[nm].up?BUFFER.downloads[nm].name:PATH(nm).name;
-              	BUFFER.downloads[nm].inDownloads=el;
-              	BUFFER.downloads[nm].inDownSpeed=el.child(".speed");
-              	BUFFER.downloads[nm].inDownIng=el.child(".downloading");
-              	BUFFER.downloads[nm].inDownBar=el.child(".bar");
-            }
-        },
+				el.child(".name").html = BUFFER.downloads[nm].up ? BUFFER.downloads[nm].name : PATH(nm).name;
+				BUFFER.downloads[nm].inDownloads = el;
+				BUFFER.downloads[nm].inDownSpeed = el.child(".speed");
+				BUFFER.downloads[nm].inDownIng = el.child(".downloading");
+				BUFFER.downloads[nm].inDownBar = el.child(".bar");
+			}
+		},
 		toTopFileRedactor: function (TH, url) {
 			url = PATH(url || TH.attrFromPath("_url")).fixUrl();
-			UI.toTopLayer(BUFFER.redactors[url].a().parent(function(el){return el.className==="back";})||BUFFER.redactors[url]);
+			UI.toTopLayer(BUFFER.redactors[url].a().parent(function (el) {
+					return el.className === "back";
+				}) || BUFFER.redactors[url]);
 		},
 		openSettings: function () {
 			var bc = UI.setSrcToPlace("settings", true).child(".backcontent>f-scrollplane"),
@@ -280,9 +289,9 @@
 								],
 								funcs: dec.funcs ? dec.funcs : "",
 								_AFTER: {
-									_INIT: function(el){
-                                      	el[dec.compareBy]=buffSett[dec.param.name] || ""
-                                    }
+									_INIT: function (el) {
+										el[dec.compareBy] = buffSett[dec.param.name] || ""
+									}
 								}
 							}
 						});
@@ -293,6 +302,55 @@
 				dom.push(bdiv);
 			}
 			bc.DOMTree(dom);
+		},
+		deleteAccs:function(TH,names){
+			UI.dialogPanel({
+				content: [{
+						type: "message",
+						text: "delete it?".tr
+					}, {
+						type: "message",
+						text: "Accounts".tr+":\n"+names.join("\n")
+					}, {
+						type: "button",
+						btntext: "yes".tr,
+						btnID: "yes"
+					}, {
+						type: "button",
+						btntext: "no".tr,
+						btnID: "no"
+					}
+				],
+				onEnter: "yes",
+				func: function (data) {
+					if (data.pressed !== "yes")
+						return;
+					var pos,
+						accs=BUFFER.localData.accounts,
+						openedLogin = ".back[act=loginLocal]".a(),
+						logList={},
+						posp;
+					openedLogin&&openedLogin.child(".item.forsel",!0).all(function(el){
+						logList[el.opt("name")]=el;
+					});
+					names.all(function(name){
+						pos=accs.name.indexOf(name);
+						posp=pos+1;
+						if(pos<0||name===ACCOUNT.name)
+							return;
+						accs.name.splice(pos,posp);
+						accs.login.splice(pos,posp);
+						accs.password.splice(pos,posp);
+						accs.ftp.splice(pos,posp);
+						accs.urlPhp.splice(pos,posp);
+						accs.urlFtp.splice(pos,posp);
+						accs.portFtp.splice(pos,posp);
+						delete accs.data.explorer[name];
+						openedLogin&&logList[name].remElem();
+					});
+					BUFFERToLocal();
+				}
+			});
 		},
 		resetSettings: function () {
 			BUFFER.localData.settings = new N_SETTINGS();
@@ -315,7 +373,7 @@
 				onEnter: "ok",
 				func: function (req) {
 					if (req.pressed === "ok") {
-                      	window.allowUnload=true;
+						window.allowUnload = true;
 						window.location.reload();
 					}
 				}
@@ -424,7 +482,7 @@
 					dom.push({
 						div: {
 							class: "tree cls " + tree[nm].type,
-                          	_type:tree[nm].type,
+							_type: tree[nm].type,
 							_url: tree[nm].url,
 							opened: tree[nm].opened,
 							contextfuncs: "dirFileMenu, treeMenu",
@@ -482,21 +540,29 @@
 					}, true));
 		},
 		openDir: function (TH, url, type, list) {
+			BUFFER.loadprocess.openDir.XHR&&BUFFER.loadprocess.openDir.XHR.abort();
 			return (BUFFER.loadprocess.openDir = BUFFER.loadprocess.openDir.wait(function (non, rW) {
 						var RE = ".rightexplorer>f-scrollplane";
 						url = PATH(url || (TH ? TH.attrFromPath("_url") : false) || BUFFER.explorer.curDir).fixUrl();
 						UI.setLSToPlace(".rightexplorer", true);
-						var path = PATH(url, UI.errors);
-						(list ? A.start(function () {
+						var path = PATH(url, UI.errors),
+							start=(list ? A.start(function () {
 								return list;
-							}) : path.common("getList", {getSize:true})).wait(function (d) {
+							}) : path.common("getList", {
+								getSize: true
+							}));
+						!list&&pendTo(function(){
+							return start.XHR;
+						}).wait(function(xhr){
+							rW.XHR=xhr;
+						});
+						start.wait(function (d) {
 							UI.setLSToPlace(".rightexplorer", false);
 							if (d === 0) {
 								UI.setPathRow(BUFFER.explorer.curDir);
 								rW.value = 0;
 								return;
 							}
-
 							d = d[0];
 
 							if (type === "back")
@@ -514,7 +580,7 @@
 									return "continue";
 								RE.addElem("div", {
 									class: "dirPlace",
-                                  	_type:r.type,
+									_type: r.type,
 									_url: r.url,
 									funcs: "selectIfSelecting," + (r.type === "dir" ? "openDir" : "openFile"),
 									contextfuncs: "dirFileMenu",
@@ -532,14 +598,15 @@
 										}, {
 											div: {
 												class: "closer",
-                                              	title: r.type==="dir"?"":formatBytes(r.size||0)
+												title: r.type === "dir" ? "" : formatBytes(r.size || 0)
 											}
-										}, r.type==="dir"?{}:{
+										}, r.type === "dir" ? {}
+										 : {
 											div: {
 												class: "size center",
-												_TXT: formatBytes(r.size||0)
+												_TXT: formatBytes(r.size || 0)
 											}
-										}	
+										}
 									]);
 							}, "break", "continue");
 							RE.opt("_url", url);
@@ -565,7 +632,7 @@
 			UI.dialogPanel({
 				content: [{
 						type: "message",
-						text: "close file?".tr+"<br>" + url
+						text: "close file?".tr + "<br>" + url
 					}, {
 						type: "button",
 						btntext: "yes".tr,
@@ -587,7 +654,7 @@
 			});
 		},
 		openFile: function (TH, url, content) {
-          	var windowed=!BUFFER.localData.settings.defaultFileEditorType;
+			var windowed = !BUFFER.localData.settings.defaultFileEditorType;
 			UI.fileEditor("edit", [TH, url, content], windowed);
 		},
 		saveFile: function (TH, url) {
@@ -597,7 +664,7 @@
 			UI.dialogPanel({
 				content: [{
 						type: "message",
-						text: "save file?".tr+"<br>" + url
+						text: "save file?".tr + "<br>" + url
 					}, {
 						type: "button",
 						btntext: "yes".tr,
@@ -637,6 +704,10 @@
 		},
 		setPathRow: function (url) {
 			".pathRow>input".val = url;
+			BUFFER.loadprocess.setHash = BUFFER.loadprocess.setHash.wait(function(v){
+				window.location.hash = url;
+				return "setJS";
+			});
 			return url;
 		},
 		addBack: function (url) {
@@ -672,20 +743,21 @@
 				async: true,
 				dataType: "form",
 				data: [{
-					name:"query",
-					value:A.json({
-						acc: row,
-						funcs: [{
-								name: "login"
-							}
-						]
-					})
-				}],
+						name: "query",
+						value: A.json({
+							acc: row,
+							funcs: [{
+									name: "login"
+								}
+							]
+						})
+					}
+				],
 				success: function (d) {
-					d=A.json(d);
+					d = A.json(d);
 					UI.setLSToPlace("body", false);
 					if (d.error.length > 0) {
-                      	UI.errors(d.error);
+						UI.errors(d.error);
 						return;
 					};
 					setAccount(row);
@@ -707,7 +779,7 @@
 			ftp && (
 				urlPhp = urlPhp || ".back .urlPhp".val(),
 				urlFtp = urlFtp || ".back .urlFtp".val(),
-            	portFtp = !A.isEmpty(portFtp) ? parseFloat(portFtp) : 21),
+				portFtp = !A.isEmpty(portFtp) ? parseFloat(portFtp) : 21),
 			UI.setLSToPlace("body", true);
 			A.ajax({
 				url: ftp ? urlPhp : log,
@@ -715,23 +787,24 @@
 				async: true,
 				dataType: "form",
 				data: [{
-					name:"query",
-					value:A.json({
-						acc: {
-							ftp: ftp,
-							password: pass,
-							login: log,
-							urlFtp: urlFtp,
-                          	portFtp: portFtp
-						},
-						funcs: [{
-								name: "login"
-							}
-						]
-					})
-				}],
+						name: "query",
+						value: A.json({
+							acc: {
+								ftp: ftp,
+								password: pass,
+								login: log,
+								urlFtp: urlFtp,
+								portFtp: portFtp
+							},
+							funcs: [{
+									name: "login"
+								}
+							]
+						})
+					}
+				],
 				success: function (e) {
-					e=A.json(e);
+					e = A.json(e);
 					UI.setLSToPlace("body", false);
 					if (e.error.length > 0) {
 						UI.errors(e.error);
@@ -790,7 +863,7 @@
 											data.ftp.push(ftp),
 											data.urlFtp.push(urlFtp),
 											data.urlPhp.push(urlPhp),
-                                            data.portFtp.push(portFtp),
+											data.portFtp.push(portFtp),
 											data.password.push(password),
 											BUFFERToLocal(),
 											setLogin(name);
@@ -804,7 +877,7 @@
 							UI.dialogPanel({
 								content: [{
 										type: "message",
-										text: "Account exists".tr+"\n("+"name".tr+":" + data.name[pos] + ")"
+										text: "Account exists".tr + "\n(" + "name".tr + ":" + data.name[pos] + ")"
 									}, {
 										type: "button",
 										btnID: "ok",
@@ -825,7 +898,7 @@
 										data.ftp[pos] = ftp,
 										data.urlFtp[pos] = urlFtp,
 										data.urlPhp[pos] = urlPhp,
-                                      	data.portFtp[pos] = portFtp,
+										data.portFtp[pos] = portFtp,
 										data.login[pos] = login,
 										BUFFERToLocal()),
 									res.pressed === "new" && store.newAcc(login, password),
@@ -911,55 +984,55 @@
 						});
 					}, true);
 		},
-		startLoadWaiting: function(fn,url){
-			url=PATH(url).fixUrl();
-			var fnwait=function(obj){
+		startLoadWaiting: function (fn, url) {
+			url = PATH(url).fixUrl();
+			var fnwait = function (obj) {
 				var tree,
-					offset;
+				offset;
 				".tree.cls.dir[opened=true]".all(function (el) {
 					if (PATH(el.opt("_url")).fixUrl() === url)
 						return (tree = el, offset = el.nextElementSibling, "break");
 				}, "break");
-				return fn(obj,function(tf){
-					tree&&UI.setLSToPlace(tree, tf);
-					tree&&UI.setLSToPlace(offset, tf);
+				return fn(obj, function (tf) {
+					tree && UI.setLSToPlace(tree, tf);
+					tree && UI.setLSToPlace(offset, tf);
 					UI.setLSToPlace(".rightexplorer", tf);
 					return tf;
 				});
 			};
-			var waiter=A.start(fnwait,true);
+			var waiter = A.start(fnwait, true);
 			BUFFER.loadprocess.openDir = BUFFER.loadprocess.openDir.wait(function () {
-				return waiter;
-			});
+					return waiter;
+				});
 			BUFFER.loadprocess.reloadTree = BUFFER.loadprocess.reloadTree.wait(function () {
-				return waiter;
-			});
+					return waiter;
+				});
 		},
-		treeParentOfNotExists: function (TH,url){
-			var arr=PATH(url).arrUrl(),
-				child=arr.pop(),
-				treeObj;
-			while(arr.length>0){
-				treeObj= objWalk(BUFFER.explorer.tree, arr, ["list"], true);
-				if(treeObj&&treeObj.opened&&!treeObj.list[child])
+		treeParentOfNotExists: function (TH, url) {
+			var arr = PATH(url).arrUrl(),
+			child = arr.pop(),
+			treeObj;
+			while (arr.length > 0) {
+				treeObj = objWalk(BUFFER.explorer.tree, arr, ["list"], true);
+				if (treeObj && treeObj.opened && !treeObj.list[child])
 					return PATH(arr).fixUrl();
-				child=arr.pop();
+				child = arr.pop();
 			}
 			return false;
 		},
-		curDirParentOfNotExists: function(TH, url){
-			var arr=PATH(url).arrUrl(),
-				curDir=BUFFER.explorer.curDir,
-				child=arr.pop(),
-				curUrl,
-				list=".rightexplorer .dirPlace".a(!0).all(function(el){
+		curDirParentOfNotExists: function (TH, url) {
+			var arr = PATH(url).arrUrl(),
+			curDir = BUFFER.explorer.curDir,
+			child = arr.pop(),
+			curUrl,
+			list = ".rightexplorer .dirPlace".a(!0).all(function (el) {
 					return PATH(el.opt("_url")).name;
 				}).return;
-			while(arr.length>0){
-				curUrl=arr.join("/")+"/";
-				if(curUrl===curDir&&list.indexOf(child)<0)
+			while (arr.length > 0) {
+				curUrl = arr.join("/") + "/";
+				if (curUrl === curDir && list.indexOf(child) < 0)
 					return curDir;
-				child=arr.pop();
+				child = arr.pop();
 			}
 			return false;
 		},
@@ -987,14 +1060,14 @@
 						return;
 					url = url || TH.attrFromPath("_url"),
 					path = PATH(url, UI.errors);
-					UI.startLoadWaiting(function(obj,ls){
+					UI.startLoadWaiting(function (obj, ls) {
 						ls(true);
 						path.common("delete").wait(function () {
 							ls(false);
-							obj.value=1;
+							obj.value = 1;
 							UI.reloadListsChanges(TH, path.parentDir);
 						});
-					},path.parentDir);
+					}, path.parentDir);
 				}
 			});
 		},
@@ -1004,41 +1077,41 @@
 			UI.dialogPanel({
 				content: [{
 						type: "message",
-						text: "extract to".tr+":"
+						text: "extract to".tr + ":"
 					}, {
 						type: "input",
 						inpID: "dest",
-						opt:{
-							_VAL:path.parentDir
+						opt: {
+							_VAL: path.parentDir
 						}
 					}, {
 						type: "button",
 						btntext: "ok".tr,
 						btnID: "ok"
 					}, {
-						type:"button",
-						btntext:"cancel".tr,
-						btnID:"cl"
+						type: "button",
+						btntext: "cancel".tr,
+						btnID: "cl"
 					}
 				],
 				onEnter: "ok",
 				func: function (data) {
 					if (data.pressed !== "ok" || !data.values.dest)
 						return;
-					UI.startLoadWaiting(function(obj,ls){
+					UI.startLoadWaiting(function (obj, ls) {
 						ls(true);
-						path.common("extractZip",{
-							destinationDir:data.values.dest
+						path.common("extractZip", {
+							destinationDir: data.values.dest
 						}).wait(function (vl, W) {
 							ls(false);
-							obj.value=1;
-							var parent=UI.curDirParentOfNotExists(TH,data.values.dest);
-							parent&&UI.reloadListsChanges(TH, parent);
-							parent=UI.treeParentOfNotExists(TH,data.values.dest);
-							parent&&UI.reloadListsChanges(TH, parent);
+							obj.value = 1;
+							var parent = UI.curDirParentOfNotExists(TH, data.values.dest);
+							parent && UI.reloadListsChanges(TH, parent);
+							parent = UI.treeParentOfNotExists(TH, data.values.dest);
+							parent && UI.reloadListsChanges(TH, parent);
 							UI.reloadListsChanges(TH, data.values.dest);
 						});
-					},PATH(data.values.dest).parentDir);
+					}, PATH(data.values.dest).parentDir);
 				}
 			});
 		},
@@ -1065,17 +1138,17 @@
 					if (data.pressed !== "yes")
 						return;
 					var parent = PATH(list[0]).parentDir;
-					
-					UI.startLoadWaiting(function(obj,ls){
+
+					UI.startLoadWaiting(function (obj, ls) {
 						ls(true);
 						PATH(parent, UI.errors).common("deleteList", {
 							list: list
 						}).wait(function (vl, W) {
 							ls(false);
-							obj.value=1;
+							obj.value = 1;
 							UI.reloadListsChanges(TH, parent);
 						});
-					},parent);
+					}, parent);
 				}
 			});
 		},
@@ -1083,7 +1156,7 @@
 			UI.dialogPanel({
 				content: [{
 						type: "message",
-						text: "enter archive".tr+":"
+						text: "enter archive".tr + ":"
 					}, {
 						type: "input",
 						inpID: "name",
@@ -1106,12 +1179,12 @@
 						return;
 					if (data.values.name == "")
 						return UI.errors(["no name"]);
-					
-					list=list || [];
-					if(list.length<1)
+
+					list = list || [];
+					if (list.length < 1)
 						return;
 
-					url = url || TH.attrFromPath("_url");					
+					url = url || TH.attrFromPath("_url");
 
 					var path = PATH(url, UI.errors);
 					UI.setLSToPlace("body", true);
@@ -1132,32 +1205,33 @@
 			UI.dialogPanel({
 				content: [{
 						type: "message",
-						text: "enter rename".tr+":<br><pre>function (oldName,oldExtension,nameIndex){</pre>"
+						text: "enter rename".tr + ":<br><pre>function (oldName,oldExtension,nameIndex){</pre>"
 					}, {
 						type: "message",
 						text: "<pre>var newName;</pre>",
-                      	opt: {
-                          	_CSS:JS_STYLE.renameDialogCodeTab
-                        }
+						opt: {
+							_CSS: JS_STYLE.renameDialogCodeTab
+						}
 					}, {
 						type: "textarea",
 						inpID: "name",
 						opt: {
 							placeholder: "new name",
-							_CSS:JS_STYLE.renameDialogTextArea,
-                          	_VAL:oldNames.length<2?oldNames[0]:"",
-							_LIS:[{
-								"combination":["tab",function(e){
-									document.execCommand("insertText", false, "\t");
-								},false]
-							}]
+							_CSS: JS_STYLE.renameDialogTextArea,
+							_VAL: oldNames.length < 2 ? oldNames[0] : "",
+							_LIS: [{
+									"combination": ["tab", function (e) {
+											document.execCommand("insertText", false, "\t");
+										}, false]
+								}
+							]
 						}
 					}, {
 						type: "message",
 						text: "<pre>return newName;</pre>",
-                      	opt: {
-                          	_CSS:JS_STYLE.renameDialogCodeTab
-                        }
+						opt: {
+							_CSS: JS_STYLE.renameDialogCodeTab
+						}
 					}, {
 						type: "message",
 						text: "<pre>}</pre>"
@@ -1170,9 +1244,9 @@
 						chctext: "no ext rename".tr,
 						chcID: "noext"
 					}, {
-                      	type:"message",
-                      	text:"no ext rename info".tr
-                    }, {
+						type: "message",
+						text: "no ext rename info".tr
+					}, {
 						type: "button",
 						btntext: "rename".tr,
 						btnID: "rename"
@@ -1188,44 +1262,45 @@
 						return;
 					if (data.values.name == "")
 						return UI.errors(["no name"]);
-                  	if (!oldNames||oldNames.length<1)
-                      	return UI.errors(["no processed"]);
-					
-                  	var send={
-                      	oldNames:oldNames,
-                      	newNames:oldNames.all(function(nm,i){
-                          	nm=PATH(nm).divNameExt();
-                      		if(data.checked.isjs)
-                          		nm= new String(Function("oldName,oldExtension,nameIndex","var newName;\n\r"+data.values.name+";\n\r return newName;")(nm[0],nm[1]||"",i));
-                      		else
-                        	  	nm= new String(data.values.name);
-                          	return nm;
-                    	}).return,
-                      	staticExtension:data.checked.noext
-                    };
-					
-					parent = parent || PATH(TH.attrFromPath("_url")).parentDir;					
+					if (!oldNames || oldNames.length < 1)
+						return UI.errors(["no processed"]);
+
+					var send = {
+						oldNames: oldNames,
+						newNames: oldNames.all(function (nm, i) {
+							nm = PATH(nm).divNameExt();
+							if (data.checked.isjs)
+								nm = new String(Function("oldName,oldExtension,nameIndex", "var newName;\n\r" + data.values.name + ";\n\r return newName;")(nm[0], nm[1] || "", i));
+							else
+								nm = new String(data.values.name);
+							return nm;
+						}).return,
+						staticExtension: data.checked.noext
+					};
+
+					parent = parent || PATH(TH.attrFromPath("_url")).parentDir;
 
 					var path = PATH(parent, UI.errors);
 					UI.setLSToPlace("body", true);
-                  	path.common("rename", send).wait(function (vl, W) {
+					path.common("rename", send).wait(function (vl, W) {
 						UI.setLSToPlace("body", false);
 						vl = vl[0];
 						if (vl.type === "requery" && vl.info === "obj exists" || vl.type === "error")
 							return UI.errors([vl.info]);
 						UI.reloadListsChanges(TH, path.url);
 						UI.dialogPanel({
-							content:[{
-								type:"message",
-								text:"renamed".tr+":<br>"+vl.renames.all(function(rn){
-									return rn[0]+" => "+rn[1];
-								}).return.join("<br>")
-							},{
-								type:"button",
-								btntext:"ok".tr,
-								btnID:"ok"
-							}],
-							onEnter:"ok"
+							content: [{
+									type: "message",
+									text: "renamed".tr + ":<br>" + vl.renames.all(function (rn) {
+										return rn[0] + " => " + rn[1];
+									}).return.join("<br>")
+								}, {
+									type: "button",
+									btntext: "ok".tr,
+									btnID: "ok"
+								}
+							],
+							onEnter: "ok"
 						});
 					});
 				}
@@ -1235,7 +1310,7 @@
 			UI.dialogPanel({
 				content: [{
 						type: "message",
-						text: "Enter dir name".tr+":"
+						text: "Enter dir name".tr + ":"
 					}, {
 						type: "input",
 						inpID: "name",
@@ -1280,7 +1355,7 @@
 			UI.dialogPanel({
 				content: [{
 						type: "message",
-						text: "Enter file name".tr+":"
+						text: "Enter file name".tr + ":"
 					}, {
 						type: "input",
 						inpID: "name",
@@ -1320,15 +1395,15 @@
 				}
 			});
 		},
-		stopLoading: function(TH, url){
-			url = PATH(url||TH.attrFromPath("_url")).fixUrl();
-			BUFFER.downloads[url]&&BUFFER.downloads[url].xhr.wait(function(vl){
+		stopLoading: function (TH, url) {
+			url = PATH(url || TH.attrFromPath("_url")).fixUrl();
+			BUFFER.downloads[url] && BUFFER.downloads[url].xhr.wait(function (vl) {
 				vl.x.XHR.abort();
 			});
 		},
-		stopAllLoads: function(TH){
-			for(var nm in BUFFER.downloads)
-				BUFFER.downloads[nm].xhr.wait(function(vl){
+		stopAllLoads: function (TH) {
+			for (var nm in BUFFER.downloads)
+				BUFFER.downloads[nm].xhr.wait(function (vl) {
 					vl.x.XHR.abort();
 				});
 		},
@@ -1355,7 +1430,7 @@
 				errs.length && UI.dialogPanel({
 					content: [{
 							type: "message",
-							text: "not copied".tr+":<br>" + errs.join("<br>")
+							text: "not copied".tr + ":<br>" + errs.join("<br>")
 						}, {
 							type: "button",
 							btntext: "ok".tr,
@@ -1363,10 +1438,10 @@
 						}
 					]
 				});
-				var checked=[];
-				args.deleteSource&&args.list.all(function(url){
-					url=PATH(url).parentDir;
-					if(checked.indexOf(url)>-1)
+				var checked = [];
+				args.deleteSource && args.list.all(function (url) {
+					url = PATH(url).parentDir;
+					if (checked.indexOf(url) > -1)
 						return;
 					checked.push(url);
 					ok.length && UI.reloadListsChanges(TH, url);
@@ -1374,327 +1449,341 @@
 				ok.length && UI.reloadListsChanges(TH, args.destinationDir);
 			});
 		},
-		getLocalData: function (TH){
+		getLocalData: function (TH) {
 			BUFFERToLocal();
 			var date = new Date(),
-				text = A.json({
-					language:localStorage.getItem(PRCON_LANGUAGE_SAVE_NAME),
-					redactor:localStorage.getItem(PRCON_REDACTOR_CURRENT_NAME),
-					storage:A.json(localStorage.getItem(PRCON_LOCAL_STORAGE_NAME))
+			text = A.json({
+					language: localStorage.getItem(PRCON_LANGUAGE_SAVE_NAME),
+					redactor: localStorage.getItem(PRCON_REDACTOR_CURRENT_NAME),
+					storage: A.json(localStorage.getItem(PRCON_LOCAL_STORAGE_NAME))
 				});
-			getFile(text,"prcon3_local_storage_"+fullDate()+".json","application/json");
+			getFile(text, "prcon3_local_storage_" + fullDate() + ".json", "application/json");
 		},
-		setLocalData: function (TH){
+		setLocalData: function (TH) {
 			UI.dialogPanel({
-				content:[{
-					type:"message",
-					text:"please, select .json file".tr+":"
-				},{
-					type:"uploader",
-					accept:".json",
-					upltext:"...",
-					uplID:"file"
-				},{
-					type:"button",
-					btntext:"ok".tr,
-					btnID:"ok"
-				},{
-					type:"button",
-					btntext:"cancel".tr,
-					btnID:"cl"
-				}],
-				onEnter:"ok",
-				func:function(d){
-					if(d.pressed!=="ok"||d.fileLists.file.length!==1)
+				content: [{
+						type: "message",
+						text: "please, select .json file".tr + ":"
+					}, {
+						type: "uploader",
+						accept: ".json",
+						upltext: "...",
+						uplID: "file"
+					}, {
+						type: "button",
+						btntext: "ok".tr,
+						btnID: "ok"
+					}, {
+						type: "button",
+						btntext: "cancel".tr,
+						btnID: "cl"
+					}
+				],
+				onEnter: "ok",
+				func: function (d) {
+					if (d.pressed !== "ok" || d.fileLists.file.length !== 1)
 						return;
 					var reader = new FileReader();
-					reader.addEventListener("loadend",function() {
- 					    var res=reader.result;
-						if(!res)
+					reader.addEventListener("loadend", function () {
+						var res = reader.result;
+						if (!res)
 							return UI.errors(["empty file"]);
-						res=A.json(res);
-						if(res.__typeOfThis__=="String")
+						res = A.json(res);
+						if (res.__typeOfThis__ == "String")
 							return UI.errors(["file cont is dep code"]);
-						if(res.language && res.language.__typeOfThis__=="String"){
-							localStorage.setItem(PRCON_LANGUAGE_SAVE_NAME,res.language);
+						if (res.language && res.language.__typeOfThis__ == "String") {
+							localStorage.setItem(PRCON_LANGUAGE_SAVE_NAME, res.language);
 						}
-						if(res.redactor && res.redactor.__typeOfThis__=="String"){
-							localStorage.setItem(PRCON_REDACTOR_CURRENT_NAME,res.redactor);
+						if (res.redactor && res.redactor.__typeOfThis__ == "String") {
+							localStorage.setItem(PRCON_REDACTOR_CURRENT_NAME, res.redactor);
 						}
-						if(res.storage && res.storage.__typeOfThis__=="Object"){
-							window.BUFFERToLocal=function(){};
+						if (res.storage && res.storage.__typeOfThis__ == "Object") {
+							window.BUFFERToLocal = function () {};
+							res.storage.version=BUFFER.localData.version;
 							localStorage.removeItem(PRCON_LOCAL_STORAGE_NAME);
-							localStorage.setItem(PRCON_LOCAL_STORAGE_NAME,A.json(res.storage));
+							localStorage.setItem(PRCON_LOCAL_STORAGE_NAME, A.json(res.storage));
 							localToBUFFER();
 						}
-						if(res.language || res.redactor || res.storage)
-							window.allowUnload=true,
-              				window.location.reload();
- 					});
- 					reader.readAsText(d.fileLists.file[0]); 
+						if (res.language || res.redactor || res.storage)
+							window.allowUnload = true,
+							window.location.reload();
+					});
+					reader.readAsText(d.fileLists.file[0]);
 				}
 			});
 		},
-      	download: function (TH, list, reload){
-          	var inLoad=[];
-        	list.all(function(item){
-            	var path=PATH(item, UI.errors),
-                    url=path.fixUrl(),
-                    downObj,
-                    tmp=[-1,-1],
-                    reloadInfo=0,
-                    tm,
-                    speed,
-                    per;
-              	if(BUFFER.downloads[url]){
-                  	if(reload){
-                      	BUFFER.downloads[url].download.XHR.abort();
-                    }else{
-                  		inLoad.push(url);
-                  		return;
-                    }
-                }
-              	BUFFER.downloads[url]=downObj={
-                  	type:A.start(function(){},true),
-                  	name:path.name,
-                  	delete:A.start(function(){},true),
-                  	speed:A.start(function(){},true),
-                  	downloaded:A.start(function(){},true),
-					xhr:A.start(function(){},true)
-                };
-              	downObj.delete.wait(function(){
-                  	var tmpin=downObj.inDownloads;
-                  	tmpin&&setTimeout(function(){
-                      	tmpin.remElem();
-                    },1000);
-                  	downObj.inDownloads=undefined;
-                    delete BUFFER.downloads[url];
-                });
-              	downObj.type.progress(function(vl){
-                  	downObj.inDownIng&&downObj.inDownIng.html(vl.tr);
-                  	if(vl==="complete"){
-                      	downObj.inDownSpeed&&downObj.inDownSpeed.html(formatBytes(0)),
-                        downObj.inDownBar&&downObj.inDownBar.css("width","100%")
-                      	downObj.delete.value=true;
-                    }
-					if(vl==="stop"||vl==="error"){
-                      	downObj.inDownSpeed&&downObj.inDownSpeed.html(formatBytes(0)),
-                        downObj.delete.value=true;
-                    }
-                });
-              	downObj.type.progressValue="getting size";
-              	downObj.size=path.common("sizeOf").wait(function(size){
-                  	if(size===0)
-                    	downObj.type.progressValue="error"; 
-                  	else
-                      	downObj.type.progressValue="downloading";
-                  	return [size[0]*4/3,formatBytes(size[0]*4/3)];
-                });
-              	downObj.download=downObj.size.wait(function(){
-                  	return (downObj.xhr.value={x:path.common("getBase64")}).x;
-                });
-              	downObj.download.wait(function(vl){
-                  	downObj.type.value=downObj.speed.value=downObj.downloaded.value=true;
-                	if(vl===0)
-                      	return (downObj.type.progressValue="error",0);  
-                  	vl=vl[0];
-                    getFile(b64toBlob(vl.content,vl.mime),downObj.name);
-                    downObj.type.progressValue="complete";
-                });
-              	downObj.download.progress(function(dt){
-					if(dt.type==="abort"){
-						return downObj.download.value=0;
+		download: function (TH, list, reload) {
+			var inLoad = [];
+			list.all(function (item) {
+				var path = PATH(item, UI.errors),
+				url = path.fixUrl(),
+				downObj,
+				tmp = [-1, -1],
+				reloadInfo = 0,
+				tm,
+				speed,
+				per;
+				if (BUFFER.downloads[url]) {
+					if (reload) {
+						BUFFER.downloads[url].download.XHR.abort();
+					} else {
+						inLoad.push(url);
+						return;
 					}
-                  	tm=downObj.size.wait(function(vl){return vl;});
-                  	tm.wait(function(vl){
-                      	if(dt.type==="down"&&dt.data.loaded<=vl[0]){
-                            downObj.downloaded.progressValue=dt.data.loaded;
-                            if(tmp[0]>-1){
-                    	      	var tmp1=[tmp[0],tmp[1]],
-                                    tm1=(tm.time-reloadInfo)>500;
-                                speed=(dt.data.loaded-tmp1[1])/(tm.time-tmp1[0])*1000;
-                                per=dt.data.loaded/vl[0]*100;
-                              	per>100&&(per=100);
-                              	if(tm1)
-                                  	reloadInfo=tm.time;
-                              	tm1&&(
-                                	downObj.inDownIng&&downObj.inDownIng.html(formatBytes(dt.data.loaded)+"/"+vl[1]),
-                              		downObj.inDownSpeed&&downObj.inDownSpeed.html(formatBytes(speed)),
-                                	downObj.inDownBar&&downObj.inDownBar.css("width",per+"%"));
-                              	
-                    	      	downObj.speed.progressValue=speed;
-                    	    }
-                    	  	tmp[0]=tm.time;
-                    	  	tmp[1]=dt.data.loaded;
-                    	}
-                	}).error(console.error);
-                });
-              	BUFFER.loadprocess.reloadDownloads.progressValue=true;
-				var downPlace=".srcplace>[act=downloads]".a();
-				if(downPlace){
-					var cont = downPlace.child(".backcontent>f-scrollplane"),
-          			el=A.createElem("div",{
-						_TXT:UI.getAct("downloadsFileSrc")
-					}).children[0].pasteIn(cont);
-            	 		el.opt({
-						_url:url
-					});
-            	 	el.child(".name").html=path.name;
-            	 	downObj.inDownloads=el;
-            	 	downObj.inDownSpeed=el.child(".speed");
-            	 	downObj.inDownIng=el.child(".downloading");
-            	 	downObj.inDownBar=el.child(".bar");
-            	
 				}
-            });
-          	if(inLoad.length)
-              	UI.dialogPanel({
-                  	content:[{
-                      	type:"message",
-                      	text:"already in load".tr+"\n"+inLoad.join("\n")
-                    },{
-                      	type:"button",
-                      	btntext:"reload".tr,
-                      	btnID:"rn"
-                    },{
-                      	type:"button",
-                      	btntext:"close".tr,
-                      	btnID:"cl"
-                    }],
-                  	onEnter:"rn",
-                  	func:function(data){
-                      	if(data.pressed==="rn")
-                          	UI.download(TH,inLoad,reload);
-                    }
-                });
-        },
-		upload: function (TH, list, destination, reload){
-          	var inLoad=[];
-        	list.all(function(item){
-            	var path=PATH(destination, UI.errors),
-                    url=path.fixUrl(),
-                    downObj,
-                    tmp=[-1,-1],
-                    reloadInfo=0,
-                    tm,
-                    speed,
-                    per;
-              	if(BUFFER.downloads[url]){
-                  	(function newUrl(c){
-						if(BUFFER.downloads[c+"_"+url])
-							return newUrl(c+1);
-						url=c+"_"+url;
+				BUFFER.downloads[url] = downObj = {
+					type: A.start(function () {}, true),
+					name: path.name,
+					delete : A.start(function () {}, true),
+					speed: A.start(function () {}, true),
+					downloaded: A.start(function () {}, true),
+					xhr: A.start(function () {}, true)
+				};
+				downObj.delete.wait(function () {
+					var tmpin = downObj.inDownloads;
+					tmpin && setTimeout(function () {
+						tmpin.remElem();
+					}, 1000);
+					downObj.inDownloads = undefined;
+					delete BUFFER.downloads[url];
+				});
+				downObj.type.progress(function (vl) {
+					downObj.inDownIng && downObj.inDownIng.html(vl.tr);
+					if (vl === "complete") {
+						downObj.inDownSpeed && downObj.inDownSpeed.html(formatBytes(0)),
+						downObj.inDownBar && downObj.inDownBar.css("width", "100%")
+						downObj.delete.value = true;
+					}
+					if (vl === "stop" || vl === "error") {
+						downObj.inDownSpeed && downObj.inDownSpeed.html(formatBytes(0)),
+						downObj.delete.value = true;
+					}
+				});
+				downObj.type.progressValue = "getting size";
+				downObj.size = path.common("sizeOf").wait(function (size) {
+						if (size === 0)
+							downObj.type.progressValue = "error";
+						else
+							downObj.type.progressValue = "downloading";
+						return [size[0] * 4 / 3, formatBytes(size[0] * 4 / 3)];
+					});
+				downObj.download = downObj.size.wait(function () {
+						return (downObj.xhr.value = {
+								x: path.common("getBase64")
+							}).x;
+					});
+				downObj.download.wait(function (vl) {
+					downObj.type.value = downObj.speed.value = downObj.downloaded.value = true;
+					if (vl === 0)
+						return (downObj.type.progressValue = "error", 0);
+					vl = vl[0];
+					getFile(b64toBlob(vl.content, vl.mime), downObj.name);
+					downObj.type.progressValue = "complete";
+				});
+				downObj.download.progress(function (dt) {
+					if (dt.type === "abort") {
+						return downObj.download.value = 0;
+					}
+					tm = downObj.size.wait(function (vl) {
+							return vl;
+						});
+					tm.wait(function (vl) {
+						if (dt.type === "down" && dt.data.loaded <= vl[0]) {
+							downObj.downloaded.progressValue = dt.data.loaded;
+							if (tmp[0] > -1) {
+								var tmp1 = [tmp[0], tmp[1]],
+								tm1 = (tm.time - reloadInfo) > 500;
+								speed = (dt.data.loaded - tmp1[1]) / (tm.time - tmp1[0]) * 1000;
+								per = dt.data.loaded / vl[0] * 100;
+								per > 100 && (per = 100);
+								if (tm1)
+									reloadInfo = tm.time;
+								tm1 && (
+									downObj.inDownIng && downObj.inDownIng.html(formatBytes(dt.data.loaded) + "/" + vl[1]),
+									downObj.inDownSpeed && downObj.inDownSpeed.html(formatBytes(speed)),
+									downObj.inDownBar && downObj.inDownBar.css("width", per + "%"));
+
+								downObj.speed.progressValue = speed;
+							}
+							tmp[0] = tm.time;
+							tmp[1] = dt.data.loaded;
+						}
+					}).error(console.error);
+				});
+				BUFFER.loadprocess.reloadDownloads.progressValue = true;
+				var downPlace = ".srcplace>[act=downloads]".a();
+				if (downPlace) {
+					var cont = downPlace.child(".backcontent>f-scrollplane"),
+					el = A.createElem("div", {
+							_TXT: UI.getAct("downloadsFileSrc")
+						}).children[0].pasteIn(cont);
+					el.opt({
+						_url: url
+					});
+					el.child(".name").html = path.name;
+					downObj.inDownloads = el;
+					downObj.inDownSpeed = el.child(".speed");
+					downObj.inDownIng = el.child(".downloading");
+					downObj.inDownBar = el.child(".bar");
+
+				}
+			});
+			if (inLoad.length)
+				UI.dialogPanel({
+					content: [{
+							type: "message",
+							text: "already in load".tr + "\n" + inLoad.join("\n")
+						}, {
+							type: "button",
+							btntext: "reload".tr,
+							btnID: "rn"
+						}, {
+							type: "button",
+							btntext: "close".tr,
+							btnID: "cl"
+						}
+					],
+					onEnter: "rn",
+					func: function (data) {
+						if (data.pressed === "rn")
+							UI.download(TH, inLoad, reload);
+					}
+				});
+		},
+		upload: function (TH, list, destination, reload) {
+			var inLoad = [];
+			list.all(function (item) {
+				var path = PATH(destination, UI.errors),
+				url = path.fixUrl(),
+				downObj,
+				tmp = [-1, -1],
+				reloadInfo = 0,
+				tm,
+				speed,
+				per;
+				if (BUFFER.downloads[url]) {
+					(function newUrl(c) {
+						if (BUFFER.downloads[c + "_" + url])
+							return newUrl(c + 1);
+						url = c + "_" + url;
 					})(0);
-                }
-              	BUFFER.downloads[url]=downObj={
-                  	type:A.start(function(){},true),
-					up:true,
-                  	name:item.name,
-                  	delete:A.start(function(){},true),
-                  	speed:A.start(function(){},true),
-                  	downloaded:A.start(function(){},true),
-					xhr:A.start(function(){},true),
-					name:item.name
-                };
-              	downObj.delete.wait(function(){
-                  	var tmpin=downObj.inDownloads;
-                  	tmpin&&setTimeout(function(){
-                      	tmpin.remElem();
-                    },1000);
-                  	downObj.inDownloads=undefined;
-                    delete BUFFER.downloads[url];
-                });
-              	downObj.type.progress(function(vl){
-                  	downObj.inDownIng&&downObj.inDownIng.html(vl.tr);
-                  	if(vl==="complete"){
-                      	downObj.inDownSpeed&&downObj.inDownSpeed.html(formatBytes(0)),
-                        downObj.inDownBar&&downObj.inDownBar.css("width","100%")
-                      	downObj.delete.value=true;
+				}
+				BUFFER.downloads[url] = downObj = {
+					type: A.start(function () {}, true),
+					up: true,
+					name: item.name,
+					delete : A.start(function () {}, true),
+					speed: A.start(function () {}, true),
+					downloaded: A.start(function () {}, true),
+					xhr: A.start(function () {}, true),
+					name: item.name
+				};
+				downObj.delete.wait(function () {
+					var tmpin = downObj.inDownloads;
+					tmpin && setTimeout(function () {
+						tmpin.remElem();
+					}, 1000);
+					downObj.inDownloads = undefined;
+					delete BUFFER.downloads[url];
+				});
+				downObj.type.progress(function (vl) {
+					downObj.inDownIng && downObj.inDownIng.html(vl.tr);
+					if (vl === "complete") {
+						downObj.inDownSpeed && downObj.inDownSpeed.html(formatBytes(0)),
+						downObj.inDownBar && downObj.inDownBar.css("width", "100%")
+						downObj.delete.value = true;
 						UI.reloadListsChanges(TH, destination);
-                    }
-					if(vl==="stop"||vl==="error"){
-                      	downObj.inDownSpeed&&downObj.inDownSpeed.html(formatBytes(0)),
-                        downObj.delete.value=true;
-                    }
-                });
-              	downObj.type.progressValue="getting size";
-              	downObj.size=A.start(function(){
-                  	return [item.size,formatBytes(item.size)];
-                });
-              	downObj.download=downObj.size.wait(function(){
-                  	return (downObj.xhr.value={x:path.common("uploadFile",{name:item.name,index:0},[item])}).x;
-                });
-              	downObj.download.wait(function(vl){
-					console.log(vl);
-                  	downObj.type.value=downObj.speed.value=downObj.downloaded.value=true;
-                	if(vl===0)
-                      	return (downObj.type.progressValue="error",0);  
-                  	vl=vl[0];
-                    if(vl.type==="ok")
-						return downObj.type.progressValue="complete";
-					else{
-						console.log(vl);
-						return downObj.type.progressValue="error";
 					}
-                });
-              	downObj.download.progress(function(dt){
-					if(dt.type==="abort"){
-						return downObj.download.value=0;
+					if (vl === "stop" || vl === "error") {
+						downObj.inDownSpeed && downObj.inDownSpeed.html(formatBytes(0)),
+						downObj.delete.value = true;
 					}
-                  	tm=downObj.size.wait(function(vl){return vl;});
-                  	tm.wait(function(vl){
-                      	if(dt.type==="up"&&dt.data.loaded<=vl[0]){
-                            downObj.downloaded.progressValue=dt.data.loaded;
-                            if(tmp[0]>-1){
-                    	      	var tmp1=[tmp[0],tmp[1]],
-                                    tm1=(tm.time-reloadInfo)>500;
-                                speed=(dt.data.loaded-tmp1[1])/(tm.time-tmp1[0])*1000;
-                                per=dt.data.loaded/vl[0]*100;
-                              	per>100&&(per=100);
-                              	if(tm1)
-                                  	reloadInfo=tm.time;
-                              	tm1&&(
-                                	downObj.inDownIng&&downObj.inDownIng.html(formatBytes(dt.data.loaded)+"/"+vl[1]),
-                              		downObj.inDownSpeed&&downObj.inDownSpeed.html(formatBytes(speed)),
-                                	downObj.inDownBar&&downObj.inDownBar.css("width",per+"%"));
-                              	
-                    	      	downObj.speed.progressValue=speed;
-                    	    }
-                    	  	tmp[0]=tm.time;
-                    	  	tmp[1]=dt.data.loaded;
-                    	}
-                	}).error(console.error);
-                });
-              	BUFFER.loadprocess.reloadDownloads.progressValue=true;
-				var downPlace=".srcplace>[act=downloads]".a();
-				if(downPlace){
-					var cont = downPlace.child(".backcontent>f-scrollplane"),
-          			el=A.createElem("div",{
-						_TXT:UI.getAct("uploadsFileSrc")
-					}).children[0].pasteIn(cont);
-            	 		el.opt({
-						_url:url
+				});
+				downObj.type.progressValue = "getting size";
+				downObj.size = A.start(function () {
+						return [item.size, formatBytes(item.size)];
 					});
-            	 	el.child(".name").html=item.name;
-            	 	downObj.inDownloads=el;
-            	 	downObj.inDownSpeed=el.child(".speed");
-            	 	downObj.inDownIng=el.child(".downloading");
-            	 	downObj.inDownBar=el.child(".bar");
-            	
+				downObj.download = downObj.size.wait(function () {
+						return (downObj.xhr.value = {
+								x: path.common("uploadFile", {
+									name: item.name,
+									index: 0
+								}, [item])
+							}).x;
+					});
+				downObj.download.wait(function (vl) {
+					console.log(vl);
+					downObj.type.value = downObj.speed.value = downObj.downloaded.value = true;
+					if (vl === 0)
+						return (downObj.type.progressValue = "error", 0);
+					vl = vl[0];
+					if (vl.type === "ok")
+						return downObj.type.progressValue = "complete";
+					else {
+						console.log(vl);
+						return downObj.type.progressValue = "error";
+					}
+				});
+				downObj.download.progress(function (dt) {
+					if (dt.type === "abort") {
+						return downObj.download.value = 0;
+					}
+					tm = downObj.size.wait(function (vl) {
+							return vl;
+						});
+					tm.wait(function (vl) {
+						if (dt.type === "up" && dt.data.loaded <= vl[0]) {
+							downObj.downloaded.progressValue = dt.data.loaded;
+							if (tmp[0] > -1) {
+								var tmp1 = [tmp[0], tmp[1]],
+								tm1 = (tm.time - reloadInfo) > 500;
+								speed = (dt.data.loaded - tmp1[1]) / (tm.time - tmp1[0]) * 1000;
+								per = dt.data.loaded / vl[0] * 100;
+								per > 100 && (per = 100);
+								if (tm1)
+									reloadInfo = tm.time;
+								tm1 && (
+									downObj.inDownIng && downObj.inDownIng.html(formatBytes(dt.data.loaded) + "/" + vl[1]),
+									downObj.inDownSpeed && downObj.inDownSpeed.html(formatBytes(speed)),
+									downObj.inDownBar && downObj.inDownBar.css("width", per + "%"));
+
+								downObj.speed.progressValue = speed;
+							}
+							tmp[0] = tm.time;
+							tmp[1] = dt.data.loaded;
+						}
+					}).error(console.error);
+				});
+				BUFFER.loadprocess.reloadDownloads.progressValue = true;
+				var downPlace = ".srcplace>[act=downloads]".a();
+				if (downPlace) {
+					var cont = downPlace.child(".backcontent>f-scrollplane"),
+					el = A.createElem("div", {
+							_TXT: UI.getAct("uploadsFileSrc")
+						}).children[0].pasteIn(cont);
+					el.opt({
+						_url: url
+					});
+					el.child(".name").html = item.name;
+					downObj.inDownloads = el;
+					downObj.inDownSpeed = el.child(".speed");
+					downObj.inDownIng = el.child(".downloading");
+					downObj.inDownBar = el.child(".bar");
+
 				}
-            });
-        },
-		getLocalFiles: function(TH, multiple, accept){
-			multiple=multiple||TH.attrFromPath("multiple");
-			accept=accept||TH.attrFromPath("accept");
-			queryFiles(function(files){
-				TH.files=files;
-				var txt="";
-				for(var i=0, len=files.length; i < len; i++){
-					txt+=files[i].name+"<br>";
+			});
+		},
+		getLocalFiles: function (TH, multiple, accept) {
+			multiple = multiple || TH.attrFromPath("multiple");
+			accept = accept || TH.attrFromPath("accept");
+			queryFiles(function (files) {
+				TH.files = files;
+				var txt = "";
+				for (var i = 0, len = files.length; i < len; i++) {
+					txt += files[i].name + "<br>";
 				}
-				TH.html=txt;
-			},multiple,accept);
+				TH.html = txt;
+			}, multiple, accept);
 		},
 		copyText: function (TH, txt) {
 			if (window.clipboardData) {

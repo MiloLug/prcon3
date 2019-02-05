@@ -72,12 +72,14 @@ var PATH = function (url, errFun) {
 								type: "abort",
 								data: prog
 							};
+							w.value=0;
 						},
 						timeout: function (prog) {
 							w.progressValue = {
 								type: "timeout",
 								data: prog
 							};
+							w.value=0;
 						},
 						success: function (d) {
 							d = A.json(d);

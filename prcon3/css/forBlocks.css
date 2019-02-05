@@ -141,6 +141,9 @@
   position:relative;
   cursor:pointer;
 }
+.disorderedList>.item.selected{
+	background:rgb(57, 57, 68);
+}
 /*</styles for disordered lists>*/
 
 /*<styles for dialogs>*/

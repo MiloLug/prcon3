@@ -13,6 +13,9 @@ f-scroll-x,f-scroll-y{
 .middle{
   z-index:13;
 }
+.selector{
+  z-index:555;
+}
 .contextmenu{
   z-index:666;
 }

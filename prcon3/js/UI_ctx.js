@@ -311,5 +311,29 @@ window.UI.ctx = {
 			}
 		};
 		UI.ctx.openContextmenu(list, coo);
+	},
+	loginLocalListItem:function(TH,coo,bbl){
+		var sel = TH.hasClass("selected"),
+		thname = TH.opt("name"),
+		names = "[act=loginLocal] .forsel.selected".all(function (el) {
+				return el.opt("name");
+			}).return,
+		list = {
+			content: [{
+					type: "button",
+					btntext: "Delete".tr,
+					btnID: "del"
+				}
+			],
+			func: function (data) {
+				var pr = data.pressed;
+				switch (pr) {
+				case "del":
+					UI.deleteAccs(TH,sel?names:[thname]);
+					break;
+				}
+			}
+		};
+		UI.ctx.openContextmenu(list, coo);
 	}
 }

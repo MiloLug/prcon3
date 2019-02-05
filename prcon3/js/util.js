@@ -106,7 +106,8 @@ var ACCOUNT={
       	this.loadprocess={
           	reloadDownloads:A.start(function(){},true),
           	openDir:A.start(),
-          	reloadTree:A.start()
+          	reloadTree:A.start(),
+			setHash:A.start()
         };
     },
 	BUFFER = new N_BUFFER(),
@@ -266,7 +267,17 @@ var ACCOUNT={
 			tmp.addEventListener("input",lis);
 			tmp.click();
 		};
-	})();
+	})(),
+	pendTo=function(fn){
+		var tmp;
+		return A.start(function(obj){
+			(function interval(){
+				if(!(tmp=fn()))
+					return setTimeout(interval,0);
+				obj.value=tmp;
+			})();
+		},true);
+	};
   	
 /*SET localStorage AND BUFFER localData*/
 (function(){
@@ -291,6 +302,27 @@ if(window.history&&BUFFER.localData.settings.enableUseBrowserBFBtns)
           	history.back(),
             UI.goForward();
 	});
+/*END*/
+
+/*HASH CHECK*/
+(function(){
+	var hashblock = true;
+	window.addEventListener("hashchange",function(){
+		if(hashblock)
+			return (hashblock=false);
+		BUFFER.loadprocess.setHash = BUFFER.loadprocess.setHash.wait(function(v,o){
+			if(v==="setJS")
+				return (o.value=true);
+			console.log(33);
+			pendTo(function(){
+				return window.UI.openDir;
+			}).wait(function(f){
+				f(false,window.location.hash.substr(1));
+				o.value=true;
+			});
+		},true);
+	});
+})();
 /*END*/
 
 /*ON PAGE UNLOAD*/

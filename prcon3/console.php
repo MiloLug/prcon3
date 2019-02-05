@@ -514,7 +514,7 @@ function Main(){
 			if (!self::isAvailable($url, $FTP)) {
 				foreach ($arrUrl as $item) {
 					$tmp .= "/" . $item;
-					if (!self::isAvailable($tmp)) {
+					if (!self::isAvailable($tmp, $FTP)) {
 						if ($FTP)
 							ftp_mkdir($ftpcon, $tmp);
 						else
@@ -945,7 +945,7 @@ function Main(){
 				$tmpName_ext = sys_get_temp_dir() . "/" . uniqid("PRCON_TMP", true) . "_ext";
 				$tmpName_zip = ($FTP ? sys_get_temp_dir() . "/" . uniqid("PRCON_TMP", true) . ".zip" : $url);
 				
-				if (!self::isAvailable($dest)) {
+				if (!self::isAvailable($dest, $FTP)) {
 					$r = self::createPath($dest);
 					if ($r["type"] !== "ok") {
 						$commonError["info"] = $r["info"];
@@ -987,7 +987,7 @@ function Main(){
 					$item = self::normUrl($item["url"], false);
 					$name = self::arrUrl($item, false);
 					$name = $name[count($name) - 1];
-					if (self::isAvailable($dest . "/" . $name)) {
+					if (self::isAvailable($dest . "/" . $name, $FTP)) {
 						self::delete($tmpName_ext, false);
 						if ($FTP)
 							unlink($tmpName_zip);

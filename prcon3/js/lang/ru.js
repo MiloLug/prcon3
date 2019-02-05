@@ -108,5 +108,7 @@ window.JS_LANG={
 	"select files":"выберите файлы",
 	"please, select .json file":"пожалуйста, выберите .json файл",
 	"edit":"редактировать",
-	"cut":"вырезать"
+	"cut":"вырезать",
+	"account":"аккаунт",
+	"accounts":"аккаунты"
 };

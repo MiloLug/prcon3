@@ -8,12 +8,13 @@ window.addEventListener("contextmenu", function (e, ccount) {
 			if (TH === document)
 				return "break";
 			FN = TH.opt("contextfuncs");
-			if (!FN || (ind > 0 && !TH.opt("bubblecontext")) || (ccount > 0 && !TH.opt("mergecontext")))
+			if (FN===null || (ind > 0 && !TH.opt("bubblecontext")) || (ccount > 0 && !TH.opt("mergecontext")))
 				return "continue";
           	e.origin.preventDefault();
 			FN = FN.split(","),
 			FN.all(function (fun, fnInd) {
-				return UI.ctx[fun.trim()](TH, e, ccount > 0 || fnInd > 0);
+				fun=fun.trim();
+				return fun&&UI.ctx[fun](TH, e, ccount > 0 || fnInd > 0);
 			}, "break", "continue");
 			ccount = 1;
 		}, "break", "continue");
