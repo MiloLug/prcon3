@@ -176,6 +176,7 @@
 			gutters: ["CodeMirror-lint-markers", "CodeMirror-linenumbers", "CodeMirror-foldgutter"],
 			foldGutter: s.HCODE_F,
 			lint: lint,
+			esversion:6,
           	indentUnit:4,
         	indentWithTabs:true
 		};

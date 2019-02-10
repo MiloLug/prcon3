@@ -168,7 +168,9 @@
 		var CSSoptions = options.css || JSON.parse(JSON.stringify(options));
 		var JSoptions = options.js || JSON.parse(JSON.stringify(options));
 		var HTMLoptions = options.html || JSON.parse(JSON.stringify(options));
-
+		
+		JSoptions.esversion=6;
+		
 		processHTML(noPhp, HTMLoptions, found);
 
 		processCSS(noPhp, CSSoptions, found);

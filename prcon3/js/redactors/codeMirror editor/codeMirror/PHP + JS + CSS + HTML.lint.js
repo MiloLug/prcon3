@@ -300,6 +300,8 @@
 		var HTMLoptions = options.html || JSON.parse(JSON.stringify(options));
 		var PHPoptions = options.php || JSON.parse(JSON.stringify(options));
 
+		JSoptions.esversion=6;
+		
 		processHTML(noPhp, HTMLoptions, found);
 
 		processCSS(noPhp, CSSoptions, found);

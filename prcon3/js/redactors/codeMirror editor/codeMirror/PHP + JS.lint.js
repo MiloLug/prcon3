@@ -221,6 +221,8 @@
 		var JSoptions = options.js || JSON.parse(JSON.stringify(options));
 		var PHPoptions = options.php || JSON.parse(JSON.stringify(options));
 
+		JSoptions.esversion=6;
+		
 		processPhp(text, PHPoptions, found);
 
 		processJS(noPhp, JSoptions, found);

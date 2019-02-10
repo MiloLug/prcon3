@@ -135,6 +135,8 @@
 		var JSoptions = options.js || JSON.parse(JSON.stringify(options));
 		var HTMLoptions = options.html || JSON.parse(JSON.stringify(options));
 
+		JSoptions.esversion=6;
+		
 		processHTML(noPhp, HTMLoptions, found);
 
 		processJS(noPhp, JSoptions, found);

@@ -306,10 +306,7 @@ if(window.history&&BUFFER.localData.settings.enableUseBrowserBFBtns)
 
 /*HASH CHECK*/
 (function(){
-	var hashblock = true;
 	window.addEventListener("hashchange",function(){
-		if(hashblock)
-			return (hashblock=false);
 		BUFFER.loadprocess.setHash = BUFFER.loadprocess.setHash.wait(function(v,o){
 			if(v==="setJS")
 				return (o.value=true);
