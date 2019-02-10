@@ -1,0 +1,27 @@
+[act=settings]>.backcontent .groupname{
+  z-index:1; 
+}
+f-scroll-x,f-scroll-y{
+  z-index:9;
+}
+[topLayer]{
+  z-index:11;
+}
+.rightmenu{
+  z-index:12;
+}
+.middle{
+  z-index:13;
+}
+.selector{
+  z-index:555;
+}
+.contextmenu{
+  z-index:666;
+}
+.loadscreen{
+  z-index:777;
+}
+.dialogback{
+  z-index:999;
+}

@@ -1,0 +1,332 @@
+<!DOCTYPE html>
+<html lang="en"><head>
+  <title>PRCON</title>
+  
+  <script>var VERSION=0;</script>
+  <script src="version.js"></script>
+  <script src="precache.js"></script>
+<script>
+	"use strict";
+	var PRCON_CHACHE_NAME="PRCON_CACHE_TEMP",
+		PRCON_LOCAL_STORAGE_NAME="PRCON_LOCAL_STORAGE",
+      	PRCON_LANGUAGE_SAVE_NAME="PRCON_LANGUAGE",
+		PRCON_REDACTOR_CURRENT_NAME="PRCON_FILE_REDACTOR",
+//		PRCON_PAGE_END_TIME_SAVE_NAME="PRCON_END_TIME",
+		REDACTORS_PATH="js/redactors/";
+  
+	precache("precache.json",PRCON_CHACHE_NAME);
+//	(function(){
+//		setTimeout(function(){
+//			if((Date.now()-15-parseFloat(localStorage.getItem(PRCON_PAGE_END_TIME_SAVE_NAME)||0))<0){
+//				document.close();
+//				window.stop();
+//				document.open().write("<hea\d><title>PRCON</title></hea\d><bod\y><div style='background:gray;color:#292929;font-weight:700;font-size:5vw;position:fixed;width:100%;height:100%;top:0;left:0;display:flex;text-align:center;align-items:center;justify-content:center;'>PRCON page already opened!</div></bod\y><!--");
+//				document.close();
+//			}
+//		},0);
+//	})();
+</script>
+<script>
+//	(function endTimer(){
+//		localStorage.setItem(PRCON_PAGE_END_TIME_SAVE_NAME,Date.now());
+//		setTimeout(endTimer,10);
+//	})();
+</script>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<link rel="apple-touch-icon" sizes="57x57" href="icons/apple-icon-57x57.png">
+<link rel="apple-touch-icon" sizes="60x60" href="icons/apple-icon-60x60.png">
+<link rel="apple-touch-icon" sizes="72x72" href="icons/apple-icon-72x72.png">
+<link rel="apple-touch-icon" sizes="76x76" href="icons/apple-icon-76x76.png">
+<link rel="apple-touch-icon" sizes="114x114" href="icons/apple-icon-114x114.png">
+<link rel="apple-touch-icon" sizes="120x120" href="icons/apple-icon-120x120.png">
+<link rel="apple-touch-icon" sizes="144x144" href="icons/apple-icon-144x144.png">
+<link rel="apple-touch-icon" sizes="152x152" href="icons/apple-icon-152x152.png">
+<link rel="apple-touch-icon" sizes="180x180" href="icons/apple-icon-180x180.png">
+<link rel="icon" type="image/png" sizes="192x192"  href="icons/android-icon-192x192.png">
+<link rel="icon" type="image/png" sizes="32x32" href="icons/favicon-32x32.png">
+<link rel="icon" type="image/png" sizes="96x96" href="icons/favicon-96x96.png">
+<link rel="icon" type="image/png" sizes="16x16" href="icons/favicon-16x16.png">
+  
+<link rel="manifest" href="manifest.json">
+  
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="application-name" content="PRCON">
+<meta name="apple-mobile-web-app-title" content="PRCON">
+<meta name="theme-color" content="#1a1a1d">
+<meta name="msapplication-navbutton-color" content="#1a1a1d">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="msapplication-starturl" content="./">
+    
+<link rel="stylesheet" type="text/css" href="css/loader.css"/>
+<link rel="stylesheet" type="text/css" href="css/layers.css"/>
+
+  </head>
+<body>
+<div class="lsplace">
+	<div class="loadscreen start">
+		<div class="box">
+			<div></div>
+			<div></div>
+			<div></div>
+			<div></div>
+			<div></div>
+			<div></div>
+			<div></div>
+		</div>
+	</div>
+</div>
+
+<script src="js/CE.js"></script>
+<script src="js/bjs.js"></script>
+<script src="js/bjs_events.js"></script>
+<script src="js/lang/setter.js"></script>  
+  
+<script src="js/common.js"></script>
+<script src="js/interactive.js"></script>
+<script src="js/parser.js"></script>
+<script src="js/PATH.js"></script>
+<script src="js/jsStyle.js"></script>
+<script src="js/jsSrc.js"></script>
+
+<script src="js/settings_declare.js"></script>
+<script src="js/util.js"></script>
+
+<script src="js/redactors/setter.js"></script>
+  
+<script src="js/scroll.js"></script>
+<link rel="stylesheet" type="text/css" href="css/scroll.css"/>
+<link rel="stylesheet" type="text/css" href="css/fonts/hack/index.css"/>
+<link rel="stylesheet" type="text/css" href="css/common.css"/>
+<link rel="stylesheet" type="text/css" href="css/generalStructure.css"/>
+<link rel="stylesheet" type="text/css" href="css/forBlocks.css"/>
+<link rel="stylesheet" type="text/css" href="css/rules.css"/>
+  
+<script>applySettings();</script>
+  
+<code class="sources" hidden>
+	<div act="login">
+      	<div class="backcontent">
+        @scrollplane::y attrs: class="center",
+          	<input type="text" class="login inputstyle cls" placeholder="URL">
+      		<input type="text" class="pass inputstyle cls" placeholder="PASSWORD">
+        ::@
+      	</div>
+        <div class="downmenu">
+          	<button class="blackbtn bwhitefont cls" funcs="sendLogin">@set::"login".tr::@</button>
+          	<button class="blackbtn bwhitefont cls" funcs="openLoginFtp">@set::"login ftp".tr::@</button>
+          	<button class="blackbtn bwhitefont cls" funcs="openLoginLocal">@set::"local storage".tr::@</button>
+          	<button class="blackbtn bwhitefont cls" funcs="easyCancel">@set::"close".tr::@</button>
+      	</div>
+    </div>
+  	
+  	<div act="settings">
+ 		<div class="backcontent">
+   			@scrollplane::Y::@
+      	</div>
+        <div class="downmenu">
+          	<button class="blackbtn bwhitefont cls" funcs="resetSettings">@set::"reset settings".tr::@</button>
+          	<button class="blackbtn bwhitefont cls" funcs="easyCancel">@set::"close".tr::@</button>
+      	</div>
+  	</div>
+  
+  	<div act="loginFtp">
+      	<div class="backcontent center">
+        @scrollplane::y attrs: class="center",
+        	<input type="text" class="urlPhp inputstyle cls" placeholder="PHP URL">
+        	<input type="text" class="urlFtp inputstyle cls" placeholder="FTP URL">
+   			<input type="text" class="login inputstyle cls" placeholder="FTP LOGIN">
+      		<input type="text" class="pass inputstyle cls" placeholder="FTP PASSWORD">
+          	<input type="text" class="port inputstyle cls" placeholder="FTP PORT (default 21)">
+      	::@	
+      	</div>
+        <div class="downmenu">
+          	<button class="blackbtn bwhitefont cls" funcs="sendLoginFtp">@set::"login".tr::@</button>
+         	<button class="blackbtn bwhitefont cls" funcs="openLogin">@set::"login php".tr::@</button>
+          	<button class="blackbtn bwhitefont cls" funcs="openLoginLocal">@set::"local storage".tr::@</button>
+          	<button class="blackbtn bwhitefont cls" funcs="easyCancel">@set::"close".tr::@</button>
+      	</div>
+    </div>     
+  	
+  	<div act="loginLocal">
+ 		<div class="backcontent">
+          	@scrollplane::y attrs: class="disorderedList"::@
+ 		</div>
+  		<div class="downmenu">
+          	<button class="blackbtn bwhitefont cls" funcs="openLogin">@set::"new account".tr::@</button>
+           	<button class="blackbtn bwhitefont cls" funcs="easyCancel">@set::"cancel".tr::@</button>
+  		</div>
+  	</div>
+
+  	<div act="dialogInputSrc">
+  		<input type="text" class="inputstyle cls">
+      	<textarea type="text" class="inputstyle cls"></textarea>
+      	<button class="blackbtn bwhitefont cls"></button>
+      	<label class="chbstyle"><input type="checkbox" hidden><div>&#10003;</div><text></text></label>
+		<label class="uploaderstyle cls"><div></div><input type="file" hidden></label>
+  	</div>
+  	<svg act="dirIcon">
+	    <defs>
+	        <path d="M1 22.99L51.91 22.99L51.91 64L1 64L1 22.99Z" id="SVGdirIc1" />
+	        <path d="M43.97 29.92L54.3 29.92L54.3 64L43.97 64L43.97 29.92Z" id="SVGdirIc2" />
+	        <path d="M32.48 22.99L46.45 22.99L46.45 64L32.48 64L32.48 22.99Z" id="SVGdirIc3" />
+	        <path d="M0 0L46.45 0L46.45 64L0 64L0 0Z" id="SVGdirIc4" />
+	        <symbol id="SVGdirIcon">
+	            <use xlink:href="#SVGdirIc1" opacity="1" fill="#999999" fill-opacity="1" />
+	            <use xlink:href="#SVGdirIc2" opacity="1" fill="#414141" fill-opacity="1" />
+	            <filter id="SVGdirIcShadow" x="24.48" y="14.99" width="30.97" height="57.01" filterUnits="userSpaceOnUse" primitiveUnits="userSpaceOnUse">
+	                <feFlood />
+	                <feComposite in2="SourceAlpha" operator="in" />
+	                <feGaussianBlur stdDeviation="1" />
+	                <feOffset dx="1" dy="0" result="afterOffset" />
+	                <feFlood flood-color="#000000" flood-opacity="0.5" />
+	                <feComposite in2="afterOffset" operator="in" />
+	                <feMorphology operator="dilate" radius="0" />
+	                <feComposite in2="SourceAlpha" operator="out" />
+	            </filter>
+	            <path d="M32.48 22.99L46.45 22.99L46.45 64L32.48 64L32.48 22.99Z" id="SVGdirIcShadowPath" fill="white" fill-opacity="1" filter="url(#SVGdirIcShadow)" />
+	            <use xlink:href="#SVGdirIc3" opacity="1" fill="#999999" fill-opacity="0" />
+	            <use xlink:href="#SVGdirIc4" opacity="1" fill="#999999" fill-opacity="1" />
+	        </symbol>
+	    </defs>
+	</svg>
+  	<svg act="fileIcon">
+	    <defs>
+	        <path d="M30 0L46 12L46 64L0 64L0 0L30 0Z" id="SVGfileIc1"></path>
+	        <path d="M46 12L30 12L30 0L46 12Z" id="SVGfileIc2"></path>
+	    <symbol id="SVGfileIcon"><use xlink:href="#SVGfileIc1" opacity="1" fill="#999999" fill-opacity="1"></use>
+	    <use xlink:href="#SVGfileIc2" opacity="1" fill="#3e3e3e" fill-opacity="1"></use>
+		</symbol>
+		</defs>
+	</svg>
+  	<div act="loadscreen">
+		<div class="box">
+			<div></div>
+			<div></div>
+			<div></div>
+			<div></div>
+			<div></div>
+			<div></div>
+			<div></div>
+		</div>
+	</div>
+  	<div act="openedFilesList">
+ 		<div class="backcontent">
+          	@scrollplane::y attrs: class="disorderedList"::@
+ 		</div>
+  		<div class="downmenu">
+          	<button class="blackbtn bwhitefont cls" funcs="easyCancel">@set::"close".tr::@</button>
+  		</div>
+  	</div>
+  	<div act="downloadsFileSrc">
+      	<div class="blackbtn file" url="">
+       		<div class="content">
+       			<div class="name"></div>
+       			<div class="progress">
+       				  	<div class="bar"></div>
+                  		<pre class="info">@set::"Speed".tr::@: <text class="speed"></text><br>@set::"Downloading".tr::@: <text class="downloading"></text></pre>
+       			</div>
+       		</div>
+       		<button class="blackbtn bwhitefont cls" funcs="stopLoading">X</button>
+   		</div>
+  	</div>
+	<div act="uploadsFileSrc">
+      	<div class="blackbtn file" url="">
+       		<div class="content">
+       			<div class="name"></div>
+       			<div class="progress">
+       				  	<div class="bar"></div>
+                  		<pre class="info">@set::"Speed".tr::@: <text class="speed"></text><br>@set::"Uploading".tr::@: <text class="downloading"></text></pre>
+       			</div>
+       		</div>
+       		<button class="blackbtn bwhitefont cls" funcs="stopLoading">X</button>
+   		</div>
+  	</div>
+  	<div act="downloads">
+ 		<div class="backcontent">
+          	@scrollplane::y::@
+ 		</div>
+  		<div class="downmenu">
+          	<button class="blackbtn bwhitefont cls" funcs="easyCancel">@set::"close".tr::@</button>
+          	<button class="blackbtn bwhitefont cls" funcs="stopAllLoads">@set::"stop all".tr::@</button>
+  		</div>
+  	</div>
+</code>
+<div class="pathRow">
+  	<button class="bwhitefont cls" funcs="goBack">&#60;</button>
+	<button class="bwhitefont cls" funcs="goForward">&#62;</button>
+  	<input class="inputstyle cls">
+</div>
+<div class="cont">
+	<div class="uppanel NOSELECT" res="before">
+      	<div class="leftexplorer" res="before">
+          <f-scrollplane>
+          </f-scrollplane>
+          <f-scroll-y>
+            <f-wheel></f-wheel>
+          </f-scroll-y>
+          <f-scroll-x>
+            <f-wheel></f-wheel>
+          </f-scroll-x>
+          <div class="lsplace"></div>
+		</div>      	
+      	<div class="middle w center leftRightEResizer">
+			<button class="middlebtn bwhitefont hide"></button>
+		</div>
+      	<div class="rightexplorer" res="after">
+          	<f-scrollplane contextfuncs="rightexplorer" bubblecontext=".">
+          	</f-scrollplane>
+          	<f-scroll-y>
+          	  <f-wheel></f-wheel>
+          	</f-scroll-y>
+          	<div class="lsplace"></div>
+      	</div>
+	</div>
+	
+	<div class="middle h center upDownPResizer">
+		<button class="middlebtn bwhitefont hide"></button>
+	</div>
+	
+	<div class="downpanel" res="after">
+		<div class="rightmenu">
+			<button class="blackbtn bwhitefont cls" funcs="openLogin">
+			&#9094;
+			</button>
+			<button class="blackbtn bwhitefont cls" funcs="showResizeButton">
+			&#8693;
+			</button>
+			<button class="blackbtn bwhitefont cls" funcs="openSettings">
+			&#10978;
+			</button>
+          	<button class="blackbtn bwhitefont cls" funcs="openDownloads">
+			&#129095;
+			</button>
+			<button class="blackbtn bwhitefont cls" funcs="toggleDirSelecting">
+			&#10003;
+			</button>
+          	<button class="blackbtn bwhitefont rightshower" funcs="toggleRightMenu">
+			<div></div>
+			</button>
+   		</div>
+      	<div class="srcplace">
+          	
+      	</div>
+	</div>
+
+</div>
+<div class="dialogback" hidden>
+</div>
+<script src="js/interactive_index.js"></script>
+<script src="js/UI_main.js"></script>
+<script src="js/UI_index.js"></script>
+<script src="js/UI_ctx.js"></script>
+<script src="js/UI_click.js"></script>
+<script src="js/UI_contextmenu.js"></script>
+<script>
+  	UI.setLSToPlace("body", false);
+</script>
+
+
+
+
