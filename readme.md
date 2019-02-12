@@ -1,7 +1,7 @@
 
-
 # Greetings to all!
 
+## ***in the next 2 weeks will be partially adapted for django***
 
 Just want to say that the project was written for myself, and only as a hobby, so I am not eager to tell all the details.
 
