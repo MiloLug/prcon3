@@ -1,1 +1,0 @@
-A.on("click",function(n){n.path.all(function(r){var n=r.errored(function(n){return n!==document&&n!==window}).opt("funcs");if(n===errored||!n)return"continue";(n=n.split(",")).all(function(n){return UI[n.trim()](r)},"break","continue")})});
