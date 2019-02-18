@@ -1,7 +1,8 @@
 
 # Greetings to all!
 
-## ***in the next 2 weeks will be partially adapted for django***
+## ***Django version now supports basic functions for FTP and local using! (viewing directories, editing files) - tested on python 3.6.6 w/ Django 2.1.7, base dir for local using (@ROOT:) - BASE_DIR in project settings (django.conf.settings)***
+
 
 Just want to say that the project was written for myself, and only as a hobby, so I am not eager to tell all the details.
 
