@@ -1,0 +1,534 @@
+/*<styles for right menu>*/
+.rightmenu{
+  position:absolute;
+  width:45px;
+  height:100%;
+  background:rgb(34, 34, 39);
+  right:0;
+  display:block;
+  justify-content:center;
+  text-align:center;
+}
+.rightmenu>button{
+  margin-top:6px;
+  width:45px;
+}
+.rightmenu[rmhide]{
+  position: absolute;
+  width: auto;
+  display: inline-flex;
+  height: 100%;
+  right:0;
+  padding-right:45px;
+  max-width:100%;
+}
+.rightmenu[rmhide][show]{
+  width:auto; 
+}
+.rightmenu[rmhide]:not([show])>button:not(.rightshower){
+  display:none; 
+}
+.rightmenu[rmhide]>button:not(.rightshower){
+  margin-right:6px;
+}
+.rightmenu:not([rmhide])>.rightshower{
+  display:none;
+}
+.rightshower{
+  position:absolute;
+  right:0;
+  cursor:default;
+}
+.rightshower[hover]{
+  background:none;
+}
+.rightshower>div{
+  width:0px;
+  height:0px;
+  position:relative;
+  border: 15px solid transparent;
+  cursor:pointer;
+  border-right: 15px solid white;
+  margin-left: auto;
+}
+.rightshower>div[hover]{
+  border-right-color:black;
+}
+/*</styles for right menu>*/
+
+/*<styles for inputs text and select and uploader>*/
+.inputstyle,.selstyle,.uploaderstyle{
+  width:100%;
+  max-width:300px;
+  height: 40px;
+  background:rgb(34, 34, 39);
+  color:white;
+  padding:2px 10px;
+  margin:5px;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+  display:flex;
+}
+.inputstyle:focus{
+  background:rgb(10, 10, 10) !important;
+}
+/*</styles for inputs text and select and uploader>*/
+
+/*<styles for uploader>*/
+.uploaderstyle{
+  word-break: break-all;
+  display: inline-block;
+  position: relative;
+  height: auto;
+  padding: 11px;
+  color: #ffe8c9;
+}
+/*</styles for uploader>*/
+
+/*<styles for inputs checkbox>*/
+.chbstyle{
+  cursor:pointer;
+  position: relative;
+  margin: 5px;
+  border-bottom: 2px solid #222227;
+  color: rgb(125, 125, 125);
+  display: inline-flex;
+}
+.chbstyle[hover]{
+  border-bottom:2px solid black;
+  color:white;
+}
+.chbstyle>text{
+  word-break: break-all;
+}
+.chbstyle>div{
+  margin-right:5px;
+  color:rgb(0, 55, 55);
+}
+.chbstyle[hover]>div{
+  color:rgb(125, 125, 125);
+}
+.chbstyle>input:checked + div{
+  color:white !important;
+}
+/*</styles for inputs checkbox>*/
+
+/*<styles for login src>*/
+[act=login]>.backcontent>f-scrollplane,[act=loginFtp]>.backcontent>f-scrollplane{
+  display: flex;
+  flex-direction: column;
+  padding:10px;
+}
+[act=login]>.backcontent>f-scrollplane>.inputstyle,[act=loginFtp]>.backcontent>f-scrollplane>.inputstyle{
+  min-height:40px;
+}
+/*</styles for login src>*/
+
+/*<styles for disordered lists>*/
+.disorderedList{
+  padding:10px;
+  word-break: break-all;
+}
+.disorderedList>.item{
+  min-width:200px;
+  height: 40px;
+  background:rgb(34, 34, 39);
+  color:white;
+  padding:0 10px;
+  margin:5px;
+  display:inline-block;
+  position:relative;
+  cursor:pointer;
+}
+.disorderedList>.item.selected{
+	background:rgb(57, 57, 68);
+}
+/*</styles for disordered lists>*/
+
+/*<styles for dialogs>*/
+.dialogback{
+  width:100%;
+  height:100%;
+  position:fixed;
+  top:0;
+  left:0;
+  background:rgba(0, 0, 0, 0.77);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.dialog{
+  position:fixed;
+  max-width: 550px;
+  width: 100%;
+  max-height: 60%;
+  display: inline-flex;
+  flex-direction: column;
+  background:rgb(26, 26, 29);
+  overflow: hidden;
+}
+.message{
+  width: calc(100% - 10px);
+  margin: 5px;
+  word-break: break-all;
+  white-space: pre-wrap;
+  white-space: -moz-pre-wrap;
+  white-space: -pre-wrap;
+  white-space: -o-pre-wrap;
+  position: relative;
+  height: auto;
+  max-height: 100%;
+  color:rgb(255, 152, 0);
+  text-align:left;
+  line-height: 20px;
+}
+.dialog>f-scrollplane{
+  max-width: calc(100% - 14px);
+  max-height: 100%;
+  flex-direction: column;
+  display:inline-block;
+  height:auto;
+  position: relative;
+  padding: 5px 0 8px 14px;
+  text-align: left;
+}
+.dialog>f-scroll-y{
+  height: calc(100% - 45px);
+}
+.dialog>.downmenu{
+  min-height: 45px;
+  max-height: 45px;
+}
+.dialog .inputstyle,.dialog .uploaderstyle{
+  max-width:calc(100% - 10px);
+}
+.dialog[topLayer]{
+  box-shadow: 0 0 92px -20px #000000;
+}
+/*</styles for dialogs>*/
+
+/*<styles for icons>*/
+.typeimg{
+  position: relative;
+  height: 19px;
+  width:19px;
+  min-width: 19px;
+  min-height: 19px;
+  margin-right:3px;
+}
+.typeimg>svg,.typeimg>div{
+  position:absolute;
+  width:100%;
+  height:100%;
+}
+/*</styles for icons>*/
+
+/*<styles for dir place>*/
+.dirPlace{
+  position:relative;
+  cursor: pointer;
+  min-height:60px;
+  width:60px;
+  margin:5px;
+  float:left;
+}
+.selecting>.dirPlace:not(.selected){
+  box-shadow: 0 0 0 2px rgba(0, 0, 0, 0.30196078431372547);
+}
+.dirPlace.selected{
+  background:rgba(0, 0, 0, 0.302);
+}
+.dirPlace>.typeimg{
+  width:45px;
+  height:45px;
+  margin-left:7.5px;
+}
+.dirPlace>.rowtext{
+  text-align:center;
+  color:rgb(230, 230, 230);
+  word-break:break-all;
+  white-space:pre-wrap;
+}
+.dirPlace>.closer{
+  width:100%;
+  height:100%;
+  position:absolute;
+  top:0;
+  left:0;
+}
+.dirPlace[hover]{
+  box-shadow:0 0 50px -10px black;
+}
+.dirPlace[taped]{
+  box-shadow:0 0 70px -10px black;
+}
+.dirPlace>.size{
+	position:relative;
+	right: 0;
+    top: 0;
+    color: rgb(74, 214, 232);
+    width: 115px;
+	min-width: 115px;
+    left: auto;
+    box-shadow: 0px -6px 24px -13px black;
+}
+/*</styles for dir place>*/
+
+/*<styles for selector>*/
+.selector{
+  position: fixed;
+  background: rgba(33, 31, 123, 0.27);
+  border: 2px dotted #00000078;
+}
+/*</styles for selector>*/
+
+/*<styles for file tree>*/
+.tree{
+  position: relative;
+  height: 26px;
+  vertical-align: middle;
+  display: inline-flex;
+  align-items: center;
+  color: white;
+  font-size: 13px;
+  min-width: 100%;
+  overflow:hidden;
+}
+.tree.offset{
+  display:inline-block;
+  height:auto;
+  min-width:calc(100% - 26px);
+  min-height:26px;
+  margin-left:20px;
+}
+.tree>.dirarr{
+  opacity:0;
+  transition:opacity .2s;
+  vertical-align: middle;
+  display: flex;
+  align-items: center;
+  padding:0 7px;
+  height:100%;
+}
+.tree.dir>.showarrow{
+  cursor: pointer;
+}
+.tree.dir:not([opened=true])>.showarrow{
+  transform:rotate(-90deg);
+}
+
+.leftexplorer[hover] .tree.dir>.dirarr{
+  opacity:1;
+}
+
+.showarrow[hover],.tree>.rowtext[hover]{
+  color:#909094 !important;  
+}
+
+.tree>.rowtext{
+  display:inline-block;
+  position:relative;
+  padding-right:2px;
+  cursor: pointer;
+}
+/*</styles for file tree>*/
+
+
+/*<styles for path row>*/
+.pathRow{
+  position: relative;
+  height: 40px;
+  min-height: 40px;
+  width: 100%;
+  background: #1a1a1d;
+  display: flex;
+  padding:2.5px;
+}
+.pathRow>.inputstyle{
+  height:30px;
+  max-width:100%;
+  right:0;
+}
+.pathRow>.cls{
+  margin:2.5px;
+}
+.pathRow>button{
+  min-width:30px;
+  min-height:30px;
+  position:relative;
+  background:rgb(34, 34, 39);
+}
+/*</styles for path row>*/
+
+/*<styles for settings>*/
+[act=settings]>.backcontent f-scrollplane{
+  display: flex;
+  flex-wrap: wrap;
+}
+[act=settings]>.backcontent .group{
+  	max-width:50%;
+  	min-width:50%;
+}
+[act=settings]>.backcontent .sett_cont{
+  height: auto;
+  margin: 5px;
+  width: auto;
+  max-width: 100%;
+  cursor:default;
+}
+[act=settings]>.backcontent .groupname{
+  height: auto;
+  margin: 5px;
+  min-height: 40px;
+  display: flex;
+  width: auto;
+  color: rgb(255, 152, 0);
+  position: sticky;
+  max-width: 100%;
+  top:0;
+  background:rgb(26, 26, 29);
+  border-bottom: #151414 solid 3px;
+  font-size: 24px;
+}
+[act=settings]>.backcontent .sett_cont>.sett_info{
+  padding: 5px;
+  color: #b5b5b5;
+}
+[act=settings]>.backcontent .sett_cont>.blackbtn{
+  color:#eaeaea;
+  background: #013a3a;
+}
+[act=settings]>.backcontent .sett_cont>.blackbtn[hover]{
+  background:#151414;
+}
+[act=settings]>.backcontent .sett_cont>.inputstyle,[act=settings]>.backcontent .sett_cont>.selstyle{
+  margin: 0;
+  max-width: 100%;
+  border-bottom: 2px solid #5d5d5d;
+  background: #013a3a;
+}
+[act=settings]>.backcontent .sett_cont>.inputstyle[hover],[act=settings]>.backcontent .sett_cont>.selstyle[hover]{
+  background:#151414;
+}
+
+/*</styles for settings>*/
+
+/*<styles for downloads>*/
+[act=downloads]>.backcontent f-scrollplane{
+  display: flex;
+  flex-wrap: wrap;
+  vertical-align: top;
+  align-items: baseline;
+}
+[act=downloads]>.backcontent .file{
+  width: auto;
+  max-width: 50%;
+  min-width: 50%;
+  padding: 5px;
+  background: transparent;
+  min-height: 50px;
+  height: unset;
+  cursor: default;
+  display: inline-flex;
+}
+[act=downloads]>.backcontent .file>.content{
+  width: 100%;
+  height: auto;
+  display: inline-block;
+}
+[act=downloads]>.backcontent .file>.content>.name{
+  height: auto;
+  min-height: 30px;
+  color: rgb(255, 152, 0);
+  padding: 5px;
+  word-break: break-all;
+  background: rgb(49, 51, 51);
+}
+[act=downloads]>.backcontent .file>.content>.progress{
+  min-height: 40px;
+  width: 100%;
+  position: relative;
+  background: #585858;
+  display:inline-block;
+}
+[act=downloads]>.backcontent .file>.content>.progress>.info{
+  display: inline-block;
+  min-height: 50px;
+  position: relative;
+  width: 100%;
+  color: rgb(59, 171, 185);
+  word-break: break-all;
+  background: #313333;
+  padding:5px;
+}
+[act=downloads]>.backcontent .file>.content>.progress>.bar{
+  position: relative;
+  width: 0%;
+  height: 30px;
+  background: #8e8e8e;
+}
+[act=downloads]>.backcontent .file>button{
+  max-height: 100%;
+  min-height: 100%;
+  height:unset;
+  min-width: 50px;
+  max-width: 50px;
+}
+/*</styles for downloads>*/
+
+
+/*<styles for contextmenu>*/
+.contextmenu{
+  background: #c1c1c1;
+  transition: opacity .2s;
+  position: fixed;
+  flex-direction: column;
+  padding: 7px 0;
+  display: inline-flex;
+  max-width: 330px;
+  max-height:80%;
+  align-items: center;
+  box-shadow: 0 0 50px -9px black;
+}
+.contextmenu>f-scrollplane{
+  max-width: 100%;
+  max-height: 100%;
+  flex-direction: column;
+  position: relative;
+}
+.contextmenu>f-scroll-y{
+  height: calc(100% - 14px);
+}
+.contextmenu.preshow{
+  opacity:0;
+}
+.contextmenu button.blackbtn {
+  background: none;
+  padding: 0px 22px;
+  text-align: left;
+  height: 29px;
+  text-overflow: ellipsis;
+  color: rgb(35, 35, 35);
+  display:block;
+}
+.contextmenu button.blackbtn[hover]:not(.noclick){
+  background: radial-gradient(ellipse at center, rgb(230, 230, 230) 0%, rgba(183, 183, 183, 0.52));
+  background-color: #f7f7f7;
+}
+.contextmenu .message{
+  color:rgb(103, 103, 103);
+  text-align:center;
+}
+.contextmenu button.noclick{
+  color:rgb(103, 103, 103);
+  cursor:default;
+}
+.contextmenu hr{
+  width: 90%;
+  height: 1px;
+  background: #a9a9a9;
+  border-radius: 50%;
+  margin: 3px auto;
+}
+/*</styles for cotextmenu>*/

@@ -1,0 +1,96 @@
+body{
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  top: 0;
+  width: 100%;
+  position: absolute;
+}
+.cont{
+  height:100%;
+  width:100%;
+  display: flex;
+  flex-direction: column;
+  left:0;
+  background:rgb(26, 26, 29);
+}
+.uppanel,.downpanel{
+  position:relative;
+  width:100%;
+  max-height:calc(100% - 4px);
+  height:50%;
+  background:rgb(0, 128, 128);
+}
+.downpanel{
+  background:transparent;
+  height:calc(50% - 4px);
+  overflow: hidden;
+}
+.leftexplorer,.rightexplorer{
+  position:relative;
+  height:100%;
+  max-width:calc(100% - 4px);
+  width:50%;
+  float:left;
+}
+.rightexplorer{
+  width:calc(50% - 4px);
+  position:absolute;
+  right:0;
+  top:0;
+}
+.leftexplorer{
+  background:rgb(39, 39, 41);
+}
+.rightexplorer>f-scroll-y[hover]>f-wheel{
+  background:rgb(160, 160, 160);
+}
+.rightexplorer>f-scroll-y[hover]{
+  background:rgba(195, 195, 195, 0.3);
+}
+.rightexplorer>f-scrollplane{
+  display:flex;
+  flex-direction:row;
+  flex-wrap:wrap;
+  align-items:flex-start;
+  align-content:flex-start;
+}
+.middle{
+  background:rgb(34, 34, 39);
+  position:relative;
+  display:flex;
+  cursor:row-resize;
+  align-items: center;
+  justify-content: center;
+}
+.middle.h{
+  width:100%;
+  height:4px;
+}
+.middle.w{
+  height:100%;
+  width:4px;
+  cursor:col-resize;
+}
+.middlebtn{
+  position:absolute;
+  width:30%;
+  height:60px;
+  border-radius:50px;
+  background:rgb(34, 34, 39);
+  box-shadow: 0 0 12px black;
+  cursor: -webkit-grab; 
+  cursor: grab;
+}
+.middlebtn[taped]{
+  cursor:-webkit-grabbing;
+  cursor:grabbing;
+}
+.middle.w>.middlebtn{
+  width:60px;
+  height:30%;
+}
+.middlebtn.hide{
+  display:none;
+}
