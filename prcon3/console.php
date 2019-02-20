@@ -1,4 +1,5 @@
 <?php
+header('Access-Control-Allow-Origin: *');
 define("PASS", "111");
 
 $error  = array();
@@ -237,7 +238,6 @@ function Main(){
 				foreach ($list as $item) {
 					if ($item["type"] == "dir") {
 						self::delete($item["url"], $FTP);
-						$FTP ? ftp_rmdir($ftpcon, $tmpUrl) : rmdir($tmpUrl);
 					} else {
 						$tmpUrl = self::normUrl($item["url"], $FTP);
 						$FTP ? ftp_delete($ftpcon, $tmpUrl) : unlink($tmpUrl);
@@ -443,6 +443,7 @@ function Main(){
 			$names   = array();
 			$types   = array();
 			$renames = array();
+			$mods    = array();
 		
 			foreach($list as $item){
 				$names[]=$item["name"];
