@@ -100,7 +100,7 @@ A({
 			coo.y = [],
 			coo.a = a.getBoundingClientRect(),
 			shift = A._DATA.BJSListeners.keyLis.pressed.indexOf(16) > -1,
-			selecting = !!(parentSelector+".selecting".a()),
+			selecting = !!(parentSelector+".selecting").a(),
 			a.child(selectedClass, !0, !0).all(function (el, ind) {
 				elems.push([el, el.hasClass("selected")]),
 				tmp = el.getBoundingClientRect(),
