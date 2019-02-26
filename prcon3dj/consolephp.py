@@ -1,17 +1,19 @@
 from json import loads as json_decode, dumps as json_encode
 import os
+from struct import pack as str_pack
 from io import BytesIO
 from django.http import QueryDict
 from ftplib import FTP as FTP_, error_perm as FTP_er_perm,  all_errors as FTP_er_all
 from django.conf import settings
-
+from magic import from_buffer as magic_from_buffer, from_file as magic_from_file
+from base64 import b64encode
 B_DIR = settings.BASE_DIR.replace("\\","/")
 
 class reader():
 	def __init__(self):
 		self.data = ""
 	def __call__(self,s):
-		self.data += s
+		self.data += s.decode("utf-8")
 
 def req(request):
 	if not (request.is_ajax() or request.method == 'POST'):
@@ -98,9 +100,10 @@ def req(request):
 			
 			url = self.gUrl(args)
 			if not lftp:
-				url = url.replace(B_DIR, "@ROOT:")
+				url = url.replace(B_DIR, "")
+				url = "@ROOT:" + (url if url[0] == "/" else "/" + url)
 			else:
-				url = "@ROOT:" + url
+				url = "@ROOT:" + (url if url[0] == "/" else "/" + url)
 			return url
 
 		def isParentOf(self, args, fftp = False):
@@ -195,6 +198,243 @@ def req(request):
 					itemR["size"]=self.sizeOf(itemUrl,fftp)
 				r.append(itemR)
 			return r
+
+		def rename(self, args, fftp = False):
+			lftp = False if fftp else FTP
+			args = du(args)
+			FN = "rename"
+			
+			url       = self.normUrl(args, fftp)
+			oldNames  = args.get("oldNames",[])
+			newNames  = args.get("newNames",[])
+			staticExt = args.get("staticExtension", False)
+			onlyStr   = args.get("onlyStr", False)
+			
+			ls      = args.get("list",[]) if onlyStr else self.getList(url, fftp)
+			names   = []
+			types   = []
+			renames = []
+			mods    = {}
+		
+			for item in ls:
+				names.append(item["name"])
+				types.append(item["type"])
+
+			for nm in newNames:
+				mods[nm]=-1
+		
+			while len(oldNames):
+				oldName = oldNames.pop()
+				newName = newNames.pop()
+				if(oldName==newName):
+					continue
+				newDiv = self.divNameExt(newName)
+				oldDiv = self.divNameExt(oldName)
+				mod=-1	
+				newExt = ("."+(oldDiv[1] if staticExt else newDiv[1])) if len(oldDiv if staticExt else newDiv)>1 else ""
+			
+				tp=types[names.index(oldName)]
+				
+				oldUrl = url + "/" + oldName
+				newUrl=""
+				
+				def umod():
+					tmod="" if mod<0 else ("_" + mod)
+					if tp=="file":
+						newUrl = newDiv[0] + tmod + newExt
+					else:
+						newUrl = newName + tmod
+					mod+=1
+				umod()
+
+				while True:
+					try:
+						names.index(newUrl)
+						umod()
+					except ValueError:
+						break
+				
+				newName=newUrl
+				newUrl=url + "/" + newUrl
+				
+				ok = True
+				if lftp and not onlyStr:
+					try:
+						ftpcon.rename(oldUrl,newUrl)
+					except:
+						ok = False
+				elif not onlyStr:
+					try:
+						os.rename(oldUrl,newUrl)
+					except:
+						ok = False
+				if ok:
+					renames.append([
+						self.shortUrl(oldUrl,fftp),
+						self.shortUrl(newUrl,fftp)
+					])
+					names[names.index(oldName)]=newName
+				
+				mods[newName]=mod
+			return {
+				"type": "ok",
+				"renames": renames,
+				"funcName": FN
+			}
+
+		def delete(self, args, fftp = False):
+			lftp = False if fftp else FTP
+			args = du(args)
+			FN = "delete"
+			
+			url = self.normUrl(args, fftp)
+			try:
+				if self.isDir(url, fftp):
+					ls = self.dotListFilter(self.getList(url, fftp))
+					for item in ls:
+						if item["type"] == "dir":
+							self.delete(item["url"], fftp)
+						else:
+							tmpUrl = self.normUrl(item["url"], fftp)
+							if lftp:
+								ftpcon.delete(tmpUrl)
+							else: 
+								os.remove(tmpUrl)
+					if lftp:
+						ftpcon.rmd(url)
+					else: 
+						os.rmdir(url)
+				else:
+					if lftp:
+						ftpcon.delete(url)
+					else: 
+						os.remove(url)
+			except:
+				pass
+			return {
+				"type": "ok" if not self.isAvailable(url, fftp) else "error",
+				"objUrl": self.shortUrl(url, fftp),
+				"funcName": FN
+			}
+
+		def deleteList(self, args, fftp = False):
+			lftp = False if fftp else FTP
+			args = du(args)
+			FN = "deleteList"
+			
+			r = []
+
+			while len(args["list"]):
+				r.append(self.delete(args["list"].pop(), fftp))
+			return {
+				"type": "ok",
+				"objList": r,
+				"funcName": FN
+			}
+
+		def create(self, args, fftp = False):
+			lftp = False if fftp else FTP
+			args = du(args)
+			FN = "create"
+			
+			type    = args.get("type","dir")
+			name    = args.get("name")
+			replace = args.get("replace",False)
+			url     = self.normUrl(args, fftp)
+			dest    = url + "/" + name
+			if self.isAvailable(dest, fftp) and not replace:
+				return {
+					"type": "requery",
+					"info": "obj exists",
+					"objName": name,
+					"objType": ("dir" if self.isDir(dest, fftp) else "file"),
+					"funcName": FN,
+					"requeryData": [
+						{
+							"name": FN,
+							"args": {
+								"url": self.shortUrl(url, fftp),
+								"name": name,
+								"type": type
+							}
+						}
+					]
+				}
+			if replace:
+				self.delete(dest, fftp)
+
+			r = True
+			try:
+				if lftp:
+					if type == "file":
+						ftpcon.storbinary("STOR "+dest, BytesIO(b''))
+					else:
+						ftpcon.mkd(dest)
+				else:
+					if type == "file":
+						with open(dest, 'a'):
+							os.utime(dest, None)
+					else:
+						os.makedirs(dest)
+			except:
+				r = False
+			return {
+				"type": "ok" if r else "error",
+				"funcName": FN
+			}
+
+		def getBase64(self, args, fftp = False):
+			lftp = False if fftp else FTP
+			args = du(args)
+			FN   = "getBase64"
+			
+			url         = self.normUrl(args, fftp)
+			commonError = {
+				"type": "error",
+				"info": "getting failed",
+				"url": self.shortUrl(url, fftp),
+				"funcName": FN
+			}
+			success={
+				"type":"ok",
+				"funcName":FN,
+				"url":self.shortUrl(url, fftp),
+				"content":""
+			}
+			chunkSize = 3*8
+	
+			if self.isDir(url, fftp):
+				commonError["info"] = "obj is dir"
+				return commonError
+			if lftp:
+				try:
+					bio = BytesIO()
+					bio.seek(0)
+					def add_binary(data):
+						bio.write(data)
+					ftpcon.retrbinary('RETR ' + url, add_binary)
+					bio.seek(0)
+					success["mime"]=magic_from_buffer(bio.read(), mime=True)
+					bio.seek(0)
+					tmp = bio.read(chunkSize)
+					while tmp:
+						success["content"]+=b64encode(tmp).decode("utf-8")
+						tmp = bio.read(chunkSize)
+				except:
+					return commonError
+			else:
+				try:
+					with open(url,"rb") as f:
+						f.seek(0)
+						tmp = f.read(chunkSize)
+						while tmp:
+							success["content"]+=b64encode(tmp).decode("utf-8")
+							tmp = f.read(chunkSize)
+						f.seek(0)
+						success["mime"]=magic_from_buffer(f.read(), mime=True)
+				except:
+					return commonError
+			return success
 
 		def setContent(self, args, fftp = False):
 			lftp = False if fftp else FTP
