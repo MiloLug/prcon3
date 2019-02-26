@@ -1,4 +1,5 @@
 <?php
+header('Access-Control-Allow-Origin: *');
 define("PASS", "111");
 
 $error  = array();
@@ -114,10 +115,11 @@ function Main(){
 				global $FTP;
 			}
 			$url = self::gUrl($url, $FTP);
-			if (!$FTP)
-				$url = str_replace($_SERVER['DOCUMENT_ROOT'], "@ROOT:", $url);
-			else
-				$url = "@ROOT:" . $url;
+			if (!$FTP){
+				$url = str_replace($_SERVER['DOCUMENT_ROOT'], "", $url);
+				$url = "@ROOT:" . ($url[0] == "/" ? $url : "/" . $url);
+			} else
+				$url = $url[0] == "/" ? "@ROOT:" . $url : "@ROOT:/" . $url;
 			return $url;
 		}
 		public function isParentOf($args, $FTP)
@@ -237,7 +239,6 @@ function Main(){
 				foreach ($list as $item) {
 					if ($item["type"] == "dir") {
 						self::delete($item["url"], $FTP);
-						$FTP ? ftp_rmdir($ftpcon, $tmpUrl) : rmdir($tmpUrl);
 					} else {
 						$tmpUrl = self::normUrl($item["url"], $FTP);
 						$FTP ? ftp_delete($ftpcon, $tmpUrl) : unlink($tmpUrl);
@@ -443,6 +444,7 @@ function Main(){
 			$names   = array();
 			$types   = array();
 			$renames = array();
+			$mods    = array();
 		
 			foreach($list as $item){
 				$names[]=$item["name"];
