@@ -115,10 +115,11 @@ function Main(){
 				global $FTP;
 			}
 			$url = self::gUrl($url, $FTP);
-			if (!$FTP)
-				$url = str_replace($_SERVER['DOCUMENT_ROOT'], "@ROOT:", $url);
-			else
-				$url = "@ROOT:" . $url;
+			if (!$FTP){
+				$url = str_replace($_SERVER['DOCUMENT_ROOT'], "", $url);
+				$url = "@ROOT:" . ($url[0] == "/" ? $url : "/" . $url);
+			} else
+				$url = $url[0] == "/" ? "@ROOT:" . $url : "@ROOT:/" . $url;
 			return $url;
 		}
 		public function isParentOf($args, $FTP)
