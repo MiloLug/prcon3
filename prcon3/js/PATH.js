@@ -128,8 +128,19 @@ var PATH = function (url, errFun) {
 	fixUrl: function () {
 		var tmp = obj.arrUrl().weed(function (e) {
 				return e !== ".";
-			});
-		return tmp.join("/") + "/";
+			}),
+			newUrl = [],
+			endItem = "";
+		tmp.all(function(item,n){
+			if(n>0 && item === ".." && newUrl.length>1 && endItem !== ".."){
+				newUrl.pop();
+				return;
+			}
+			
+			newUrl.push(item);
+			endItem = item;
+		});
+		return newUrl.join("/") + "/";
 	},
 	divNameExt: function () {
 		var name = obj.arrUrl().pop(),

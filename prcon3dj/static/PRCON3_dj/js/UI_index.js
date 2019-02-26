@@ -452,7 +452,7 @@
 				var dom = [];
 				tree = tree || down;
 				for (var nm in tree) {
-					if (nm === "." || nm === "..")
+					if (nm === ".")
 						continue;
 					var inEl = [{
 							div: {
@@ -576,7 +576,7 @@
 							BUFFER.explorer.curDir = UI.setPathRow(url);
 							RE.html = "";
 							d.all(function (r) {
-								if (r.name === "." || r.name === "..")
+								if (r.name === ".")
 									return "continue";
 								RE.addElem("div", {
 									class: "dirPlace",
