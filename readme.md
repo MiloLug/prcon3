@@ -26,6 +26,29 @@ On phones the site also works great :)
  - [x] delete, cut, copy, paste files
  - [x] easy add new UI languages, redactors
 
+#### highlighting and linting code languages:
+Linting:
+
+ - PHP
+ - CSS
+ - JS
+ - HTML
+ - JSON
+ - Coffee Script
+
+Highlighting:
+
+ - SASS
+ - Coffee Script
+ - PHP
+ - markdown
+ - python
+ - CSS
+ - C like languages (C, C++ etc.)
+ - javascript
+ - HTML
+ - XML
+
 ### Setup and using:
 1. Download the folder ***prcon3***, upload it to the host.
 2. Go to it through the browser ( http(s)://yoursite/prcon3/ )
@@ -53,25 +76,3 @@ Well, you understand
 #### select file editor:
 ![
 ](https://i.ibb.co/HrWDNcj/image.png)
-#### highlighting code languages:
-Linting:
-
- - PHP
- - CSS
- - JS
- - HTML
- - JSON
- - Coffee Script
-
-Highlighting:
-
- - SASS
- - Coffee Script
- - PHP
- - markdown
- - python
- - CSS
- - C like languages (C, C++ etc.)
- - javascript
- - HTML
- - XML
