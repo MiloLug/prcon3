@@ -1,3 +1,3 @@
-".tr".all(function(elem){
+"._tr".all(function(elem){
 	elem.parentNode.innerHTML=elem.html().tr;
 });
