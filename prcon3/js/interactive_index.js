@@ -98,6 +98,8 @@ A({
 			coo.start = [e.X, e.Y + a.scrollTop, e.Y],
 			coo.x = [],
 			coo.y = [],
+			coo.h = [],
+			coo.w = [],
 			coo.a = a.getBoundingClientRect(),
 			shift = A._DATA.BJSListeners.keyLis.pressed.indexOf(16) > -1,
 			selecting = !!(parentSelector+".selecting").a(),
@@ -106,8 +108,8 @@ A({
 				tmp = el.getBoundingClientRect(),
 				coo.x.push(tmp.x),
 				coo.y.push(tmp.y + a.scrollTop),
-				coo.h = tmp.height,
-				coo.w = tmp.width;
+				coo.h.push(tmp.height),
+				coo.w.push(tmp.width);
 			});
 		},
 		fnForHasElem = function (el) {
@@ -135,8 +137,8 @@ A({
 			tmp2 = el[0];
 			if ((tmp[2] + tmp[0]) > coo.x[ind] &&
 				(tmp[3] + tmp[1]) > coo.y[ind] &&
-				(coo.x[ind] + coo.w) > tmp[2] &&
-				(coo.y[ind] + coo.h) > tmp[3])
+				(coo.x[ind] + coo.w[ind]) > tmp[2] &&
+				(coo.y[ind] + coo.h[ind]) > tmp[3])
 				fnForHasElem(el);
 			else
 				fnForNotHasElem(el);
