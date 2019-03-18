@@ -20,9 +20,9 @@
  - divNameExt +
  - isDir +
  - getList +
-  - *maybe, only for python :(
-   - execCommand 
-   - getPartitions
+  -- *maybe, only for python :(
+  --- execCommand 
+  --- getPartitions
  - createPath +
  - uploadFile +
  - uploadFiles +
