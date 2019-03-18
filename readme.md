@@ -20,8 +20,9 @@
  - divNameExt +
  - isDir +
  - getList +
- 
-* *maybe, only for python :(
+
+*
+*maybe, only for python :(
   - execCommand 
   - getPartitions
 *
