@@ -461,7 +461,7 @@ function Main(){
 					continue;
 				$newDiv = self::divNameExt($newName);
 				$oldDiv = self::divNameExt($oldName);
-				$mod=-1;	
+				$mod=$mods[$newName];	
 				$newExt = count($staticExt?$oldDiv:$newDiv)>1?".".($staticExt?$oldDiv[1]:$newDiv[1]):"";
 			
 				$type=$types[array_search($oldName,$names)];
@@ -478,7 +478,7 @@ function Main(){
 					}
 					$mod++;
 				}while(array_search($newUrl,$names)!==false);
-				
+				$mods[$newName]=$mod;
 				$newName=$newUrl;
 				$newUrl=$url . "/" . $newUrl;
 	
@@ -490,10 +490,8 @@ function Main(){
 				
 				if($ok){
 					$renames[]=array(self::shortUrl($oldUrl,$FTP),self::shortUrl($newUrl,$FTP));
-					$names[array_search($oldName,$names)]=$newName;
+					array_push($names, $newName);
 				}
-				
-				$mods[$newName]=$mod;
 			}
 			return array(
 				"type" => "ok",
