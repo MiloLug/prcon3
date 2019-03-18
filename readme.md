@@ -7,7 +7,40 @@
  - renaming 
  - deleting
  - creating
- - downloading 
+ - downloading
+ (file API methods realization at this moment):
+ - login +
+ - gUrl +
+ - normUrl +
+ - shortUrl +
+ - isParentOf +
+ - dotListFilter +
+ - arrUrl +
+ - divNameExt +
+ - isDir +
+ - getList +
+* *maybe, only python :(
+ - execCommand 
+ - getPartitions
+*
+ - createPath +
+ - uploadFile +
+ - uploadFiles +
+ - rename +
+ - delete +
+ - deleteList +
+ - create +
+ - createZip -
+ - extractZip -
+ - copyTo -
+ - copyListTo -
+ - getBase64 +
+ - setContent +
+ - getContent +
+ - sizeOf +
+ - isAvailable +
+ - ifEqual +
+ - getInfo +-....WTF??????
 ## ***- tested on python 3.6.6 w/ Django 2.1.7, base dir for local using (@ROOT:) - BASE_DIR in project settings (django.conf.settings)***
 
 
