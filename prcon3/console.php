@@ -116,8 +116,8 @@ function Main(){
 			}
 			$url = self::gUrl($url, $FTP);
 			if (!$FTP){
-				$url = str_replace($_SERVER['DOCUMENT_ROOT'], "", $url);
-				$url = "@ROOT:" . ($url[0] == "/" ? $url : "/" . $url);
+				$tmp = str_replace($_SERVER['DOCUMENT_ROOT'], "" , $url);
+				$url = str_replace($_SERVER['DOCUMENT_ROOT'], "@ROOT:" . ($tmp[0] == "/" ? "" : "/"), $url);
 			} else
 				$url = $url[0] == "/" ? "@ROOT:" . $url : "@ROOT:/" . $url;
 			return $url;
@@ -461,7 +461,7 @@ function Main(){
 					continue;
 				$newDiv = self::divNameExt($newName);
 				$oldDiv = self::divNameExt($oldName);
-				$mod=$mods[$newName];	
+				$mod=-1;	
 				$newExt = count($staticExt?$oldDiv:$newDiv)>1?".".($staticExt?$oldDiv[1]:$newDiv[1]):"";
 			
 				$type=$types[array_search($oldName,$names)];
@@ -478,7 +478,7 @@ function Main(){
 					}
 					$mod++;
 				}while(array_search($newUrl,$names)!==false);
-				$mods[$newName]=$mod;
+				
 				$newName=$newUrl;
 				$newUrl=$url . "/" . $newUrl;
 	
@@ -490,8 +490,10 @@ function Main(){
 				
 				if($ok){
 					$renames[]=array(self::shortUrl($oldUrl,$FTP),self::shortUrl($newUrl,$FTP));
-					array_push($names, $newName);
+					$names[array_search($oldName,$names)]=$newName;
 				}
+				
+				$mods[$newName]=$mod;
 			}
 			return array(
 				"type" => "ok",
@@ -807,11 +809,11 @@ function Main(){
 			if ($FTP) {
 				if (ftp_put($ftpcon, $inDest, $tmpName, FTP_BINARY)) {
 					$uploaded = true;
-					unlink($tmpName);
 				}
+				@unlink($tmpName);
 			} else {
 				$uploaded = @move_uploaded_file($tmpName, $inDest);
-				unlink($tmpName);
+				@unlink($tmpName);
 			}
 			if(!$uploaded){
 				$commonError["info"]="create error";
@@ -940,6 +942,7 @@ function Main(){
 				"url" => self::shortUrl($url, $FTP),
 				"funcName" => $FN
 			);
+			$dop=array();
 			if (extension_loaded('zip')) {
 				$zip         = new ZipArchive();
 				$tmpName_ext = sys_get_temp_dir() . "/" . uniqid("PRCON_TMP", true) . "_ext";
@@ -1012,6 +1015,7 @@ function Main(){
 					$tmp   = array_shift($stack);
 					$_path = $tmp[1];
 					foreach ($tmp[0] as $item) {
+						$dop[]=$item["url"];
 						$item = self::normUrl($item["url"], false);
 						$name = self::arrUrl($item, false);
 						$name = $name[count($name) - 1];
@@ -1028,6 +1032,7 @@ function Main(){
 									$_path . $name . "/"
 								);
 						} else {
+							
 							if ($FTP)
 								ftp_put($ftpcon, $_path . $name, $item, FTP_BINARY);
 							else
@@ -1046,7 +1051,8 @@ function Main(){
 			}
 			return array(
 				"type" => "ok",
-				"funcName" => $FN
+				"funcName" => $FN,
+				"dop"=>$dop
 			);
 		}
 		public function setContent($args, $FTP)
