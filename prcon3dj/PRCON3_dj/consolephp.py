@@ -115,15 +115,15 @@ def req(request):
 			lftp = False if fftp else FTP
 			
 			url = self.gUrl(args)
-			if not lftp:
-				url = url.replace(B_DIR, "")
-			
+
 			try:
-				url = url if url[0] == "/" else "/" + url
+				if not lftp:
+					tmp = url.replace(B_DIR, "")
+					url = url.replace(B_DIR, "@ROOT:" + ("" if tmp[0] == "/" else "/"))
+				else:
+					url = "@ROOT:" + (url if url[0] == "/" else "/" + url)
 			except IndexError:
-				url = "/"
-			
-			url = "@ROOT:" + url
+				url = "@ROOT:/"
 			
 			return url
 
