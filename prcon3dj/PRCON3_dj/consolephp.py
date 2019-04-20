@@ -782,7 +782,7 @@ def req(request):
 			lftp = False if fftp else FTP
 			
 			url = self.normUrl(args, fftp)
-			if self.shortUrl(url, fftp) == "@ROOT:":
+			if self.shortUrl(url, fftp) == "@ROOT:/":
 				return True
 
 			if lftp :
