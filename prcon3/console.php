@@ -1152,7 +1152,7 @@ function Main(){
 			global $ftpcon;
 			
 			$url = self::normUrl($url, $FTP);
-			if (self::shortUrl($url, $FTP) === "@ROOT:")
+			if (self::shortUrl($url, $FTP) === "@ROOT:/")
 				return true;
 			if ($FTP) {
 				if (ftp_size($ftpcon, $url) > -1)
