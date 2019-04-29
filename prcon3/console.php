@@ -230,7 +230,8 @@ function Main(){
 			if(!$dot)
 				$r[] = array(
 					"type" => "dir",
-					"url" => self::shortUrl($url."/..", $FTP)
+					"url" => self::shortUrl($url."/..", $FTP),
+					"name" => ".."
 				);
 			return $r;
 		}
