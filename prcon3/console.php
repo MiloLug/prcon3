@@ -196,11 +196,12 @@ function Main(){
 				global $FTP;
 			}
 			global $ftpcon;
-			
+
 			$r   = array();
 			$url = self::normUrl($args, $FTP);
 			$gs  = $args["getSize"];
-	
+			$dot = false;
+
 			if ($FTP) {
 				$list = (array) ftp_nlist($ftpcon, $url);
 			} else {
@@ -218,11 +219,19 @@ function Main(){
 					"url" => self::shortUrl($itemUrl, $FTP),
 					"name" => $item
 				);
+				if($item === "..")
+					$dot = true;
+
 				if($gs && !$itemIsDir)
 					$itemR["size"]=self::sizeOf($itemUrl, $FTP, false);
-	
+
 				$r[] = $itemR;
 			}
+			if(!$dot)
+				$r[] = array(
+					"type" => "dir",
+					"url" => self::shortUrl($url."/..", $FTP)
+				);
 			return $r;
 		}
 		public function delete($url, $FTP)
