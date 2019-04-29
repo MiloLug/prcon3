@@ -228,11 +228,11 @@ function Main(){
 				$r[] = $itemR;
 			}
 			if(!$dot)
-				$r[] = array(
+				array_unshift($r, array(
 					"type" => "dir",
 					"url" => self::shortUrl($url."/..", $FTP),
 					"name" => ".."
-				);
+				));
 			return $r;
 		}
 		public function delete($url, $FTP)
